@@ -1,0 +1,178 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+
+:root {
+    --navy: 221 59% 26%;
+    --navy-glow: 221 59% 45%;
+    --gold: 47 67% 53%;
+    --background: 210 40% 98%;
+    --surface: 0 0% 100%;
+    --text-main: 222 47% 11%;
+    --text-muted: 215 16% 47%;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: #f8fafc;
+    color: hsl(var(--text-main));
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.bg-modern-institutional {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+}
+
+.login-card {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.05),
+        0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 480px;
+    overflow: hidden;
+    border: 1px solid #f1f5f9;
+}
+
+.institutional-header {
+    background-color: #ffffff;
+    padding: 50px 40px 30px;
+}
+
+.btn-institutional-modern {
+    background-color: #1b396a;
+    color: white;
+    padding: 16px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 15px;
+}
+
+.btn-institutional-modern:hover {
+    background-color: #142b50;
+    box-shadow: 0 4px 12px rgba(27, 57, 106, 0.15);
+}
+
+.label-formal {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    color: #1b396a;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.7;
+    text-align: center;
+}
+
+.input-formal-modern {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 14px;
+    background-color: #fbfcfd;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #1e293b;
+    text-align: center;
+}
+
+.input-formal-modern:focus {
+    border-color: #1b396a;
+    background-color: #ffffff;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(27, 57, 106, 0.06);
+    transform: translateY(-1px);
+}
+
+.password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    transition: all 0.2s ease;
+    outline: none !important;
+    z-index: 10;
+}
+
+.password-toggle:hover {
+    color: #1b396a;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.form-actions {
+    margin-top: 40px;
+    width: 100%;
+}
+
+/* Reduced width Form container */
+.form-container {
+    max-width: 330px;
+    margin: 0 auto;
+}
+
+/* Modern Tabs - Spaced */
+.modern-tabs {
+    display: flex;
+    background-color: #f1f5f9;
+    padding: 4px;
+    border-radius: 14px;
+    margin-bottom: 40px;
+    max-width: 360px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.modern-tab {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.login-card-content {
+    padding: 2.5rem 2.5rem 4.5rem;
+    /* Increased bottom padding to 4.5rem (72px) */
+}
+
+.modern-tab.active {
+    background-color: #ffffff;
+    color: #1b396a;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}

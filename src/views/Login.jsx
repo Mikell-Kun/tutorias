@@ -1,190 +1,158 @@
 import React, { useState } from 'react';
-import { useUser } from '../context/UserContext';
-import { User, GraduationCap, Users, ArrowLeft, Lock, Hash } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ShieldCheck, GraduationCap, Briefcase, Eye, EyeOff } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useUser } from '../context/UserContext.jsx';
+import { validateCredentials } from '../data/database.js';
 
 const Login = () => {
-    const { login } = useUser();
-    const [selectedRole, setSelectedRole] = useState(null);
-    const [credentials, setCredentials] = useState({ controlNumber: '', password: '' });
+    const [selectedRole, setSelectedRole] = useState('estudiante');
+    const [nControl, setNControl] = useState('');
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { login } = useUser();
+    const navigate = useNavigate();
 
     const roles = [
-        { id: 'student', label: 'Estudiante', icon: GraduationCap, color: '#B38E5D' },
-        { id: 'teacher', label: 'Docente', icon: User, color: '#1B396A' },
-        { id: 'tutor', label: 'Tutor', icon: Users, color: '#06b6d4' },
+        { id: 'estudiante', label: 'Estudiantes' },
+        { id: 'docente', label: 'Docentes' },
+        { id: 'tutor', label: 'Tutores' },
     ];
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        try {
-            login(selectedRole, credentials);
-        } catch (err) {
-            setError(err.message);
+        setIsSubmitting(true);
+
+        // Simulation delay
+        await new Promise(resolve => setTimeout(resolve, 800));
+
+        const validatedUser = validateCredentials(nControl, password);
+
+        if (validatedUser && validatedUser.rol === selectedRole) {
+            login({
+                n_control: validatedUser.n_control.toString(),
+                role: validatedUser.rol === 'estudiante' ? 'student' : validatedUser.rol === 'docente' ? 'teacher' : 'tutor',
+                nombre_completo: validatedUser.nombre_completo,
+                carrera: validatedUser.carrera || validatedUser.departamento || validatedUser.area
+            });
+            navigate('/');
+        } else {
+            setError(validatedUser ? `Este usuario no tiene el rol de ${selectedRole}` : 'Número de control o contraseña incorrectos');
+            setIsSubmitting(false);
         }
     };
 
-    const handleBack = () => {
-        setSelectedRole(null);
-        setError('');
-        setCredentials({ controlNumber: '', password: '' });
-    };
-
-    if (!selectedRole) {
-        return (
-            <div style={{
-                height: '100vh',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '40px',
-                padding: '20px'
-            }}>
-                <div style={{ textAlign: 'center' }}>
-                    <h1 className="gradient-text" style={{ fontSize: '3.5rem', fontWeight: 'bold', marginBottom: '10px' }}>TutorApp</h1>
-                    <p style={{ color: 'var(--text-dim)', fontSize: '1.1rem' }}>SISTEMA DE TUTORÍAS RECONSTRUIDO</p>
-                </div>
-
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-                    gap: '24px',
-                    width: '100%',
-                    maxWidth: '850px'
-                }}>
-                    {roles.map((role) => (
-                        <div
-                            key={role.id}
-                            className="glass-card"
-                            onClick={() => setSelectedRole(role.id)}
-                            style={{
-                                padding: '40px 30px',
-                                textAlign: 'center',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                gap: '20px'
-                            }}
-                        >
-                            <div style={{
-                                width: '80px',
-                                height: '80px',
-                                borderRadius: '50%',
-                                background: 'rgba(255, 255, 255, 0.05)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyCenter: 'center',
-                                border: `1px solid ${role.color}33`,
-                                color: role.color
-                            }}>
-                                <role.icon size={40} style={{ margin: 'auto' }} />
-                            </div>
-                            <h3 style={{ fontSize: '1.4rem', fontWeight: '600', color: 'white' }}>{role.label}</h3>
-                            <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>Ingresar como {role.label}</p>
-                        </div>
-                    ))}
-                </div>
-
-                <p style={{ color: 'var(--text-dim)', fontSize: '1rem', marginTop: '20px' }}>Tecnológico Nacional de México</p>
-            </div>
-        );
-    }
-
-    const currentRole = roles.find(r => r.id === selectedRole);
-
     return (
-        <div style={{
-            height: '100vh',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '20px'
-        }}>
-            <div className="glass-card" style={{
-                width: '100%',
-                maxWidth: '450px',
-                padding: '40px',
-                position: 'relative'
-            }}>
-                <button
-                    onClick={handleBack}
-                    style={{
-                        position: 'absolute',
-                        top: '20px',
-                        left: '20px',
-                        background: 'transparent',
-                        border: 'none',
-                        color: 'var(--text-dim)',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '5px'
-                    }}
-                >
-                    <ArrowLeft size={18} /> Volver
-                </button>
-
-                <div style={{ textAlign: 'center', marginBottom: '30px', marginTop: '10px' }}>
-                    <div style={{ color: currentRole.color, marginBottom: '15px' }}>
-                        <currentRole.icon size={48} style={{ margin: 'auto' }} />
+        <div className="bg-modern-institutional min-h-screen">
+            <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="login-card"
+            >
+                {/* Institutional Header - Side-by-Side Logo & Text */}
+                <div className="institutional-header">
+                    <div className="flex justify-center items-center gap-5 mb-10">
+                        <div className="w-12 h-12 bg-white text-navy border-2 border-navy/10 rounded-xl flex items-center justify-center shadow-sm shrink-0">
+                            <ShieldCheck size={28} />
+                        </div>
+                        <div className="text-left border-l-2 border-navy/10 pl-5">
+                            <div className="text-[10px] font-extrabold text-[#111] uppercase leading-tight tracking-[0.2em]">Tecnológico</div>
+                            <div className="text-[10px] font-extrabold text-[#111] uppercase leading-tight tracking-[0.2em]">Nacional de México®</div>
+                        </div>
                     </div>
-                    <h2 style={{ fontSize: '1.8rem', fontWeight: 'bold', marginBottom: '8px' }}>
-                        Acceso {currentRole.label}
+
+                    <h2 className="text-[22px] font-black text-navy uppercase tracking-tight text-center">
+                        Servicio de tutorías "Mexicali"
                     </h2>
-                    <p style={{ color: 'var(--text-dim)' }}>Ingresa tus credenciales para continuar</p>
+                    <h3 className="text-[11px] font-bold text-navy/40 tracking-[0.4em] text-center mt-2 uppercase">
+                        {selectedRole === 'estudiante' ? 'Acceso Estudiantes' : selectedRole === 'tutor' ? 'Acceso Tutores' : 'Acceso Docentes'}
+                    </h3>
                 </div>
 
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                    {selectedRole === 'student' ? (
-                        <div>
-                            <label><Hash size={14} style={{ marginRight: '5px' }} /> Número de Control</label>
-                            <input
-                                type="text"
-                                placeholder="Ej: 20491199"
-                                value={credentials.controlNumber}
-                                onChange={(e) => setCredentials({ ...credentials, controlNumber: e.target.value })}
-                                required
-                            />
+                <div className="login-card-content">
+                    <div className="form-container">
+                        {/* Modern Tabs - Spaced */}
+                        <div className="modern-tabs">
+                            {roles.map((role) => (
+                                <button
+                                    key={role.id}
+                                    onClick={() => setSelectedRole(role.id)}
+                                    className={`modern-tab ${selectedRole === role.id ? 'active' : ''}`}
+                                >
+                                    {role.label}
+                                </button>
+                            ))}
                         </div>
-                    ) : (
-                        <div>
-                            <label><User size={14} style={{ marginRight: '5px' }} /> Usuario / Correo</label>
-                            <input
-                                type="text"
-                                placeholder="Ingresa tu identificación"
-                                required
-                            />
-                        </div>
-                    )}
 
-                    <div>
-                        <label><Lock size={14} style={{ marginRight: '5px' }} /> Contraseña</label>
-                        <input
-                            type="password"
-                            placeholder="Mínimo 8 caracteres"
-                            value={credentials.password}
-                            onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-                            required
-                        />
+                        <form onSubmit={handleSubmit} className="space-y-10">
+                            <AnimatePresence mode="wait">
+                                {error && (
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        className="p-3.5 rounded-xl bg-red-50 text-red-600 text-xs font-bold text-center"
+                                    >
+                                        {error}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+
+                            <div className="space-y-4">
+                                <label className="label-formal">Número de Control</label>
+                                <input
+                                    type="text"
+                                    value={nControl}
+                                    onChange={(e) => setNControl(e.target.value)}
+                                    className="input-formal-modern"
+                                    placeholder="Ingresa tu número"
+                                    required
+                                />
+                            </div>
+
+                            <div className="space-y-4">
+                                <label className="label-formal">Contraseña</label>
+                                <div className="password-container">
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className="input-formal-modern"
+                                        style={{ paddingRight: '54px' }}
+                                        placeholder="••••••••"
+                                        required
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="password-toggle"
+                                    >
+                                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="form-actions">
+                                <button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className="btn-institutional-modern flex items-center justify-center h-[56px]"
+                                >
+                                    {isSubmitting ? (
+                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                    ) : (
+                                        <span className="uppercase tracking-widest text-[13px]">Iniciar sesión</span>
+                                    )}
+                                </button>
+                            </div>
+                        </form>
                     </div>
-
-                    {error && (
-                        <p style={{ color: 'var(--error)', fontSize: '0.9rem', textAlign: 'center' }}>{error}</p>
-                    )}
-
-                    <button type="submit" className="btn-primary" style={{ marginTop: '10px' }}>
-                        Iniciar Sesión
-                    </button>
-                </form>
-
-                <div style={{ textAlign: 'center', marginTop: '30px' }}>
-                    <p style={{ color: 'var(--text-dim)', fontSize: '0.8rem' }}>
-                        &copy; 2026 TutorApp - TecNM
-                    </p>
                 </div>
-            </div>
+            </motion.div>
         </div>
     );
 };

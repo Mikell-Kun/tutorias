@@ -1,42 +1,41 @@
-import { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    const login = (role, credentials = {}) => {
-        // Mock validation and user data based on role
-        if (role === 'student') {
-            const { controlNumber, password } = credentials;
-            if (!controlNumber || !password || password.length < 8) {
-                throw new Error('Número de control o contraseña (mín. 8 caracteres) inválidos');
-            }
-
-            setUser({
-                name: 'Juan Pérez García',
-                role: 'student',
-                controlNumber: controlNumber,
-                career: 'Ingeniería en Sistemas Computacionales',
-                semester: 5,
-                email: `${controlNumber}@inst.edu.mx`,
-                phone: '123-456-7890',
-                progress: 28.6
-            });
-        } else if (role === 'teacher') {
-            setUser({ name: 'Dr. Roberto Sánchez', role: 'teacher', email: 'roberto.s@inst.edu.mx' });
-        } else if (role === 'tutor') {
-            setUser({ name: 'Mtra. Elena Gómez', role: 'tutor', email: 'elena.g@inst.edu.mx' });
+    useEffect(() => {
+        // Check for existing session
+        const savedUser = localStorage.getItem('tutorias_user');
+        if (savedUser) {
+            setUser(JSON.parse(savedUser));
         }
+        setLoading(false);
+    }, []);
+
+    const login = (userData) => {
+        setUser(userData);
+        localStorage.setItem('tutorias_user', JSON.stringify(userData));
     };
 
-    const logout = () => setUser(null);
+    const logout = () => {
+        setUser(null);
+        localStorage.removeItem('tutorias_user');
+    };
 
     return (
-        <UserContext.Provider value={{ user, login, logout }}>
+        <UserContext.Provider value={{ user, login, logout, loading }}>
             {children}
         </UserContext.Provider>
     );
 };
 
-export const useUser = () => useContext(UserContext);
+export const useUser = () => {
+    const context = useContext(UserContext);
+    if (!context) {
+        throw new Error('useUser must be used within a UserProvider');
+    }
+    return context;
+};

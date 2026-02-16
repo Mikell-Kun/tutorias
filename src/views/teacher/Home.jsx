@@ -1,138 +1,102 @@
 import React from 'react';
-import {
-    Users,
-    MessageSquare,
-    Calendar,
-    FileText,
-    ChevronRight,
-    AlertCircle,
-    CheckCircle2,
-    Clock,
-    UserCheck,
-    BarChart3
-} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Users, FileText, MessageCircle, MoreVertical, Search, Filter } from 'lucide-react';
+import Card from '../../components/Card.jsx';
 
-const TeacherStat = ({ icon: Icon, label, value, color }) => (
-    <div className="glass-card" style={{
-        flex: 1,
-        minWidth: '220px',
-        padding: '24px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '20px',
-        borderLeft: `4px solid ${color}`
-    }}>
-        <div style={{ background: `${color}15`, padding: '12px', borderRadius: '12px', color: color }}>
-            <Icon size={24} />
-        </div>
-        <div>
-            <p style={{ color: 'var(--text-dim)', fontSize: '0.85rem', fontWeight: '500' }}>{label}</p>
-            <h4 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'white' }}>{value}</h4>
-        </div>
-    </div>
-);
+const TeacherHome = () => {
+    const students = [
+        { id: 1, name: 'Miguel Angel', control: '20210456', status: 'Riesgo', last: '2 días' },
+        { id: 2, name: 'Ana Garcia', control: '20210789', status: 'Regular', last: 'Hoy' },
+        { id: 3, name: 'Carlos Ruiz', control: '20210123', status: 'Excelente', last: '1 semana' },
+    ];
 
-const TeacherHome = ({ user }) => {
-    const pendingTutories = [
-        { student: 'Ana Martínez', control: '20491122', reason: 'Bajo rendimiento', time: 'Hoy 4:00 PM', status: 'Urgent' },
-        { student: 'Carlos Ruiz', control: '20491185', reason: 'Seguimiento', time: 'Mañana 11:30 AM', status: 'Normal' },
-        { student: 'Sofía López', control: '20491190', reason: 'Duda académica', time: '18 Feb, 1:00 PM', status: 'Normal' },
+    const stats = [
+        { label: 'Total Alumnos', value: '42', icon: Users, color: 'text-navy', bg: 'bg-blue-50' },
+        { label: 'Tutorías Pendientes', value: '8', icon: FileText, color: 'text-gold', bg: 'bg-yellow-50' },
+        { label: 'Mensajes Nuevos', value: '12', icon: MessageCircle, color: 'text-green-600', bg: 'bg-green-50' },
     ];
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-            {/* WELCOME SECTION */}
-            <div className="glass-card" style={{ padding: '40px', background: 'linear-gradient(135deg, rgba(27, 57, 106, 0.3) 0%, rgba(179, 142, 93, 0.1) 100%)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                    <UserCheck size={20} color="var(--secondary)" />
-                    <span style={{ color: 'var(--secondary)', fontWeight: '600', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Panel de Docente</span>
+        <div className="p-8 space-y-8 animate-in slide-in-from-bottom-4 duration-700">
+            <div className="flex justify-between items-center">
+                <div>
+                    <h1 className="text-2xl font-bold text-navy">Panel del Docente</h1>
+                    <p className="text-text-muted mt-1">Gestiona el progreso de tus tutorados</p>
                 </div>
-                <h1 className="gradient-text" style={{ fontSize: '2.5rem', fontWeight: 'bold' }}>
-                    ¡Bienvenido, {user.name.split(' ')[1]}!
-                </h1>
-                <p style={{ color: 'var(--text-dim)', marginTop: '8px', fontSize: '1.1rem' }}>
-                    Tienes {pendingTutories.length} tutorías programadas para esta semana.
-                </p>
+                <div className="flex gap-3">
+                    <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-100 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors">
+                        <Filter size={16} /> Filtrar
+                    </button>
+                    <button className="btn-primary flex items-center gap-2">
+                        Nueva Sesión
+                    </button>
+                </div>
             </div>
 
-            {/* KEY METRICS */}
-            <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-                <TeacherStat icon={Users} label="Total Alumnos" value="42" color="var(--primary)" />
-                <TeacherStat icon={CheckCircle2} label="Tutorías Realizadas" value="15" color="var(--success)" />
-                <TeacherStat icon={Clock} label="Pendientes" value="3" color="var(--secondary)" />
-                <TeacherStat icon={BarChart3} label="Promedio Grupal" value="8.5" color="#8b5cf6" />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '24px' }}>
-                {/* PENDING SESSIONS */}
-                <div className="glass-card" style={{ padding: '30px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                        <h3 style={{ fontSize: '1.3rem', fontWeight: 'bold', color: 'white' }}>Sesiones de Tutoría</h3>
-                        <button className="btn-secondary" style={{ padding: '6px 14px', fontSize: '0.85rem' }}>Gestionar</button>
-                    </div>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                        {pendingTutories.map((session, i) => (
-                            <div key={i} style={{
-                                padding: '20px',
-                                background: 'rgba(255, 255, 255, 0.02)',
-                                border: '1px solid var(--glass-border)',
-                                borderRadius: '16px',
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center'
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                                    <div style={{
-                                        width: '45px',
-                                        height: '45px',
-                                        borderRadius: '12px',
-                                        background: session.status === 'Urgent' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(27, 57, 106, 0.1)',
-                                        color: session.status === 'Urgent' ? 'var(--error)' : 'var(--primary)',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center'
-                                    }}>
-                                        <Users size={22} />
-                                    </div>
-                                    <div>
-                                        <h4 style={{ fontSize: '1.05rem', fontWeight: '600', color: 'white' }}>{session.student}</h4>
-                                        <p style={{ fontSize: '0.85rem', color: 'var(--text-dim)' }}>{session.reason} • {session.control}</p>
-                                    </div>
-                                </div>
-                                <div style={{ textAlign: 'right' }}>
-                                    <p style={{ fontSize: '0.9rem', color: 'white', fontWeight: '600' }}>{session.time}</p>
-                                    <span style={{ fontSize: '0.75rem', color: session.status === 'Urgent' ? 'var(--error)' : 'var(--success)', fontWeight: '700' }}>
-                                        {session.status === 'Urgent' ? 'Prioridad Alta' : 'Programada'}
-                                    </span>
-                                </div>
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {stats.map((stat, i) => (
+                    <Card key={i} className="border-none shadow-sm">
+                        <div className="flex items-center gap-4">
+                            <div className={`p-4 ${stat.bg} ${stat.color} rounded-2xl`}>
+                                <stat.icon size={24} />
                             </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* QUICK ACTIONS */}
-                <div className="glass-card" style={{ padding: '30px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                    <h3 style={{ fontSize: '1.3rem', fontWeight: 'bold', color: 'white' }}>Acciones Rápidas</h3>
-
-                    <button className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'center' }}>
-                        <FileText size={20} /> Generar Reporte Mensual
-                    </button>
-
-                    <button className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'center' }}>
-                        <Calendar size={20} /> Agendar Nueva Sesión
-                    </button>
-
-                    <div style={{ marginTop: 'auto', padding: '24px', background: 'rgba(0, 0, 0, 0.2)', borderRadius: '20px', border: '1px solid var(--glass-border)' }}>
-                        <h4 style={{ fontSize: '1rem', color: 'white', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <AlertCircle size={18} color="var(--secondary)" /> Recordatorio
-                        </h4>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--text-dim)', lineHeight: '1.5' }}>
-                            Tienes hasta el viernes para subir las actas de resultados de las tutorías del primer parcial.
-                        </p>
-                    </div>
-                </div>
+                            <div>
+                                <p className="text-text-muted text-sm font-medium">{stat.label}</p>
+                                <p className="text-2xl font-bold text-navy">{stat.value}</p>
+                            </div>
+                        </div>
+                    </Card>
+                ))}
             </div>
+
+            {/* Student List Table view */}
+            <Card title="Seguimiento de Alumnos" subtitle="Lista detallada por estatus académico">
+                <div className="mt-4 overflow-hidden border border-gray-100 rounded-xl">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className="bg-gray-50/50 text-text-muted text-xs uppercase tracking-wider">
+                                <th className="px-6 py-4 font-semibold">Alumno</th>
+                                <th className="px-6 py-4 font-semibold">N. Control</th>
+                                <th className="px-6 py-4 font-semibold">Estatus</th>
+                                <th className="px-6 py-4 font-semibold">Último Contacto</th>
+                                <th className="px-6 py-4 font-semibold">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100 bg-white">
+                            {students.map((student) => (
+                                <tr key={student.id} className="hover:bg-gray-50/50 transition-colors">
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-navy font-bold text-xs">
+                                                {student.name.charAt(0)}
+                                            </div>
+                                            <span className="text-sm font-medium text-navy">{student.name}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-sm text-text-muted">{student.control}</td>
+                                    <td className="px-6 py-4">
+                                        <span className={`
+                      px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tight
+                      ${student.status === 'Riesgo' ? 'bg-red-50 text-red-600' : ''}
+                      ${student.status === 'Regular' ? 'bg-orange-50 text-orange-600' : ''}
+                      ${student.status === 'Excelente' ? 'bg-green-50 text-green-600' : ''}
+                    `}>
+                                            {student.status}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 text-sm text-text-muted">{student.last}</td>
+                                    <td className="px-6 py-4">
+                                        <button className="p-2 hover:bg-white rounded-lg transition-colors border border-transparent hover:border-gray-100 shadow-sm">
+                                            <MoreVertical size={16} className="text-text-muted" />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </Card>
         </div>
     );
 };
