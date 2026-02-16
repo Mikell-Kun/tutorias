@@ -9,6 +9,8 @@ import {
   ReticulaPlaceholder,
   MessagesPlaceholder
 } from './views/Placeholders.jsx';
+import TutorHome from './views/tutor/Home.jsx';
+import TutorIncidencias from './views/tutor/Incidencias.jsx';
 
 function App() {
   const { user, loading } = useUser();
@@ -28,7 +30,7 @@ function App() {
           {/* Shared/Switching Home Path */}
           <Route path="/" element={
             user?.role === 'teacher' ? <TeacherHome /> :
-              user?.role === 'tutor' ? <div className="p-8">Panel del Tutor (En desarrollo)</div> :
+              user?.role === 'tutor' ? <TutorHome /> :
                 <StudentHome />
           } />
 
@@ -36,6 +38,9 @@ function App() {
           <Route path="/reticula" element={<ReticulaPlaceholder />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/messages" element={<MessagesPlaceholder />} />
+          <Route path="/incidencias" element={<TutorIncidencias />} />
+          <Route path="/students" element={<div className="p-8">Sección de Mis Estudiantes (Próximamente)</div>} />
+          <Route path="/events" element={<div className="p-8">Sección de Eventos (Próximamente)</div>} />
           <Route path="/settings" element={<div className="p-8">Configuración</div>} />
         </Route>
 

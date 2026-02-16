@@ -6,14 +6,27 @@ import { useUser } from '../../context/UserContext.jsx';
 const Profile = () => {
     const { user, logout } = useUser();
 
+    const isStudent = user?.rol === 'estudiante';
+
     const profileFields = [
         { label: 'Nombre', value: user?.nombre_completo, icon: User },
         { label: 'Correo Electrónico', value: user?.correo, icon: Mail },
         { label: 'Teléfono', value: user?.telefono, icon: Phone },
-        { label: 'Rol', value: user?.rol === 'estudiante' ? 'Estudiante' : 'Institucional', icon: Award },
-        { label: 'Matrícula', value: user?.n_control, icon: ShieldCheck },
-        { label: 'Carrera', value: user?.carrera, icon: GraduationCap },
+        {
+            label: 'Rol',
+            value: user?.rol === 'estudiante' ? 'Estudiante' :
+                user?.rol === 'docente' ? 'Docente' :
+                    user?.rol === 'tutor' ? 'Tutor' : 'Institucional',
+            icon: Award
+        },
     ];
+
+    if (isStudent) {
+        profileFields.push(
+            { label: 'Matrícula', value: user?.n_control, icon: ShieldCheck },
+            { label: 'Carrera', value: user?.carrera, icon: GraduationCap }
+        );
+    }
 
     return (
         <div className="p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -28,7 +41,9 @@ const Profile = () => {
                 <div className="flex items-center gap-3 px-6 py-2 bg-gray-50 rounded-full border border-gray-100">
                     <span className="text-sm font-bold text-navy opacity-80">{user?.nombre_completo}</span>
                     <span className="px-3 py-0.5 bg-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full">
-                        {user?.rol === 'estudiante' ? 'Estudiante' : 'Personal'}
+                        {user?.rol === 'estudiante' ? 'Estudiante' :
+                            user?.rol === 'docente' ? 'Docente' :
+                                user?.rol === 'tutor' ? 'Tutor' : 'Personal'}
                     </span>
                     <button
                         onClick={logout}

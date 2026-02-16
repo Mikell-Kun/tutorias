@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Users, FileText, MessageCircle, MoreVertical, Search, Filter } from 'lucide-react';
+import { Users, FileText, MessageCircle, MoreVertical, Filter } from 'lucide-react';
 import Card from '../../components/Card.jsx';
 
 const TeacherHome = () => {

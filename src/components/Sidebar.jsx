@@ -8,7 +8,9 @@ import {
     MessageSquare,
     LogOut,
     Users,
-    Settings
+    Settings,
+    AlertTriangle,
+    Calendar
 } from 'lucide-react';
 import { useUser } from '../context/UserContext.jsx';
 
@@ -28,7 +30,17 @@ const Sidebar = () => {
         { name: 'Configuración', path: '/settings', icon: Settings },
     ];
 
-    const links = user?.role === 'teacher' ? teacherLinks : studentLinks;
+    const tutorLinks = [
+        { name: 'Inicio', path: '/', icon: Home },
+        { name: 'Mis Estudiantes', path: '/students', icon: Users },
+        { name: 'Mensajería', path: '/messages', icon: MessageSquare },
+        { name: 'Incidencias', path: '/incidencias', icon: AlertTriangle },
+        { name: 'Eventos', path: '/events', icon: Calendar },
+        { name: 'Mi Perfil', path: '/profile', icon: User },
+    ];
+
+    const links = user?.role === 'teacher' ? teacherLinks :
+        user?.role === 'tutor' ? tutorLinks : studentLinks;
 
     return (
         <div className="w-64 bg-navy h-[calc(100vh-2rem)] sticky top-4 left-0 flex flex-col p-4 rounded-3xl shadow-2xl">

@@ -1,5 +1,4 @@
-// Mock database mirroring the SQL tables with expanded roles
-
+// Mock database mirroring the SQL tables with expanded rol
 export const Estudiantes = [
     {
         n_control: 20491199,
@@ -10,7 +9,8 @@ export const Estudiantes = [
         semestre: '7mo Semestre',
         estatus: 'Regular',
         rol: 'estudiante',
-        correo: 'a20491199@gmail.com'
+        correo: 'a20491199@gmail.com',
+        tutor_id: 20202020
     },
     {
         n_control: 20491198,
@@ -21,7 +21,8 @@ export const Estudiantes = [
         semestre: '5to Semestre',
         estatus: 'Regular',
         rol: 'estudiante',
-        correo: 'a20491198@itmexicali.edu.mx'
+        correo: 'a20491198@itmexicali.edu.mx',
+        tutor_id: 20202020
     }
 ];
 
@@ -37,18 +38,22 @@ export const Docentes = [
 
 export const Tutores = [
     {
-        n_control: 20202020,
+        id_tutor: 20202020,
         nombre_completo: 'Ing. Roberto Mendez',
+        telefono: '686-333-4455',
         rol: 'tutor',
-        area: 'Tutorías Académicas'
+        correo: 'roberto.mendez@itmexicali.edu.mx'
     }
 ];
 
+export const TutoresAuth = [
+    { id_tutor: 20202020, contrasena: 'Tutor123' }
+];
+
 export const EstudiantesAuth = [
-    { n_control: 20491199, contrasena: 'Gatitofe' },
+    { n_control: 20491199, contrasena: 'Gatitofeliz3' },
     { n_control: 20491198, contrasena: 'Pepito12' },
-    { n_control: 10101010, contrasena: 'Docente123' },
-    { n_control: 20202020, contrasena: 'Tutor123' }
+    { n_control: 10101010, contrasena: 'Docente123' }
 ];
 
 /**
@@ -57,18 +62,42 @@ export const EstudiantesAuth = [
 export const validateCredentials = (nControl, password) => {
     const controlNum = parseInt(nControl, 10);
 
-    const authEntry = EstudiantesAuth.find(
+    // Check EstudiantesAuth (contains students and docentes for now in the mock)
+    let authEntry = EstudiantesAuth.find(
         auth => auth.n_control === controlNum && auth.contrasena === password
     );
 
     if (authEntry) {
-        // Search in all role tables
         return (
             Estudiantes.find(u => u.n_control === controlNum) ||
-            Docentes.find(u => u.n_control === controlNum) ||
-            Tutores.find(u => u.n_control === controlNum)
+            Docentes.find(u => u.n_control === controlNum)
         );
+    }
+
+    // Check TutoresAuth
+    authEntry = TutoresAuth.find(
+        auth => auth.id_tutor === controlNum && auth.contrasena === password
+    );
+
+    if (authEntry) {
+        return Tutores.find(u => u.id_tutor === controlNum);
     }
 
     return null;
 };
+
+export const Incidencias = [
+    {
+        id: 1,
+        estudiante_n_control: 20491198, // Juan Perez
+        estudiante_nombre: 'Juan Pérez García',
+        estudiante_carrera: 'Ingeniería en Sistemas Computacionales',
+        tipo: 'INASISTENCIA',
+        descripcion: 'Acumuló 6 inasistencias sin justificar',
+        materia_codigo: 'PRO101',
+        materia_nombre: 'Fundamentos de Programación',
+        docente_nombre: 'Prof. Ana Martinez',
+        fecha_hora: '27 de enero de 2026, 10:04 a.m.',
+        tutor_id: 20202020
+    }
+];
