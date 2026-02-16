@@ -7,6 +7,8 @@ export const Estudiantes = [
         fecha_nacimiento: '2002-09-15',
         telefono: '686-315-1314',
         carrera: 'Ingeniería en Sistemas computacionales',
+        semestre: '7mo Semestre',
+        estatus: 'Regular',
         rol: 'estudiante',
         correo: 'a20491199@gmail.com'
     },
@@ -16,6 +18,8 @@ export const Estudiantes = [
         fecha_nacimiento: '2001-05-20',
         telefono: '686-123-4567',
         carrera: 'Ingeniería en Sistemas computacionales',
+        semestre: '5to Semestre',
+        estatus: 'Regular',
         rol: 'estudiante',
         correo: 'a20491198@itmexicali.edu.mx'
     }

@@ -33,10 +33,9 @@ const Login = () => {
 
         if (validatedUser && validatedUser.rol === selectedRole) {
             login({
-                n_control: validatedUser.n_control.toString(),
-                role: validatedUser.rol === 'estudiante' ? 'student' : validatedUser.rol === 'docente' ? 'teacher' : 'tutor',
-                nombre_completo: validatedUser.nombre_completo,
-                carrera: validatedUser.carrera || validatedUser.departamento || validatedUser.area
+                ...validatedUser,
+                name: validatedUser.nombre_completo,
+                role: validatedUser.rol === 'estudiante' ? 'student' : validatedUser.rol === 'docente' ? 'teacher' : 'tutor'
             });
             navigate('/');
         } else {

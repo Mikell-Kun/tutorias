@@ -4,9 +4,9 @@ import Login from './views/Login.jsx';
 import DashboardLayout from './components/DashboardLayout.jsx';
 import StudentHome from './views/student/Home.jsx';
 import TeacherHome from './views/teacher/Home.jsx';
+import Profile from './views/student/Profile.jsx';
 import {
   ReticulaPlaceholder,
-  ProfilePlaceholder,
   MessagesPlaceholder
 } from './views/Placeholders.jsx';
 
@@ -34,7 +34,7 @@ function App() {
 
           {/* Sub Routes */}
           <Route path="/reticula" element={<ReticulaPlaceholder />} />
-          <Route path="/profile" element={<ProfilePlaceholder />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/messages" element={<MessagesPlaceholder />} />
           <Route path="/settings" element={<div className="p-8">Configuración</div>} />
         </Route>
