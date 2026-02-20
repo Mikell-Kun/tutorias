@@ -7,16 +7,18 @@ const Profile = () => {
     const { user, logout } = useUser();
 
     const isStudent = user?.rol === 'estudiante';
+    const isTeacher = user?.rol === 'docente';
+    const isTutor = user?.rol === 'tutor';
 
     const profileFields = [
-        { label: 'Nombre', value: user?.nombre_completo, icon: User },
+        { label: 'Nombre Completo', value: user?.nombre_completo, icon: User },
         { label: 'Correo Electrónico', value: user?.correo, icon: Mail },
-        { label: 'Teléfono', value: user?.telefono, icon: Phone },
+        { label: 'Teléfono de Contacto', value: user?.telefono, icon: Phone },
         {
-            label: 'Rol',
+            label: 'Rol Institucional',
             value: user?.rol === 'estudiante' ? 'Estudiante' :
                 user?.rol === 'docente' ? 'Docente' :
-                    user?.rol === 'tutor' ? 'Tutor' : 'Institucional',
+                    user?.rol === 'tutor' ? 'Tutor' : 'Personal',
             icon: Award
         },
     ];
@@ -25,6 +27,15 @@ const Profile = () => {
         profileFields.push(
             { label: 'Matrícula', value: user?.n_control, icon: ShieldCheck },
             { label: 'Carrera', value: user?.carrera, icon: GraduationCap }
+        );
+    } else if (isTeacher) {
+        profileFields.push(
+            { label: 'Número de Control', value: user?.n_control, icon: ShieldCheck },
+            { label: 'Departamento', value: user?.departamento, icon: GraduationCap }
+        );
+    } else if (isTutor) {
+        profileFields.push(
+            { label: 'ID de Tutor', value: user?.id_tutor, icon: ShieldCheck }
         );
     }
 

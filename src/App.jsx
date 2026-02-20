@@ -3,11 +3,12 @@ import { useUser } from './context/UserContext';
 import Login from './views/Login.jsx';
 import DashboardLayout from './components/DashboardLayout.jsx';
 import StudentHome from './views/student/Home.jsx';
-import TeacherHome from './views/teacher/Home.jsx';
+import TeacherHome from './views/docentes/Home.jsx';
+import ReportarIncidencia from './views/docentes/ReportarIncidencia.jsx';
 import Profile from './views/student/Profile.jsx';
+import Messages from './views/Messages.jsx';
 import {
-  ReticulaPlaceholder,
-  MessagesPlaceholder
+  ReticulaPlaceholder
 } from './views/Placeholders.jsx';
 import TutorHome from './views/tutor/Home.jsx';
 import TutorIncidencias from './views/tutor/Incidencias.jsx';
@@ -35,10 +36,11 @@ function App() {
           } />
 
           {/* Sub Routes */}
-          <Route path="/reticula" element={<ReticulaPlaceholder />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/messages" element={<MessagesPlaceholder />} />
+          <Route path="reticula" element={<ReticulaPlaceholder />} />
+          <Route path="perfil" element={<Profile role="student" />} />
+          <Route path="mensajes" element={<Messages />} />
           <Route path="/incidencias" element={<TutorIncidencias />} />
+          <Route path="/reportar-incidencia" element={<ReportarIncidencia />} />
           <Route path="/students" element={<div className="p-8">Sección de Mis Estudiantes (Próximamente)</div>} />
           <Route path="/events" element={<div className="p-8">Sección de Eventos (Próximamente)</div>} />
           <Route path="/settings" element={<div className="p-8">Configuración</div>} />

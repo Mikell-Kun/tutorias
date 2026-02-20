@@ -20,23 +20,26 @@ const Sidebar = () => {
     const studentLinks = [
         { name: 'Inicio', path: '/', icon: Home },
         { name: 'Retícula Académica', path: '/reticula', icon: BookOpen },
-        { name: 'Mensajería', path: '/messages', icon: MessageSquare },
-        { name: 'Mi Perfil', path: '/profile', icon: User },
+        { name: 'Mensajería', path: '/mensajes', icon: MessageSquare },
+        { name: 'Mi Perfil', path: '/perfil', icon: User },
     ];
 
     const teacherLinks = [
-        { name: 'Panel Estudiantes', path: '/', icon: Users },
-        { name: 'Mensajería', path: '/messages', icon: MessageSquare },
-        { name: 'Configuración', path: '/settings', icon: Settings },
+        { name: 'Inicio', path: '/', icon: Home },
+        { name: 'Estudiantes', path: '/students', icon: Users },
+        { name: 'Reportar Incidencia', path: '/reportar-incidencia', icon: AlertTriangle },
+        { name: 'Mensajes', path: '/mensajes', icon: MessageSquare },
+        { name: 'Eventos', path: '/events', icon: Calendar },
+        { name: 'Mi Perfil', path: '/perfil', icon: User },
     ];
 
     const tutorLinks = [
         { name: 'Inicio', path: '/', icon: Home },
         { name: 'Mis Estudiantes', path: '/students', icon: Users },
-        { name: 'Mensajería', path: '/messages', icon: MessageSquare },
+        { name: 'Mensajería', path: '/mensajes', icon: MessageSquare },
         { name: 'Incidencias', path: '/incidencias', icon: AlertTriangle },
         { name: 'Eventos', path: '/events', icon: Calendar },
-        { name: 'Mi Perfil', path: '/profile', icon: User },
+        { name: 'Mi Perfil', path: '/perfil', icon: User },
     ];
 
     const links = user?.role === 'teacher' ? teacherLinks :

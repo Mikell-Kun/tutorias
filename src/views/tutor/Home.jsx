@@ -3,18 +3,31 @@ import { motion } from 'framer-motion';
 import { Users, AlertTriangle, MessageCircle, MoreVertical, Filter, GraduationCap } from 'lucide-react';
 import Card from '../../components/Card.jsx';
 import { useUser } from '../../context/UserContext.jsx';
-import { Estudiantes } from '../../data/database.js';
+import { Estudiantes, getIncidencias } from '../../data/database.js';
+import { useNavigate } from 'react-router-dom';
 
 const TutorHome = () => {
     const { user } = useUser();
+    const navigate = useNavigate();
+    const [refresh, setRefresh] = React.useState(0);
+
+    React.useEffect(() => {
+        const handleUpdate = () => setRefresh(prev => prev + 1);
+        window.addEventListener('databaseUpdated', handleUpdate);
+        return () => window.removeEventListener('databaseUpdated', handleUpdate);
+    }, []);
 
     // Filter students assigned to this tutor
-    const assignedStudents = Estudiantes.filter(s => s.tutor_id === user?.id_tutor);
-    const atRiskStudents = assignedStudents.filter(s => s.estatus === 'Riesgo');
+    const assignedStudents = (Estudiantes || []).filter(s => s && s.tutor_id === user?.id_tutor);
+    const atRiskStudents = assignedStudents.filter(s => s && s.estatus === 'Riesgo');
+
+    // Filter ALL system incidents
+    const incidencias = getIncidencias() || [];
+    const unreadIncidencias = incidencias.filter(i => !i.leida);
 
     const stats = [
         { label: 'Alumnos Asignados', value: assignedStudents.length, icon: Users, color: 'text-navy', bg: 'bg-blue-50' },
-        { label: 'Alumnos en Riesgo', value: atRiskStudents.length, icon: AlertTriangle, color: 'text-red-600', bg: 'bg-red-50' },
+        { label: 'Incidencias Totales', value: incidencias.length, icon: AlertTriangle, color: 'text-orange-600', bg: 'bg-orange-50' },
         { label: 'Mensajes Nuevos', value: '5', icon: MessageCircle, color: 'text-gold', bg: 'bg-yellow-50' },
     ];
 

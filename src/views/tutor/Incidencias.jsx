@@ -1,14 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AlertTriangle, User, MessageSquare, Clock, BookOpen, Send } from 'lucide-react';
 import { useUser } from '../../context/UserContext.jsx';
-import { Incidencias } from '../../data/database.js';
+import { getIncidencias, markIncidenciaAsRead } from '../../data/database.js';
 
 const TutorIncidencias = () => {
     const { user } = useUser();
+    const [incidencias, setIncidencias] = useState(getIncidencias() || []);
 
-    // Filter incidents for this tutor's students
-    const myIncidencias = Incidencias.filter(i => i.tutor_id === user?.id_tutor);
+    // Filter all incidents for the system (all tutors see everything)
+    const myIncidencias = (incidencias || []).filter(i => i);
+
+    const handleMarkAsRead = (id) => {
+        const updated = markIncidenciaAsRead(id);
+        setIncidencias(updated);
+    };
 
     return (
         <div className="p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 min-h-full">
@@ -43,7 +49,12 @@ const TutorIncidencias = () => {
                             {/* Header: Name and Badge */}
                             <div className="flex justify-between items-start mb-6">
                                 <div>
-                                    <h2 className="text-2xl font-black tracking-tight text-navy uppercase">{incidencia.estudiante_nombre}</h2>
+                                    <div className="flex items-center gap-2">
+                                        <h2 className="text-2xl font-black tracking-tight text-navy uppercase">{incidencia.estudiante_nombre}</h2>
+                                        {!incidencia.leida && (
+                                            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                                        )}
+                                    </div>
                                     <p className="text-sm text-text-muted mt-1 font-medium italic">
                                         Matrícula: {incidencia.estudiante_n_control} • {incidencia.estudiante_carrera}
                                     </p>
@@ -80,10 +91,20 @@ const TutorIncidencias = () => {
                                     </div>
                                 </div>
 
-                                <button className="btn-institutional-modern !w-auto h-auto px-6 py-3 flex items-center gap-3">
-                                    <MessageSquare size={16} />
-                                    Contactar Estudiante
-                                </button>
+                                <div className="flex gap-3">
+                                    {!incidencia.leida && (
+                                        <button
+                                            onClick={() => handleMarkAsRead(incidencia.id)}
+                                            className="px-6 py-3 bg-gray-50 text-navy text-[10px] font-black rounded-xl uppercase tracking-widest hover:bg-gray-100 transition-colors"
+                                        >
+                                            Marcar como leído
+                                        </button>
+                                    )}
+                                    <button className="btn-institutional-modern !w-auto h-auto px-6 py-3 flex items-center gap-3">
+                                        <MessageSquare size={16} />
+                                        Contactar Estudiante
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </motion.div>
