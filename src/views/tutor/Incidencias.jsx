@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, User, MessageSquare, Clock, BookOpen, Send } from 'lucide-react';
 import { useUser } from '../../context/UserContext.jsx';
-import { getIncidencias, markIncidenciaAsRead } from '../../data/database.js';
+import { getIncidencias, markIncidenciaAsRead, addMensaje } from '../../data/database.js';
 
 const TutorIncidencias = () => {
     const { user } = useUser();
+    const navigate = useNavigate();
     const [incidencias, setIncidencias] = useState(getIncidencias() || []);
 
     // Filter all incidents for the system (all tutors see everything)
@@ -14,6 +16,19 @@ const TutorIncidencias = () => {
     const handleMarkAsRead = (id) => {
         const updated = markIncidenciaAsRead(id);
         setIncidencias(updated);
+    };
+
+    const handleContactStudent = (incidencia) => {
+        const tutorId = user.id_tutor;
+        const studentId = incidencia.estudiante_n_control;
+        const nombreEstudiante = incidencia.estudiante_nombre.split(' ')[0];
+        const content = `Reporte de Incidencia: Hola ${nombreEstudiante}, te contacto respecto al reporte en la materia ${incidencia.materia_nombre} (${incidencia.tipo}). ¿Podemos platicar al respecto?`;
+
+        // Send message
+        addMensaje(tutorId, studentId, content);
+
+        // Navigate to messages with the contact selected
+        navigate('/mensajes', { state: { contactId: studentId } });
     };
 
     return (
@@ -100,7 +115,10 @@ const TutorIncidencias = () => {
                                             Marcar como leído
                                         </button>
                                     )}
-                                    <button className="btn-institutional-modern !w-auto h-auto px-6 py-3 flex items-center gap-3">
+                                    <button
+                                        onClick={() => handleContactStudent(incidencia)}
+                                        className="btn-institutional-modern !w-auto h-auto px-6 py-3 flex items-center gap-3"
+                                    >
                                         <MessageSquare size={16} />
                                         Contactar Estudiante
                                     </button>

@@ -136,8 +136,12 @@ export const validateCredentials = (nControl, password) => {
     return null;
 };
 
-// Use a local variable to simulate a database that can be updated in-memory
-let incidenciasData = [
+// Keys for localStorage
+const STORAGE_KEY_INCIDENCIAS = 'tutorias_incidencias_db';
+const STORAGE_KEY_MENSAJES = 'tutorias_mensajes_db';
+
+// Initial data for incidences (pre-populated)
+const initialIncidencias = [
     {
         id: 1,
         estudiante_n_control: 20491198, // Juan Perez
@@ -154,13 +158,28 @@ let incidenciasData = [
     }
 ];
 
+// Helper to load from storage or use defaults
+const getPersistentData = (key, fallback) => {
+    const saved = localStorage.getItem(key);
+    if (!saved) {
+        localStorage.setItem(key, JSON.stringify(fallback));
+        return fallback;
+    }
+    return JSON.parse(saved);
+};
+
+// Use a local variable to simulate a database that can be updated in-memory
+let incidenciasData = getPersistentData(STORAGE_KEY_INCIDENCIAS, initialIncidencias);
+
 // --- Messaging System ---
-let mensajeriaData = [];
+let mensajeriaData = getPersistentData(STORAGE_KEY_MENSAJES, []);
 
 export const getMensajes = (userId) => {
     if (!userId) return [];
     const id = parseInt(userId, 10);
-    return mensajeriaData.filter(m =>
+    // Always get fresh data from storage to ensure sync
+    const currentData = getPersistentData(STORAGE_KEY_MENSAJES, []);
+    return currentData.filter(m =>
         parseInt(m.remitente_id, 10) === id ||
         parseInt(m.destinatario_id, 10) === id
     );
@@ -183,6 +202,7 @@ export const addMensaje = (remitenteId, destinatarioId, contenido) => {
         leido: false
     };
     mensajeriaData = [...mensajeriaData, nuevo];
+    localStorage.setItem(STORAGE_KEY_MENSAJES, JSON.stringify(mensajeriaData));
     window.dispatchEvent(new CustomEvent('databaseUpdated'));
     return nuevo;
 };
@@ -206,12 +226,13 @@ export const getContactosDisponibles = (user) => {
     return [];
 };
 
-export const getIncidencias = () => incidenciasData;
+export const getIncidencias = () => getPersistentData(STORAGE_KEY_INCIDENCIAS, initialIncidencias);
 
 export const addIncidencia = (nuevaIncidencia) => {
     const id = incidenciasData.length > 0 ? Math.max(...incidenciasData.map(i => i.id)) + 1 : 1;
     incidenciasData = [...incidenciasData, { ...nuevaIncidencia, id, leida: false, fecha_hora: new Date().toLocaleString('es-MX') }];
 
+    localStorage.setItem(STORAGE_KEY_INCIDENCIAS, JSON.stringify(incidenciasData));
     // Notify components of data change
     window.dispatchEvent(new CustomEvent('databaseUpdated'));
     return incidenciasData;
@@ -220,6 +241,7 @@ export const addIncidencia = (nuevaIncidencia) => {
 export const markIncidenciaAsRead = (id) => {
     incidenciasData = incidenciasData.map(i => i.id === id ? { ...i, leida: true } : i);
 
+    localStorage.setItem(STORAGE_KEY_INCIDENCIAS, JSON.stringify(incidenciasData));
     // Notify components of data change
     window.dispatchEvent(new CustomEvent('databaseUpdated'));
     return incidenciasData;

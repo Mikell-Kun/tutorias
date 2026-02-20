@@ -13,6 +13,7 @@ import {
     Clock
 } from 'lucide-react';
 import { useUser } from '../context/UserContext.jsx';
+import { useLocation } from 'react-router-dom';
 import {
     getMensajes,
     addMensaje,
@@ -23,8 +24,19 @@ import Card from '../components/Card.jsx';
 
 const Messages = () => {
     const { user } = useUser();
+    const location = useLocation();
     const [messages, setMessages] = useState([]);
     const [activeContact, setActiveContact] = useState(null);
+
+    // Auto-select contact from navigation state
+    useEffect(() => {
+        if (location.state?.contactId) {
+            const contact = getUserByControl(location.state.contactId);
+            if (contact) {
+                setActiveContact({ id: location.state.contactId, ...contact });
+            }
+        }
+    }, [location.state]);
     const [newMessage, setNewMessage] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [isNewChatModalOpen, setIsNewChatModalOpen] = useState(false);
@@ -41,7 +53,19 @@ const Messages = () => {
     useEffect(() => {
         refreshData();
         window.addEventListener('databaseUpdated', refreshData);
-        return () => window.removeEventListener('databaseUpdated', refreshData);
+
+        // Sync across tabs
+        const handleStorageChange = (e) => {
+            if (e.key === 'tutorias_mensajes_db') {
+                refreshData();
+            }
+        };
+        window.addEventListener('storage', handleStorageChange);
+
+        return () => {
+            window.removeEventListener('databaseUpdated', refreshData);
+            window.removeEventListener('storage', handleStorageChange);
+        };
     }, [user]);
 
     useEffect(() => {
