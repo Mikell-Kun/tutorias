@@ -207,6 +207,26 @@ export const addMensaje = (remitenteId, destinatarioId, contenido) => {
     return nuevo;
 };
 
+export const markMensajesComoLeidos = (userId, contactId) => {
+    const uId = parseInt(userId, 10);
+    const cId = parseInt(contactId, 10);
+
+    let changed = false;
+    const updatedData = mensajeriaData.map(m => {
+        if (parseInt(m.destinatario_id, 10) === uId && parseInt(m.remitente_id, 10) === cId && !m.leido) {
+            changed = true;
+            return { ...m, leido: true };
+        }
+        return m;
+    });
+
+    if (changed) {
+        mensajeriaData = updatedData;
+        localStorage.setItem(STORAGE_KEY_MENSAJES, JSON.stringify(mensajeriaData));
+        window.dispatchEvent(new CustomEvent('databaseUpdated'));
+    }
+};
+
 export const getContactosDisponibles = (user) => {
     if (!user) return [];
 

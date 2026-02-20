@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, Bell, ChevronRight, Award, Clock, FileText, Download } from 'lucide-react';
+import { Calendar, Bell, ChevronRight, Award, Clock, FileText } from 'lucide-react';
 import Card from '../../components/Card.jsx';
 import { useUser } from '../../context/UserContext.jsx';
 
@@ -15,10 +15,6 @@ const StudentHome = () => {
                     <h1 className="text-4xl font-black text-navy uppercase tracking-tight">Panel de Control del Estudiante</h1>
                     <p className="text-text-muted font-medium mt-1 text-lg">Gestión académica y seguimiento de tutorías</p>
                 </div>
-                <button className="flex items-center gap-3 bg-navy text-white px-8 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-navy-glow transition-all shadow-xl shadow-navy/20 group">
-                    <Download size={18} className="group-hover:-translate-y-0.5 transition-transform" />
-                    Descargar Reporte
-                </button>
             </div>
 
             {/* Stats Row - Top horizontal */}
@@ -37,8 +33,7 @@ const StudentHome = () => {
                 </Card>
                 <Card title="Mensajes de Tutor" subtitle="Bandeja de entrada" icon={Bell}>
                     <div className="flex items-baseline gap-2 mt-2">
-                        <span className="text-4xl font-black text-navy text-gold/80">3</span>
-                        <span className="text-[10px] font-black text-white bg-gold/90 px-3 py-1 rounded-full uppercase tracking-tighter">Pendientes</span>
+                        <span className="text-sm font-medium text-text-muted italic">Consulta tus conversaciones activas</span>
                     </div>
                 </Card>
             </div>

@@ -17,6 +17,7 @@ import { useLocation } from 'react-router-dom';
 import {
     getMensajes,
     addMensaje,
+    markMensajesComoLeidos,
     getContactosDisponibles,
     getUserByControl
 } from '../data/database.js';
@@ -70,7 +71,11 @@ const Messages = () => {
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages, activeContact]);
+        if (activeContact && user) {
+            const userId = user.n_control || user.id_tutor;
+            markMensajesComoLeidos(userId, activeContact.id);
+        }
+    }, [messages, activeContact, user]);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

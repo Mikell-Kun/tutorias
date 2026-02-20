@@ -3,7 +3,7 @@ import { Link, Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar.jsx';
 import { Bell } from 'lucide-react';
 import { useUser } from '../context/UserContext.jsx';
-import { getIncidencias } from '../data/database.js';
+import { getIncidencias, getMensajes } from '../data/database.js';
 
 const DashboardLayout = () => {
     const { user } = useUser();
@@ -15,12 +15,22 @@ const DashboardLayout = () => {
         return () => window.removeEventListener('databaseUpdated', handleUpdate);
     }, []);
 
-    // Get unread incidents if the user is a tutor
-    // Defensive check for getIncidencias return value
+    const userId = user?.n_control || user?.id_tutor;
     const incidencias = getIncidencias() || [];
-    const unreadCount = user?.role === 'tutor'
-        ? incidencias.filter(i => i && !i.leida).length
-        : 0;
+    const mensajes = getMensajes(userId) || [];
+
+    // Tutors see unread incidents, Students see unread messages from tutors
+    let unreadCount = 0;
+    let notificationLink = '#';
+
+    if (user?.role === 'tutor') {
+        unreadCount = incidencias.filter(i => i && !i.leida).length;
+        notificationLink = '/incidencias';
+    } else if (user?.role === 'student') {
+        // Count unread messages where the student is the recipient
+        unreadCount = mensajes.filter(m => m && !m.leido && parseInt(m.destinatario_id, 10) === userId).length;
+        notificationLink = '/mensajes';
+    }
 
     return (
         <div className="flex gap-6 p-4 min-h-screen gradient-mesh">
@@ -32,8 +42,8 @@ const DashboardLayout = () => {
 
                     <div className="flex items-center gap-6">
                         <Link
-                            to={user?.role === 'tutor' ? '/incidencias' : '#'}
-                            className="relative cursor-pointer text-text-muted hover:text-navy transition-colors bg-white p-2 rounded-lg border border-gray-100"
+                            to={notificationLink}
+                            className={`relative cursor-pointer text-text-muted hover:text-navy transition-colors bg-white p-2 rounded-lg border border-gray-100 ${notificationLink === '#' ? 'pointer-events-none opacity-50' : ''}`}
                         >
                             <Bell size={20} />
                             {unreadCount > 0 && (
