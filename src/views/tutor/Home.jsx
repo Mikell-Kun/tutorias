@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Users, AlertTriangle, MessageCircle, MoreVertical, Filter, GraduationCap } from 'lucide-react';
 import Card from '../../components/Card.jsx';
 import { useUser } from '../../context/UserContext.jsx';
-import { Estudiantes, getIncidencias } from '../../data/database.js';
+import { Estudiantes, getIncidencias, getMensajes, Tutores } from '../../data/database.js';
 import { useNavigate } from 'react-router-dom';
 import { generateSemesterReport } from '../../utils/reportGenerator.js';
 
@@ -31,18 +31,46 @@ const TutorHome = () => {
     const incidencias = getIncidencias() || [];
     const unreadIncidencias = incidencias.filter(i => !i.leida);
 
+    // Status Logic
+    const getStudentDashboardStatus = (student) => {
+        const studentIncidencias = incidencias.filter(i =>
+            parseInt(i.estudiante_n_control, 10) === parseInt(student.n_control, 10) && !i.leida
+        );
+
+        const studentMessages = getMensajes(student.n_control) || [];
+        const tutorContact = [...studentMessages]
+            .filter(m =>
+                parseInt(m.destinatario_id, 10) === parseInt(student.n_control, 10) &&
+                Tutores.some(t => t.id_tutor === parseInt(m.remitente_id, 10))
+            )
+            .sort((a, b) => new Date(a.fecha_hora) - new Date(b.fecha_hora))[0];
+
+        if (studentIncidencias.length > 0 && tutorContact) {
+            return { label: 'Atendiendo', color: 'bg-blue-50 text-blue-600 border-blue-100' };
+        }
+        if (studentIncidencias.length > 0) {
+            return { label: 'Pendiente', color: 'bg-orange-50 text-orange-600 border-orange-100' };
+        }
+        return { label: 'Regular', color: 'bg-green-50 text-green-600 border-green-100' };
+    };
+
     const stats = [
         { label: 'Alumnos Asignados', value: assignedStudents.length, icon: Users, color: 'text-navy', bg: 'bg-blue-50' },
         { label: 'Incidencias Totales', value: incidencias.length, icon: AlertTriangle, color: 'text-orange-600', bg: 'bg-orange-50' },
         { label: 'Mensajes Nuevos', value: '5', icon: MessageCircle, color: 'text-gold', bg: 'bg-yellow-50' },
     ];
 
+    const attendingStudents = assignedStudents.filter(student => {
+        const status = getStudentDashboardStatus(student);
+        return status.label === 'Atendiendo';
+    });
+
     return (
         <div className="p-8 space-y-8 animate-in slide-in-from-bottom-4 duration-700">
             <div className="flex justify-between items-center">
                 <div>
                     <h1 className="text-2xl font-bold text-navy uppercase tracking-tight">Panel de Tutoría</h1>
-                    <p className="text-text-muted mt-1">Seguimiento de alumnos asignados y alertas académicas</p>
+                    <p className="text-text-muted mt-1">Seguimiento de alumnos con atención activa</p>
                 </div>
                 <div className="flex gap-3">
                     <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-100 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors">
@@ -75,7 +103,7 @@ const TutorHome = () => {
             </div>
 
             {/* Assigned Students List */}
-            <Card title="Alumnos bajo Tutoría" subtitle="Gestión de progreso y estatus académico">
+            <Card title="Alumnos en Atención" subtitle="Estudiantes que requieren seguimiento activo">
                 <div className="mt-4 overflow-hidden border border-gray-100 rounded-2xl">
                     <table className="w-full text-left border-collapse">
                         <thead>
@@ -88,36 +116,46 @@ const TutorHome = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100 bg-white">
-                            {assignedStudents.map((student) => (
-                                <tr key={student.n_control} className="hover:bg-gray-50/50 transition-colors group">
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 bg-navy text-white rounded-lg flex items-center justify-center font-black text-xs shadow-sm">
-                                                {student.nombre_completo.charAt(0)}
+                            {attendingStudents.map((student) => {
+                                const status = getStudentDashboardStatus(student);
+                                return (
+                                    <tr key={student.n_control} className="hover:bg-gray-50/50 transition-colors group">
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 bg-navy text-white rounded-lg flex items-center justify-center font-black text-xs shadow-sm">
+                                                    {student.nombre_completo.charAt(0)}
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-sm font-bold text-navy group-hover:text-blue-600 transition-colors">{student.nombre_completo}</span>
+                                                    <span className="text-[10px] text-text-muted font-medium">{student.correo}</span>
+                                                </div>
                                             </div>
-                                            <div className="flex flex-col">
-                                                <span className="text-sm font-bold text-navy group-hover:text-blue-600 transition-colors">{student.nombre_completo}</span>
-                                                <span className="text-[10px] text-text-muted font-medium">{student.correo}</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 text-sm font-bold text-navy/60">{student.n_control}</td>
-                                    <td className="px-6 py-4 text-sm text-text-muted">{student.carrera}</td>
-                                    <td className="px-6 py-4">
-                                        <span className={`
-                                            px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter
-                                            ${student.estatus === 'Riesgo' ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-green-50 text-green-600 border border-green-100'}
-                                        `}>
-                                            {student.estatus}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <button className="p-2 hover:bg-white rounded-lg transition-all border border-transparent hover:border-gray-100 hover:shadow-sm">
-                                            <MoreVertical size={16} className="text-text-muted" />
-                                        </button>
+                                        </td>
+                                        <td className="px-6 py-4 text-sm font-bold text-navy/60">{student.n_control}</td>
+                                        <td className="px-6 py-4 text-sm text-text-muted">{student.carrera}</td>
+                                        <td className="px-6 py-4">
+                                            <span className={`
+                                                    px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter border
+                                                    ${status.color}
+                                                `}>
+                                                {status.label}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <button className="p-2 hover:bg-white rounded-lg transition-all border border-transparent hover:border-gray-100 hover:shadow-sm">
+                                                <MoreVertical size={16} className="text-text-muted" />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                            {attendingStudents.length === 0 && (
+                                <tr>
+                                    <td colSpan="5" className="px-6 py-12 text-center text-navy/20 italic font-medium">
+                                        No hay alumnos en atención activa en este momento.
                                     </td>
                                 </tr>
-                            ))}
+                            )}
                         </tbody>
                     </table>
                 </div>

@@ -7,6 +7,7 @@ import { Estudiantes, getIncidencias, getMensajes, Tutores } from '../../data/da
 const MisEstudiantes = () => {
     const { user } = useUser();
     const [refresh, setRefresh] = useState(0);
+    const [filter, setFilter] = useState('all');
 
     useEffect(() => {
         const handleUpdate = () => setRefresh(prev => prev + 1);
@@ -63,9 +64,17 @@ const MisEstudiantes = () => {
             type: 'regular',
             color: 'text-green-600 bg-green-50',
             icon: CheckCircle,
+            incidentType: 'Ninguna', // Default for regular
             // Even if regular, they might have been contacted in the past
             firstContact: tutorContact
         };
+    };
+
+    const getIncidentType = (student) => {
+        const studentIncidencias = allIncidencias.filter(i =>
+            parseInt(i.estudiante_n_control, 10) === parseInt(student.n_control, 10) && !i.leida
+        );
+        return studentIncidencias.length > 0 ? studentIncidencias[0].tipo : 'Ninguna';
     };
 
     return (
@@ -81,6 +90,27 @@ const MisEstudiantes = () => {
                 </div>
             </div>
 
+            {/* Filter Buttons */}
+            <div className="flex flex-wrap gap-2">
+                {[
+                    { id: 'all', label: 'Todos', color: 'bg-navy/5 text-navy border-navy/10' },
+                    { id: 'regular', label: 'Regular', color: 'bg-green-50 text-green-600 border-green-100' },
+                    { id: 'pendiente', label: 'Pendiente', color: 'bg-orange-50 text-orange-600 border-orange-100' },
+                    { id: 'atendiendo', label: 'Atendiendo', color: 'bg-blue-50 text-blue-600 border-blue-100' },
+                ].map((f) => (
+                    <button
+                        key={f.id}
+                        onClick={() => setFilter(f.id)}
+                        className={`
+                            px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all
+                            ${filter === f.id ? f.color + ' shadow-sm scale-105' : 'bg-white text-navy/40 border-gray-100 hover:bg-gray-50'}
+                        `}
+                    >
+                        {f.label}
+                    </button>
+                ))}
+            </div>
+
             {/* Table Container */}
             <div className="bg-white border border-gray-100 rounded-[2rem] shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
@@ -88,12 +118,17 @@ const MisEstudiantes = () => {
                         <thead>
                             <tr className="bg-gray-50/50">
                                 <th className="px-8 py-6 text-[10px] font-black text-navy/40 uppercase tracking-[0.2em]">Nombre Completo / Carrera</th>
+                                <th className="px-8 py-6 text-[10px] font-black text-navy/40 uppercase tracking-[0.2em]">Incidencia</th>
                                 <th className="px-8 py-6 text-[10px] font-black text-navy/40 uppercase tracking-[0.2em]">Estatus</th>
                                 <th className="px-8 py-6 text-[10px] font-black text-navy/40 uppercase tracking-[0.2em]">Primer Contacto</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50">
-                            {Estudiantes.map((student) => {
+                            {Estudiantes.filter(student => {
+                                if (filter === 'all') return true;
+                                const status = getStudentStatus(student);
+                                return status.type === filter;
+                            }).map((student) => {
                                 const status = getStudentStatus(student);
                                 const StatusIcon = status.icon;
 
@@ -128,6 +163,13 @@ const MisEstudiantes = () => {
                                                     </p>
                                                 </div>
                                             </div>
+                                        </td>
+
+                                        {/* Incident Type */}
+                                        <td className="px-8 py-6">
+                                            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter ${getIncidentType(student) !== 'Ninguna' ? 'bg-orange-50 text-orange-600 border border-orange-100' : 'bg-gray-50 text-gray-400 border border-gray-100'}`}>
+                                                {getIncidentType(student)}
+                                            </span>
                                         </td>
 
                                         {/* Status */}
