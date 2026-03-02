@@ -10,8 +10,8 @@ const TutorIncidencias = () => {
     const navigate = useNavigate();
     const [incidencias, setIncidencias] = useState(getIncidencias() || []);
 
-    // Filter all incidents for the system (all tutors see everything)
-    const myIncidencias = (incidencias || []).filter(i => i);
+    // Filter only unread incidents for the tutor view
+    const myIncidencias = (incidencias || []).filter(i => !i.leida);
 
     const handleMarkAsRead = (id) => {
         const updated = markIncidenciaAsRead(id);

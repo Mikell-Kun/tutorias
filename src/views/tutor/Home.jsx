@@ -5,6 +5,7 @@ import Card from '../../components/Card.jsx';
 import { useUser } from '../../context/UserContext.jsx';
 import { Estudiantes, getIncidencias } from '../../data/database.js';
 import { useNavigate } from 'react-router-dom';
+import { generateSemesterReport } from '../../utils/reportGenerator.js';
 
 const TutorHome = () => {
     const { user } = useUser();
@@ -20,6 +21,11 @@ const TutorHome = () => {
     // Filter students assigned to this tutor
     const assignedStudents = (Estudiantes || []).filter(s => s && s.tutor_id === user?.id_tutor);
     const atRiskStudents = assignedStudents.filter(s => s && s.estatus === 'Riesgo');
+
+    const handleGenerateReport = () => {
+        if (!user) return;
+        generateSemesterReport(user, atRiskStudents);
+    };
 
     // Filter ALL system incidents
     const incidencias = getIncidencias() || [];
@@ -42,7 +48,10 @@ const TutorHome = () => {
                     <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-100 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors">
                         <Filter size={16} /> Filtrar
                     </button>
-                    <button className="btn-institutional-modern !w-auto px-6 !py-2.5 h-auto">
+                    <button
+                        onClick={handleGenerateReport}
+                        className="btn-institutional-modern !w-auto px-6 !py-2.5 h-auto"
+                    >
                         Generar Reporte
                     </button>
                 </div>

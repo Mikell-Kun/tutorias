@@ -12,6 +12,7 @@ import {
 } from './views/Placeholders.jsx';
 import TutorHome from './views/tutor/Home.jsx';
 import TutorIncidencias from './views/tutor/Incidencias.jsx';
+import MisEstudiantes from './views/tutor/MisEstudiantes.jsx';
 
 function App() {
   const { user, loading } = useUser();
@@ -41,7 +42,10 @@ function App() {
           <Route path="mensajes" element={<Messages />} />
           <Route path="/incidencias" element={<TutorIncidencias />} />
           <Route path="/reportar-incidencia" element={<ReportarIncidencia />} />
-          <Route path="/students" element={<div className="p-8">Sección de Mis Estudiantes (Próximamente)</div>} />
+          <Route path="/students" element={
+            user?.role === 'tutor' ? <MisEstudiantes /> :
+              <div className="p-8">Sección de Estudiantes (Docente - Próximamente)</div>
+          } />
           <Route path="/events" element={<div className="p-8">Sección de Eventos (Próximamente)</div>} />
           <Route path="/settings" element={<div className="p-8">Configuración</div>} />
         </Route>
