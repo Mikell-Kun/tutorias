@@ -80,13 +80,13 @@ const MisEstudiantes = () => {
     return (
         <div className="p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 min-h-full">
             {/* Header Section */}
-            <div className="flex items-center gap-4 border-b border-gray-100 pb-6">
-                <div className="p-4 bg-navy/5 rounded-2xl text-navy">
+            <div className="flex items-center gap-4 border-b border-slate-100 pb-6">
+                <div className="p-4 bg-navy/5 rounded-lg text-navy">
                     <Users size={36} />
                 </div>
                 <div>
                     <h1 className="text-3xl font-black uppercase tracking-tight text-navy">Historial de Estudiantes</h1>
-                    <p className="text-text-muted font-medium italic">Todos los alumnos registrados en el sistema</p>
+                    <p className="text-text-muted font-medium">Todos los alumnos registrados en el sistema</p>
                 </div>
             </div>
 
@@ -102,8 +102,8 @@ const MisEstudiantes = () => {
                         key={f.id}
                         onClick={() => setFilter(f.id)}
                         className={`
-                            px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all
-                            ${filter === f.id ? f.color + ' shadow-sm scale-105' : 'bg-white text-navy/40 border-gray-100 hover:bg-gray-50'}
+                            px-6 py-2 rounded-md text-[10px] font-black uppercase tracking-[0.2em] border transition-all
+                            ${filter === f.id ? f.color + ' shadow-sm scale-105' : 'bg-white text-navy/40 border-slate-100 hover:bg-slate-50'}
                         `}
                     >
                         {f.label}
@@ -112,18 +112,18 @@ const MisEstudiantes = () => {
             </div>
 
             {/* Table Container */}
-            <div className="bg-white border border-gray-100 rounded-[2rem] shadow-sm overflow-hidden">
+            <div className="bg-white border border-slate-100 rounded-xl shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="bg-gray-50/50">
-                                <th className="px-8 py-6 text-[10px] font-black text-navy/40 uppercase tracking-[0.2em]">Nombre Completo / Carrera</th>
-                                <th className="px-8 py-6 text-[10px] font-black text-navy/40 uppercase tracking-[0.2em]">Incidencia</th>
-                                <th className="px-8 py-6 text-[10px] font-black text-navy/40 uppercase tracking-[0.2em]">Estatus</th>
-                                <th className="px-8 py-6 text-[10px] font-black text-navy/40 uppercase tracking-[0.2em]">Primer Contacto</th>
+                        <thead className="bg-gray-50/50">
+                            <tr className="text-[10px] font-black text-navy/40 uppercase tracking-[0.2em]">
+                                <th className="px-8 py-6">Estudiante / Carrera</th>
+                                <th className="px-8 py-6">Incidencia</th>
+                                <th className="px-8 py-6">Estatus</th>
+                                <th className="px-8 py-6">Primer Contacto</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-50">
+                        <tbody className="divide-y divide-slate-50">
                             {Estudiantes.filter(student => {
                                 if (filter === 'all') return true;
                                 const status = getStudentStatus(student);
@@ -151,14 +151,14 @@ const MisEstudiantes = () => {
                                         {/* Name and Carrera */}
                                         <td className="px-8 py-6">
                                             <div className="flex items-center gap-4">
-                                                <div className="w-10 h-10 bg-navy/5 rounded-xl flex items-center justify-center text-navy font-black text-sm">
+                                                <div className="w-10 h-10 bg-navy/5 rounded-md flex items-center justify-center text-navy font-black text-sm">
                                                     {student.nombre_completo.charAt(0)}
                                                 </div>
                                                 <div>
                                                     <p className="font-bold text-navy uppercase tracking-tight group-hover:text-gold transition-colors">
                                                         {student.nombre_completo}
                                                     </p>
-                                                    <p className="text-[10px] text-text-muted font-medium italic">
+                                                    <p className="text-[10px] text-text-muted font-medium">
                                                         {student.carrera} • {student.n_control}
                                                     </p>
                                                 </div>
@@ -194,7 +194,7 @@ const MisEstudiantes = () => {
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <span className="text-navy/20 italic font-medium">Sin contacto previo</span>
+                                                <span className="text-navy/20 font-medium">Sin contacto previo</span>
                                             )}
                                         </td>
                                     </motion.tr>

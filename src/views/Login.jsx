@@ -55,7 +55,7 @@ const Login = () => {
                 {/* Institutional Header - Side-by-Side Logo & Text */}
                 <div className="institutional-header">
                     <div className="flex justify-center items-center gap-5 mb-10">
-                        <div className="w-12 h-12 bg-white text-navy border-2 border-navy/10 rounded-xl flex items-center justify-center shadow-sm shrink-0">
+                        <div className="w-12 h-12 bg-white text-navy border-2 border-navy/10 rounded-md flex items-center justify-center shadow-sm shrink-0">
                             <ShieldCheck size={28} />
                         </div>
                         <div className="text-left border-l-2 border-navy/10 pl-5">
@@ -94,7 +94,7 @@ const Login = () => {
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
-                                        className="p-3.5 rounded-xl bg-red-50 text-red-600 text-xs font-bold text-center"
+                                        className="p-3.5 rounded-md bg-red-50 text-red-600 text-xs font-bold text-center"
                                     >
                                         {error}
                                     </motion.div>

@@ -34,8 +34,8 @@ const TutorIncidencias = () => {
     return (
         <div className="p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 min-h-full">
             {/* Header Section */}
-            <div className="flex items-center gap-4 border-b border-gray-100 pb-6">
-                <div className="p-4 bg-navy/5 rounded-2xl text-navy">
+            <div className="flex items-center gap-4 border-b border-slate-100 pb-6">
+                <div className="p-4 bg-navy/5 rounded-lg text-navy">
                     <AlertTriangle size={36} />
                 </div>
                 <h1 className="text-3xl font-black uppercase tracking-tight text-navy">Incidencias Reportadas</h1>
@@ -43,7 +43,7 @@ const TutorIncidencias = () => {
 
             {/* Alert Banner */}
             {myIncidencias.length > 0 && (
-                <div className="bg-orange-50 border border-orange-100 p-4 rounded-xl flex items-center gap-3 text-orange-600">
+                <div className="bg-orange-50 border border-orange-100 p-4 rounded-lg flex items-center gap-3 text-orange-600">
                     <AlertTriangle size={18} />
                     <p className="text-sm font-bold">
                         Atención: Tienes {myIncidencias.length} incidencia(s) reportada(s) por profesores sobre tus estudiantes.
@@ -58,7 +58,7 @@ const TutorIncidencias = () => {
                         key={incidencia.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-white border border-gray-100 rounded-[2rem] p-8 shadow-sm relative overflow-hidden group"
+                        className="bg-white border border-slate-100 rounded-xl p-8 shadow-sm relative overflow-hidden group"
                     >
                         <div className="relative z-10">
                             {/* Header: Name and Badge */}
@@ -70,7 +70,7 @@ const TutorIncidencias = () => {
                                             <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
                                         )}
                                     </div>
-                                    <p className="text-sm text-text-muted mt-1 font-medium italic">
+                                    <p className="text-sm text-text-muted mt-1 font-medium">
                                         Matrícula: {incidencia.estudiante_n_control} • {incidencia.estudiante_carrera}
                                     </p>
                                 </div>
@@ -80,29 +80,36 @@ const TutorIncidencias = () => {
                             </div>
 
                             {/* Description Section */}
-                            <div className="space-y-4 py-6 border-y border-gray-50">
+                            <div className="space-y-4 py-6 border-y border-slate-50">
                                 <div>
                                     <label className="text-[10px] font-black text-navy/30 uppercase tracking-[0.2em] block mb-2">Descripción:</label>
-                                    <div className="bg-gray-50 rounded-2xl p-6 text-center italic text-navy/80 font-medium border border-gray-100">
+                                    <div className="bg-slate-50 rounded-lg p-6 text-center text-navy/80 font-medium border border-slate-100">
                                         "{incidencia.descripcion}"
                                     </div>
                                 </div>
 
-                                <div>
-                                    <label className="text-[10px] font-black text-navy/30 uppercase tracking-[0.2em] block mb-2">Materia:</label>
-                                    <p className="text-lg font-bold text-navy">{incidencia.materia_codigo} - {incidencia.materia_nombre}</p>
+                                <div className="flex flex-wrap gap-x-8 gap-y-4">
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-black text-navy/20 uppercase tracking-[0.2em]">Materia</p>
+                                        <p className="font-bold text-navy">{incidencia.materia_codigo} - {incidencia.materia_nombre}</p>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-black text-navy/20 uppercase tracking-[0.2em]">Profesor</p>
+                                        <p className="font-bold text-navy/60">{incidencia.docente_nombre}</p>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-black text-navy/20 uppercase tracking-[0.2em]">Fecha</p>
+                                        <p className="font-bold text-navy/60">{incidencia.fecha_hora}</p>
+                                    </div>
                                 </div>
                             </div>
 
                             {/* Footer Section */}
                             <div className="mt-8 flex justify-between items-end">
                                 <div className="space-y-2">
-                                    <p className="text-xs text-text-muted font-medium tracking-tight">
-                                        Reportado por: <span className="text-navy font-bold">{incidencia.docente_nombre}</span>
-                                    </p>
+                                    {/* Removed redundant "Reportado por" as it's now in the titulitos */}
                                     <div className="flex items-center gap-2 text-[10px] text-navy/40 font-bold uppercase tracking-wider">
-                                        <Clock size={12} />
-                                        {incidencia.fecha_hora}
+                                        {/* Clock icon and date/time are now part of the titulitos */}
                                     </div>
                                 </div>
 
@@ -110,7 +117,7 @@ const TutorIncidencias = () => {
                                     {!incidencia.leida && (
                                         <button
                                             onClick={() => handleMarkAsRead(incidencia.id)}
-                                            className="px-6 py-3 bg-gray-50 text-navy text-[10px] font-black rounded-xl uppercase tracking-widest hover:bg-gray-100 transition-colors"
+                                            className="px-6 py-3 bg-slate-50 text-navy text-[10px] font-black rounded-md uppercase tracking-widest hover:bg-slate-100 transition-colors"
                                         >
                                             Marcar como leído
                                         </button>

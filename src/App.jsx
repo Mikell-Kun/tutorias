@@ -45,8 +45,8 @@ function App() {
           <Route path="/incidencias" element={<TutorIncidencias />} />
           <Route path="/reportar-incidencia" element={<ReportarIncidencia />} />
           <Route path="/students" element={
-            user?.role === 'tutor' ? <MisEstudiantes /> :
-              <div className="p-8">Sección de Estudiantes (Docente - Próximamente)</div>
+            (user?.role === 'tutor' || user?.role === 'teacher') ? <MisEstudiantes /> :
+              <div className="p-8">Sección de Estudiantes (Próximamente)</div>
           } />
           <Route path="/events" element={<div className="p-8">Sección de Eventos (Próximamente)</div>} />
           <Route path="/settings" element={<div className="p-8">Configuración</div>} />

@@ -142,7 +142,10 @@ const Messages = () => {
         <div className="h-[calc(100vh-160px)] flex gap-6 p-8 relative">
             {/* Sidebar list */}
             <div className="w-96 flex flex-col gap-6">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4 border-b border-slate-100 pb-4">
+                    <div className="p-3 bg-navy/5 rounded-lg text-navy">
+                        <MessageSquare size={28} />
+                    </div>
                     <div>
                         <h1 className="text-2xl font-bold text-navy">Mensajes</h1>
                         <p className="text-text-muted text-sm">Gestiona tus comunicaciones</p>
@@ -156,7 +159,7 @@ const Messages = () => {
                             <input
                                 type="text"
                                 placeholder="Buscar contacto..."
-                                className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-100 rounded-xl focus:ring-2 focus:ring-navy/5 outline-none transition-all text-sm"
+                                className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-md focus:ring-2 focus:ring-navy/5 outline-none transition-all text-sm"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
@@ -169,16 +172,16 @@ const Messages = () => {
                                 <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mx-auto text-gray-300">
                                     <MessageSquare size={24} />
                                 </div>
-                                <p className="text-xs text-text-muted font-medium italic">No tienes conversaciones activas</p>
+                                <p className="text-xs text-text-muted font-medium">No tienes conversaciones activas</p>
                             </div>
                         ) : (
                             conversations.map(conv => (
                                 <button
                                     key={conv.id}
                                     onClick={() => setActiveContact({ id: conv.id, ...conv.user })}
-                                    className={`w-full p-4 flex gap-4 border-b border-gray-50 hover:bg-gray-50 transition-all text-left ${activeContact?.id === conv.id ? 'bg-navy/5 border-l-4 border-l-navy' : ''}`}
+                                    className={`w-full p-4 flex gap-4 border-b border-slate-50 hover:bg-slate-50 transition-all text-left ${activeContact?.id === conv.id ? 'bg-navy/5 border-l-4 border-l-navy' : ''}`}
                                 >
-                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold text-sm shrink-0 shadow-sm
+                                    <div className={`w-12 h-12 rounded-md flex items-center justify-center text-white font-bold text-sm shrink-0 shadow-sm
                                         ${conv.user.rol === 'tutor' ? 'bg-blue-600' :
                                             conv.user.rol === 'docente' ? 'bg-indigo-600' :
                                                 'bg-emerald-600'}`}
@@ -194,10 +197,10 @@ const Messages = () => {
                                             {conv.lastMessage.remitente_id === (user.n_control || user.id_tutor) ? 'Tú: ' : ''}
                                             {conv.lastMessage.contenido}
                                         </p>
-                                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest
-                                            ${conv.user.rol === 'tutor' ? 'bg-blue-100 text-blue-700' :
-                                                conv.user.rol === 'docente' ? 'bg-indigo-100 text-indigo-700' :
-                                                    'bg-emerald-100 text-emerald-700'}`}
+                                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em]
+                                            ${conv.user.rol === 'tutor' ? 'bg-blue-100/50 text-blue-700' :
+                                                conv.user.rol === 'docente' ? 'bg-indigo-100/50 text-indigo-700' :
+                                                    'bg-emerald-100/50 text-emerald-700'}`}
                                         >
                                             {conv.user.rol}
                                         </span>
@@ -209,7 +212,7 @@ const Messages = () => {
 
                     <button
                         onClick={() => setIsNewChatModalOpen(true)}
-                        className="m-4 p-3 bg-navy text-white rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-navy/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                        className="m-4 p-3 bg-navy text-white rounded-md font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-navy/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
                     >
                         <Plus size={16} /> Nueva Conversación
                     </button>
@@ -221,9 +224,9 @@ const Messages = () => {
                 {activeContact ? (
                     <Card className="h-full flex flex-col p-0 overflow-hidden bg-white shadow-xl border-navy/5">
                         {/* Header */}
-                        <div className="p-4 border-b border-gray-50 flex items-center justify-between bg-white">
+                        <div className="p-4 border-b border-slate-50 flex items-center justify-between bg-white">
                             <div className="flex items-center gap-4">
-                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black text-sm shadow-inner
+                                <div className={`w-12 h-12 rounded-md flex items-center justify-center text-white font-black text-sm shadow-inner
                                     ${activeContact.rol === 'tutor' ? 'bg-blue-600' :
                                         activeContact.rol === 'docente' ? 'bg-indigo-600' :
                                             'bg-emerald-600'}`}
@@ -233,13 +236,13 @@ const Messages = () => {
                                 <div>
                                     <h2 className="font-bold text-navy">{activeContact.nombre_completo}</h2>
                                     <div className="flex items-center gap-2">
-                                        <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">{activeContact.rol}</span>
+                                        <span className="text-[10px] font-black text-navy/40 uppercase tracking-[0.2em]">{activeContact.rol}</span>
                                         <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
                                         <span className="text-[10px] text-text-muted font-medium">{activeContact.correo || 'En línea'}</span>
                                     </div>
                                 </div>
                             </div>
-                            <button className="p-2 hover:bg-gray-50 rounded-xl transition-all text-text-muted">
+                            <button className="p-2 hover:bg-slate-50 rounded-md transition-all text-text-muted">
                                 <MoreVertical size={20} />
                             </button>
                         </div>
@@ -251,10 +254,10 @@ const Messages = () => {
                                 return (
                                     <div key={m.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                                         <div className={`max-w-[70%] space-y-1`}>
-                                            <div className={`p-4 rounded-2xl text-sm shadow-sm relative group
+                                            <div className={`p-4 rounded-lg text-sm shadow-sm relative group
                                                 ${isMe
                                                     ? 'bg-navy text-white rounded-tr-none'
-                                                    : 'bg-white border border-gray-100 text-navy rounded-tl-none'}`}
+                                                    : 'bg-white border border-slate-100 text-navy rounded-tl-none'}`}
                                             >
                                                 {/* Context Alert Shortcut (as seen in mockup) */}
                                                 {m.contenido.includes("Reporte de Incidencia:") && (
@@ -282,11 +285,11 @@ const Messages = () => {
                         </div>
 
                         {/* Input Area */}
-                        <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-50 flex gap-4 bg-white">
+                        <form onSubmit={handleSendMessage} className="p-4 border-t border-slate-50 flex gap-4 bg-white">
                             <input
                                 type="text"
                                 placeholder="Escribe un mensaje..."
-                                className="flex-1 px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-navy/10 outline-none transition-all text-sm font-medium"
+                                className="flex-1 px-5 py-4 bg-slate-50 border border-slate-100 rounded-lg focus:ring-2 focus:ring-navy/10 outline-none transition-all text-sm font-medium"
                                 value={newMessage}
                                 onChange={(e) => setNewMessage(e.target.value)}
                             />
@@ -338,7 +341,7 @@ const Messages = () => {
                                 <input
                                     type="text"
                                     placeholder="Buscar por nombre..."
-                                    className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-navy/10 outline-none transition-all"
+                                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-lg focus:ring-2 focus:ring-navy/10 outline-none transition-all"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     autoFocus
@@ -368,7 +371,7 @@ const Messages = () => {
                     </div>
                 )}
             </AnimatePresence>
-        </div>
+        </div >
     );
 };
 

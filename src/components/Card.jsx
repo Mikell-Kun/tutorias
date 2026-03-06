@@ -10,7 +10,7 @@ const Card = ({ children, title, subtitle, icon: Icon, className = "" }) => {
                         {subtitle && <p className="text-text-muted text-sm">{subtitle}</p>}
                     </div>
                     {Icon && (
-                        <div className="p-3 bg-gray-50 rounded-xl text-navy">
+                        <div className="p-3 bg-navy/5 rounded-lg text-navy">
                             <Icon size={24} />
                         </div>
                     )}

@@ -93,13 +93,13 @@ const ReportarIncidencia = () => {
 
     return (
         <div className="p-8 space-y-8 animate-in fade-in duration-700">
-            <div className="flex items-center gap-3">
-                <div className="p-3 bg-navy text-white rounded-2xl shadow-lg">
-                    <Megaphone size={24} />
+            <div className="flex items-center gap-4 border-b border-slate-100 pb-6">
+                <div className="p-4 bg-navy/5 text-navy rounded-lg">
+                    <Megaphone size={36} />
                 </div>
                 <div>
-                    <h1 className="text-2xl font-bold text-navy">Reportar Incidencia</h1>
-                    <p className="text-text-muted">Informa sobre situaciones que requieran atención del tutor</p>
+                    <h1 className="text-3xl font-black uppercase tracking-tight text-navy">Reportar Incidencia</h1>
+                    <p className="text-text-muted font-medium mt-1">Informa sobre situaciones que requieran atención del tutor</p>
                 </div>
             </div>
 
@@ -113,7 +113,7 @@ const ReportarIncidencia = () => {
                                 name="estudiante_n_control"
                                 value={formData.estudiante_n_control}
                                 onChange={handleStudentChange}
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-navy/5 focus:border-navy transition-all outline-none"
+                                className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-md focus:ring-2 focus:ring-navy/5 focus:border-navy transition-all outline-none"
                                 required
                             >
                                 <option value="">Selecciona un estudiante...</option>
@@ -130,7 +130,7 @@ const ReportarIncidencia = () => {
                                 name="tipo"
                                 value={formData.tipo}
                                 onChange={handleInputChange}
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-navy/5 focus:border-navy transition-all outline-none"
+                                className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-md focus:ring-2 focus:ring-navy/5 focus:border-navy transition-all outline-none"
                                 required
                             >
                                 <option value="">Selecciona un tipo...</option>
@@ -147,7 +147,7 @@ const ReportarIncidencia = () => {
                                 name="materia"
                                 value={formData.materia}
                                 onChange={handleInputChange}
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-navy/5 focus:border-navy transition-all outline-none"
+                                className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-md focus:ring-2 focus:ring-navy/5 focus:border-navy transition-all outline-none"
                             >
                                 <option value="">No especificar materia</option>
                                 {subjects.map(m => (
@@ -171,7 +171,7 @@ const ReportarIncidencia = () => {
                             onChange={handleInputChange}
                             placeholder="Describe la situación con el mayor detalle posible..."
                             rows="4"
-                            className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-navy/5 focus:border-navy transition-all outline-none resize-none"
+                            className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-md focus:ring-2 focus:ring-navy/5 focus:border-navy transition-all outline-none resize-none"
                             required
                         ></textarea>
                     </div>
@@ -180,7 +180,7 @@ const ReportarIncidencia = () => {
                         <motion.div
                             initial={{ opacity: 0, y: -10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className={`p-4 rounded-xl flex items-center gap-3 ${status.type === 'success' ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'
+                            className={`p-4 rounded-md flex items-center gap-3 ${status.type === 'success' ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'
                                 }`}
                         >
                             <AlertCircle size={18} />
@@ -188,12 +188,12 @@ const ReportarIncidencia = () => {
                         </motion.div>
                     )}
 
-                    <div className="flex gap-4 pt-4 border-t border-gray-50">
+                    <div className="flex gap-4 pt-4 border-t border-slate-100">
                         <motion.button
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             type="submit"
-                            className="flex-1 flex items-center justify-center gap-2 py-4 bg-navy text-white rounded-2xl font-bold shadow-lg shadow-navy/20 hover:bg-navy/90 transition-all"
+                            className="flex-1 flex items-center justify-center gap-2 py-4 bg-navy text-white rounded-md font-bold shadow-lg shadow-navy/20 hover:bg-navy/90 transition-all"
                         >
                             <Send size={18} /> Enviar Reporte
                         </motion.button>
@@ -202,7 +202,7 @@ const ReportarIncidencia = () => {
                             whileTap={{ scale: 0.98 }}
                             type="button"
                             onClick={handleClear}
-                            className="px-8 flex items-center justify-center gap-2 py-4 bg-gray-100 text-navy rounded-2xl font-bold hover:bg-gray-200 transition-all"
+                            className="px-8 flex items-center justify-center gap-2 py-4 bg-slate-100 text-navy rounded-md font-bold hover:bg-slate-200 transition-all"
                         >
                             <Trash2 size={18} /> Limpiar
                         </motion.button>

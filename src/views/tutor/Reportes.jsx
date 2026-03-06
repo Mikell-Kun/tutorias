@@ -56,7 +56,7 @@ const TutorReportes = () => {
                 </div>
                 <div>
                     <h1 className="text-3xl font-black uppercase tracking-tight text-navy">Centro de Reportes</h1>
-                    <p className="text-text-muted font-medium italic">Gestión y generación de informes de tutoría</p>
+                    <p className="text-text-muted font-medium">Gestión y generación de informes de tutoría</p>
                 </div>
             </div>
 
@@ -74,7 +74,7 @@ const TutorReportes = () => {
                                     <div className={`p-4 rounded-2xl ${type.color}`}>
                                         <type.icon size={28} />
                                     </div>
-                                    <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${type.color} border border-current opacity-70`}>
+                                    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] ${type.color} border border-current opacity-70`}>
                                         {type.badge}
                                     </span>
                                 </div>
@@ -92,7 +92,7 @@ const TutorReportes = () => {
                                             <button
                                                 key={i}
                                                 onClick={opt.action}
-                                                className="flex items-center justify-between px-4 py-2.5 bg-navy border border-navy/10 rounded-xl text-[9px] font-black uppercase tracking-wider text-white hover:bg-gold hover:text-navy hover:border-gold transition-all group/opt shadow-sm"
+                                                className="flex items-center justify-between px-4 py-2.5 bg-navy border border-navy/10 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-white hover:bg-gold hover:text-navy hover:border-gold transition-all group/opt shadow-sm"
                                             >
                                                 {opt.label}
                                                 <ArrowRight size={12} className="opacity-0 group-hover/opt:opacity-100 transition-opacity" />

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Users, AlertTriangle, MessageCircle, MoreVertical, Filter, GraduationCap } from 'lucide-react';
+import { Users, AlertTriangle, MessageCircle, MoreVertical, GraduationCap, LayoutDashboard } from 'lucide-react';
 import Card from '../../components/Card.jsx';
 import { useUser } from '../../context/UserContext.jsx';
 import { Estudiantes, getIncidencias, getMensajes, Tutores } from '../../data/database.js';
@@ -56,9 +56,9 @@ const TutorHome = () => {
     ).length;
 
     const stats = [
-        { label: 'Alumnos Asignados', value: assignedStudents.length, icon: Users, color: 'text-navy', bg: 'bg-blue-50' },
-        { label: 'Incidencias Nuevas', value: unreadIncidencias.length, icon: AlertTriangle, color: 'text-orange-600', bg: 'bg-orange-50' },
-        { label: 'Mensajes Nuevos', value: unreadCount, icon: MessageCircle, color: 'text-gold', bg: 'bg-yellow-50' },
+        { label: 'Alumnos Asignados', value: assignedStudents.length, icon: Users },
+        { label: 'Incidencias Nuevas', value: unreadIncidencias.length, icon: AlertTriangle },
+        { label: 'Mensajes Nuevos', value: unreadCount, icon: MessageCircle },
     ];
 
     const attendingStudents = assignedStudents.filter(student => {
@@ -68,15 +68,13 @@ const TutorHome = () => {
 
     return (
         <div className="p-8 space-y-8 animate-in slide-in-from-bottom-4 duration-700">
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-2xl font-bold text-navy uppercase tracking-tight">Panel de Tutoría</h1>
-                    <p className="text-text-muted mt-1">Seguimiento de alumnos con atención activa</p>
+            <div className="flex items-center gap-4 border-b border-slate-100 pb-6">
+                <div className="p-4 bg-navy/5 rounded-lg text-navy">
+                    <LayoutDashboard size={36} />
                 </div>
-                <div className="flex gap-3">
-                    <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-100 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors">
-                        <Filter size={16} /> Filtrar
-                    </button>
+                <div>
+                    <h1 className="text-3xl font-black uppercase tracking-tight text-navy">Panel de Tutoría</h1>
+                    <p className="text-text-muted font-medium mt-1">Seguimiento de alumnos con atención activa</p>
                 </div>
             </div>
 
@@ -85,11 +83,11 @@ const TutorHome = () => {
                 {stats.map((stat, i) => (
                     <Card key={i} className="border-none shadow-sm hover:shadow-md transition-shadow">
                         <div className="flex items-center gap-4">
-                            <div className={`p-4 ${stat.bg} ${stat.color} rounded-2xl`}>
+                            <div className="p-4 bg-navy/5 text-navy rounded-lg">
                                 <stat.icon size={24} />
                             </div>
                             <div>
-                                <p className="text-text-muted text-xs font-black uppercase tracking-widest">{stat.label}</p>
+                                <p className="text-[10px] font-black text-navy/40 uppercase tracking-[0.2em]">{stat.label}</p>
                                 <p className="text-2xl font-black text-navy">{stat.value}</p>
                             </div>
                         </div>
@@ -99,7 +97,7 @@ const TutorHome = () => {
 
             {/* Assigned Students List */}
             <Card title="Alumnos en Atención" subtitle="Estudiantes que requieren seguimiento activo">
-                <div className="mt-4 overflow-hidden border border-gray-100 rounded-2xl">
+                <div className="mt-4 overflow-hidden border border-slate-100 rounded-lg">
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-gray-50/50 text-[10px] font-black text-navy/40 uppercase tracking-[0.2em]">
@@ -110,14 +108,14 @@ const TutorHome = () => {
                                 <th className="px-6 py-4">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100 bg-white">
+                        <tbody className="divide-y divide-slate-100 bg-white">
                             {attendingStudents.map((student) => {
                                 const status = getStudentDashboardStatus(student);
                                 return (
                                     <tr key={student.n_control} className="hover:bg-gray-50/50 transition-colors group">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 bg-navy text-white rounded-lg flex items-center justify-center font-black text-xs shadow-sm">
+                                                <div className="w-8 h-8 bg-navy text-white rounded-md flex items-center justify-center font-black text-xs shadow-sm">
                                                     {student.nombre_completo.charAt(0)}
                                                 </div>
                                                 <div className="flex flex-col">
@@ -146,7 +144,7 @@ const TutorHome = () => {
                             })}
                             {attendingStudents.length === 0 && (
                                 <tr>
-                                    <td colSpan="5" className="px-6 py-12 text-center text-navy/20 italic font-medium">
+                                    <td colSpan="5" className="px-6 py-12 text-center text-navy/20 font-medium">
                                         No hay alumnos en atención activa en este momento.
                                     </td>
                                 </tr>
@@ -161,10 +159,10 @@ const TutorHome = () => {
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="p-6 bg-red-600 rounded-[2rem] text-white flex items-center justify-between shadow-xl shadow-red-200"
+                    className="p-6 bg-red-600 rounded-xl text-white flex items-center justify-between shadow-xl shadow-red-200"
                 >
                     <div className="flex items-center gap-6">
-                        <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center">
+                        <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-lg flex items-center justify-center">
                             <AlertTriangle size={32} />
                         </div>
                         <div>
@@ -172,7 +170,7 @@ const TutorHome = () => {
                             <p className="text-white/80 font-medium">Hay {atRiskStudents.length} alumnos en situación de riesgo que requieren intervención inmediata.</p>
                         </div>
                     </div>
-                    <button className="px-6 py-3 bg-white text-red-600 font-black rounded-xl uppercase tracking-widest text-xs hover:bg-red-50 transition-colors">
+                    <button className="px-6 py-3 bg-white text-red-600 font-black rounded-md uppercase tracking-widest text-xs hover:bg-slate-50 transition-colors">
                         Revisar Casos
                     </button>
                 </motion.div>
