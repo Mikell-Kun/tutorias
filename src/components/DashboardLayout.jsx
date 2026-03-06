@@ -9,6 +9,7 @@ const DashboardLayout = () => {
     const { user, logout } = useUser();
     const [refresh, setRefresh] = React.useState(0);
     const [showProfileMenu, setShowProfileMenu] = React.useState(false);
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState(false);
     const menuRef = React.useRef(null);
 
     React.useEffect(() => {
@@ -45,12 +46,19 @@ const DashboardLayout = () => {
     }
 
     return (
-        <div className="flex gap-6 p-4 min-h-screen bg-slate-50">
-            <Sidebar />
+        <div className="flex min-h-screen bg-slate-50">
+            <Sidebar isCollapsed={isSidebarCollapsed} onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)} />
 
-            <main className="flex-1 flex flex-col gap-6">
+            <main className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
                 {/* Top Navbar */}
-                <header className="glass px-8 py-3 flex items-center justify-end sticky top-4 z-50">
+                <header className="px-8 py-3 flex items-center justify-between sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm">
+                    <div className="flex items-center gap-4">
+                        <img src="/logo_tecnm.png" alt="TecNM" className="h-10 w-auto opacity-80" />
+                        <div className="h-6 w-[1px] bg-slate-200 mx-2"></div>
+                        <span className="text-[10px] font-black text-navy/40 uppercase tracking-[0.2em] hidden md:block">
+                            Tecnológico Nacional de México
+                        </span>
+                    </div>
 
                     <div className="flex items-center gap-6">
                         <Link
@@ -113,7 +121,7 @@ const DashboardLayout = () => {
                 </header>
 
                 {/* Content Area */}
-                <div className="flex-1 glass overflow-auto">
+                <div className="flex-1 p-8 overflow-auto">
                     <Outlet />
                 </div>
             </main>

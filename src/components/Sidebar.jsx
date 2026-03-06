@@ -6,16 +6,16 @@ import {
     BookOpen,
     User,
     MessageSquare,
-    LogOut,
     Users,
-    Settings,
     AlertTriangle,
     Calendar,
-    FileBarChart
+    FileBarChart,
+    ChevronLeft,
+    Menu
 } from 'lucide-react';
 import { useUser } from '../context/UserContext.jsx';
 
-const Sidebar = () => {
+const Sidebar = ({ isCollapsed, onToggle }) => {
     const { user, logout } = useUser();
 
     const studentLinks = [
@@ -48,31 +48,58 @@ const Sidebar = () => {
         user?.role === 'tutor' ? tutorLinks : studentLinks;
 
     return (
-        <div className="w-64 bg-navy h-[calc(100vh-2rem)] sticky top-4 left-0 flex flex-col p-4 rounded-xl shadow-2xl">
-            <div className="mb-8 px-4 flex items-center gap-3">
-                <div className="w-10 h-10 bg-white rounded-md flex items-center justify-center text-navy font-black shadow-lg">
+        <div className={`
+            ${isCollapsed ? 'w-20' : 'w-64'} 
+            bg-navy h-screen fixed top-0 left-0 flex flex-col transition-all duration-300 z-[60] shadow-2xl
+        `}>
+            {/* Collapse Toggle Button */}
+            <button
+                onClick={onToggle}
+                className="absolute -right-3 top-20 bg-gold text-navy p-1 rounded-full shadow-lg hover:scale-110 transition-transform hidden lg:block"
+            >
+                {isCollapsed ? <Menu size={16} /> : <ChevronLeft size={16} />}
+            </button>
+
+            <div className={`mb-8 px-6 pt-8 flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
+                <div className="w-10 h-10 bg-white rounded-sm flex items-center justify-center text-navy font-black shadow-lg shrink-0">
                     TN
                 </div>
-                <div className="flex flex-col">
-                    <span className="font-black text-white text-lg leading-tight tracking-tight uppercase">Tutorías</span>
-                    <span className="text-[10px] font-black text-gold uppercase tracking-[0.2em]">TecNM</span>
-                </div>
+                {!isCollapsed && (
+                    <motion.div
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="flex flex-col"
+                    >
+                        <span className="font-black text-white text-lg leading-tight tracking-tight uppercase">Tutorías</span>
+                        <span className="text-[10px] font-black text-gold uppercase tracking-[0.2em]">TecNM</span>
+                    </motion.div>
+                )}
             </div>
 
-            <nav className="flex-1 space-y-2">
+            <nav className="flex-1 space-y-2 px-4">
                 {links.map((link) => (
                     <NavLink
                         key={link.path}
                         to={link.path}
                         className={({ isActive }) => `
-              flex items-center gap-3 px-4 py-3 rounded-md transition-all duration-300
-              ${isActive
+                            flex items-center gap-3 px-3 py-3 rounded-sm transition-all duration-300
+                            ${isCollapsed ? 'justify-center' : ''}
+                            ${isActive
                                 ? 'bg-gold text-navy shadow-lg shadow-gold/20 font-bold'
                                 : 'text-blue-100/60 hover:bg-white/10 hover:text-white'}
-            `}
+                        `}
+                        title={isCollapsed ? link.name : ''}
                     >
-                        <link.icon size={20} />
-                        <span className="font-medium tracking-tight text-[14px]">{link.name}</span>
+                        <link.icon size={20} className="shrink-0" />
+                        {!isCollapsed && (
+                            <motion.span
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="font-medium tracking-tight text-[14px] truncate"
+                            >
+                                {link.name}
+                            </motion.span>
+                        )}
                     </NavLink>
                 ))}
             </nav>
