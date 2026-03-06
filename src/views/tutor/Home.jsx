@@ -5,7 +5,6 @@ import Card from '../../components/Card.jsx';
 import { useUser } from '../../context/UserContext.jsx';
 import { Estudiantes, getIncidencias, getMensajes, Tutores } from '../../data/database.js';
 import { useNavigate } from 'react-router-dom';
-import { generateSemesterReport } from '../../utils/reportGenerator.js';
 
 const TutorHome = () => {
     const { user } = useUser();
@@ -22,14 +21,11 @@ const TutorHome = () => {
     const assignedStudents = (Estudiantes || []).filter(s => s && s.tutor_id === user?.id_tutor);
     const atRiskStudents = assignedStudents.filter(s => s && s.estatus === 'Riesgo');
 
-    const handleGenerateReport = () => {
-        if (!user) return;
-        generateSemesterReport(user, atRiskStudents);
-    };
 
-    // Filter ALL system incidents
+    // Filter system incidents for THIS tutor
     const incidencias = getIncidencias() || [];
-    const unreadIncidencias = incidencias.filter(i => !i.leida);
+    const tutorIncidencias = incidencias.filter(i => i.tutor_id === user?.id_tutor);
+    const unreadIncidencias = tutorIncidencias.filter(i => !i.leida);
 
     // Status Logic
     const getStudentDashboardStatus = (student) => {
@@ -54,10 +50,15 @@ const TutorHome = () => {
         return { label: 'Regular', color: 'bg-green-50 text-green-600 border-green-100' };
     };
 
+    const messages = getMensajes(user?.id_tutor) || [];
+    const unreadCount = messages.filter(m =>
+        parseInt(m.destinatario_id, 10) === user?.id_tutor && !m.leido
+    ).length;
+
     const stats = [
         { label: 'Alumnos Asignados', value: assignedStudents.length, icon: Users, color: 'text-navy', bg: 'bg-blue-50' },
-        { label: 'Incidencias Totales', value: incidencias.length, icon: AlertTriangle, color: 'text-orange-600', bg: 'bg-orange-50' },
-        { label: 'Mensajes Nuevos', value: '5', icon: MessageCircle, color: 'text-gold', bg: 'bg-yellow-50' },
+        { label: 'Incidencias Nuevas', value: unreadIncidencias.length, icon: AlertTriangle, color: 'text-orange-600', bg: 'bg-orange-50' },
+        { label: 'Mensajes Nuevos', value: unreadCount, icon: MessageCircle, color: 'text-gold', bg: 'bg-yellow-50' },
     ];
 
     const attendingStudents = assignedStudents.filter(student => {
@@ -75,12 +76,6 @@ const TutorHome = () => {
                 <div className="flex gap-3">
                     <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-100 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors">
                         <Filter size={16} /> Filtrar
-                    </button>
-                    <button
-                        onClick={handleGenerateReport}
-                        className="btn-institutional-modern !w-auto px-6 !py-2.5 h-auto"
-                    >
-                        Generar Reporte
                     </button>
                 </div>
             </div>

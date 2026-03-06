@@ -13,6 +13,7 @@ import {
 import TutorHome from './views/tutor/Home.jsx';
 import TutorIncidencias from './views/tutor/Incidencias.jsx';
 import MisEstudiantes from './views/tutor/MisEstudiantes.jsx';
+import TutorReportes from './views/tutor/Reportes.jsx';
 
 function App() {
   const { user, loading } = useUser();
@@ -40,6 +41,7 @@ function App() {
           <Route path="reticula" element={<ReticulaPlaceholder />} />
           <Route path="perfil" element={<Profile role="student" />} />
           <Route path="mensajes" element={<Messages />} />
+          <Route path="/reportes" element={<TutorReportes />} />
           <Route path="/incidencias" element={<TutorIncidencias />} />
           <Route path="/reportar-incidencia" element={<ReportarIncidencia />} />
           <Route path="/students" element={

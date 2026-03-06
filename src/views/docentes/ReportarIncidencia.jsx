@@ -19,15 +19,20 @@ const ReportarIncidencia = () => {
 
     const incidentTypes = [
         'Retardos o ausencias injustificadas',
-        'Dificultades de adaptación social y emocional',
-        'Problemas personales',
-        'Falta de apoyo familiar',
-        'Comportamiento inapropiado',
-        'Uso indebido del recurso académico',
         'Bajo rendimiento académico',
+        'Incumplimiento de tareas y proyectos',
         'Falta de participación en clase',
-        'Actitud negativa hacia el aprendizaje',
-        'Incumplimiento de tareas y proyectos'
+        'Necesidad de asesoría académica',
+        'Dificultades en trámites administrativo-académicos',
+        'Requerimiento de servicios psicológicos',
+        'Atención por servicios de salud',
+        'Situación de riesgo por adicciones',
+        'Solicitud de apoyo alimenticio',
+        'Necesidad de beca de manutención o transporte',
+        'Detección de aptitudes sobresalientes',
+        'Problemas personales o familiares',
+        'Dificultades de adaptación social y emocional',
+        'Comportamiento inapropiado'
     ];
 
     const handleInputChange = (e) => {

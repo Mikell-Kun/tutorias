@@ -10,7 +10,8 @@ import {
     Users,
     Settings,
     AlertTriangle,
-    Calendar
+    Calendar,
+    FileBarChart
 } from 'lucide-react';
 import { useUser } from '../context/UserContext.jsx';
 
@@ -36,6 +37,7 @@ const Sidebar = () => {
     const tutorLinks = [
         { name: 'Inicio', path: '/', icon: Home },
         { name: 'Mis Estudiantes', path: '/students', icon: Users },
+        { name: 'Reportes', path: '/reportes', icon: FileBarChart },
         { name: 'Mensajería', path: '/mensajes', icon: MessageSquare },
         { name: 'Incidencias', path: '/incidencias', icon: AlertTriangle },
         { name: 'Eventos', path: '/events', icon: Calendar },
