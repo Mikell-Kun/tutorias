@@ -30,11 +30,35 @@ export const Estudiantes = [
         fecha_nacimiento: '2000-04-20',
         telefono: '686-123-4567',
         carrera: 'Ingeniería en Sistemas computacionales',
-        semestre: '5to Semestre',
+        semestre: '8to Semestre',
         estatus: 'Regular',
         rol: 'estudiante',
         correo: 'a20491198@itmexicali.edu.mx',
         tutor_id: 40404040
+    },
+    {
+        n_control: 20491196,
+        nombre_completo: 'Veronica citlali martinez lopez',
+        fecha_nacimiento: '2000-04-20',
+        telefono: '686-123-4567',
+        carrera: 'Ingeniería en Sistemas computacionales',
+        semestre: '4to Semestre',
+        estatus: 'Regular',
+        rol: 'estudiante',
+        correo: 'a20491198@itmexicali.edu.mx',
+        tutor_id: 40404040
+    },
+    {
+        n_control: 20491195,
+        nombre_completo: 'Jesus Alejandro Hernandez Lopez',
+        fecha_nacimiento: '2000-04-20',
+        telefono: '686-123-4567',
+        carrera: 'Ingeniería en Sistemas computacionales',
+        semestre: '2to Semestre',
+        estatus: 'Regular',
+        rol: 'estudiante',
+        correo: 'a20491198@itmexicali.edu.mx',
+        tutor_id: 20202020
     }
 ];
 
@@ -106,7 +130,10 @@ export const DocentesAuth = [
 
 export const EstudiantesAuth = [
     { n_control: 20491199, contrasena: 'Gatitofeliz3' },
-    { n_control: 20491198, contrasena: 'Pepito12' }
+    { n_control: 20491198, contrasena: '123456' },
+    { n_control: 20491197, contrasena: '123456' },
+    { n_control: 20491196, contrasena: '123456' },
+    { n_control: 20491195, contrasena: '123456' }
 ];
 
 /**

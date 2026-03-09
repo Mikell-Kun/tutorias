@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Save, Plus, Trash2, FileText, Users, MapPin, CheckCircle2 } from 'lucide-react';
 import Card from '../../components/Card';
 import { useUser } from '../../context/UserContext';
 import { generateReferralReport } from '../../utils/reportGenerator';
+import { saveReportEntry } from '../../utils/reportHistory';
 
 const ReferralReportForm = () => {
     const { user } = useUser();
     const navigate = useNavigate();
+    const location = useLocation();
+    const editData = location.state?.editData;
 
     const [formData, setFormData] = useState({
         tutorName: user?.nombre_completo || '',
@@ -33,6 +36,13 @@ const ReferralReportForm = () => {
             AS: { externa: false, interna: false, otras: false, ninguno: false }
         }
     });
+
+    // Handle Edit Mode
+    useEffect(() => {
+        if (editData) {
+            setFormData(editData);
+        }
+    }, [editData]);
 
     const programs = [
         'Ing. Bioquímica', 'Ing. Sistemas Computacionales', 'Contador Público', 'Ing. Semiconductores',
@@ -91,6 +101,15 @@ const ReferralReportForm = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         generateReferralReport(formData);
+
+        saveReportEntry({
+            author: user?.nombre_completo || 'Tutor',
+            authorId: user?.id_tutor || user?.n_control,
+            type: 'General',
+            reportType: 'referral',
+            title: `Canalizaciones por Grupo - ${formData.groupNum || 'S/G'}`,
+            data: formData
+        });
     };
 
     return (
@@ -213,8 +232,8 @@ const ReferralReportForm = () => {
                                             type="button"
                                             onClick={() => toggleStatus(area.id, type)}
                                             className={`py-2 px-3 rounded-xl text-[9px] font-black uppercase tracking-tighter transition-all flex items-center justify-center gap-2 ${formData.supportStatus[area.id][type]
-                                                    ? 'bg-navy text-white shadow-lg shadow-navy/20'
-                                                    : 'bg-white text-navy/30 hover:bg-white hover:text-navy border border-gray-100'
+                                                ? 'bg-navy text-white shadow-lg shadow-navy/20'
+                                                : 'bg-white text-navy/30 hover:bg-white hover:text-navy border border-gray-100'
                                                 }`}
                                         >
                                             {formData.supportStatus[area.id][type] && <CheckCircle2 size={10} />}

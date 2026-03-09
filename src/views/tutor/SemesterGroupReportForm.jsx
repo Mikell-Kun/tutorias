@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Save, X, Plus, Trash2, UserPlus, FileText, Calendar, Users, BarChart } from 'lucide-react';
 import Card from '../../components/Card';
 import { useUser } from '../../context/UserContext';
 import { Estudiantes } from '../../data/database';
 import { generateGroupSemesterReport } from '../../utils/reportGenerator';
+import { saveReportEntry } from '../../utils/reportHistory';
 
 const SemesterGroupReportForm = () => {
     const { user } = useUser();
     const navigate = useNavigate();
+    const location = useLocation();
+    const editData = location.state?.editData;
 
     const [formData, setFormData] = useState({
         tutorName: user?.nombre_completo || '',
@@ -33,6 +36,13 @@ const SemesterGroupReportForm = () => {
         },
         observations: ''
     });
+
+    // Handle Edit Mode
+    useEffect(() => {
+        if (editData) {
+            setFormData(editData);
+        }
+    }, [editData]);
 
     const periods = ['2026-1', '2026-2', '2027-1', '2027-2'];
     const programs = [
@@ -98,6 +108,15 @@ const SemesterGroupReportForm = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         generateGroupSemesterReport(formData);
+
+        saveReportEntry({
+            author: user?.nombre_completo || 'Tutor',
+            authorId: user?.id_tutor || user?.n_control,
+            type: 'General',
+            reportType: 'semester',
+            title: `Semestral por Grupo - ${formData.groupNum || 'S/G'}`,
+            data: formData
+        });
     };
 
     useEffect(() => {

@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Save, X, Plus, Trash2, UserPlus, FileText, Calendar, Users, BarChart } from 'lucide-react';
 import Card from '../../components/Card';
 import { useUser } from '../../context/UserContext';
 import { Estudiantes } from '../../data/database';
 import { generateDetailedGroupReport } from '../../utils/reportGenerator';
+import { saveReportEntry } from '../../utils/reportHistory';
 
 const DetailedGroupReportForm = () => {
     const { user } = useUser();
     const navigate = useNavigate();
+    const location = useLocation();
+    const editData = location.state?.editData;
 
     const [formData, setFormData] = useState({
         tutorName: user?.nombre_completo || '',
@@ -33,6 +36,13 @@ const DetailedGroupReportForm = () => {
         },
         observations: ''
     });
+
+    // Handle Edit Mode
+    useEffect(() => {
+        if (editData) {
+            setFormData(editData);
+        }
+    }, [editData]);
 
     const programs = [
         'Ing. Bioquímica',
@@ -97,6 +107,15 @@ const DetailedGroupReportForm = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         generateDetailedGroupReport(formData);
+
+        saveReportEntry({
+            author: user?.nombre_completo || 'Tutor',
+            authorId: user?.id_tutor || user?.n_control,
+            type: 'General',
+            reportType: 'detailed',
+            title: `Detallado por Grupo - ${formData.groupNum || 'S/G'}`,
+            data: formData
+        });
     };
 
     useEffect(() => {
