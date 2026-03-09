@@ -345,3 +345,179 @@ export const generateGroupSemesterReport = (data) => {
 export const generateDetailedGroupReport = (data) => {
     generateGroupReportBase(data, 'reporte detallado por grupo del tutor');
 };
+
+/**
+ * Generates the specialized "Reporte de Canalizaciones"
+ */
+export const generateReferralReport = (data) => {
+    const doc = new jsPDF({
+        orientation: 'p',
+        unit: 'mm',
+        format: 'a4'
+    });
+
+    const primaryColor = [13, 27, 62]; // Navy
+
+    // --- Header ---
+    doc.setFillColor(...primaryColor);
+    doc.rect(0, 0, 210, 25, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    doc.text('REPORTE DE CANALIZACIONES', 105, 15, { align: 'center' });
+
+    // --- Subtitle: DATOS GENERALES ---
+    doc.setFillColor(0, 0, 0);
+    doc.rect(10, 28, 190, 6, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(10);
+    doc.text('DATOS GENERALES', 105, 32, { align: 'center' });
+
+    // --- Data Block 1 ---
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(9);
+    doc.rect(10, 34, 190, 15); // Outer frame
+    doc.line(105, 34, 105, 41); // Vertical divider
+    doc.line(10, 41, 200, 41); // Horizontal divider
+
+    doc.setFont('helvetica', 'bold');
+    doc.text('NOMBRE DEL TUTOR:', 12, 38);
+    doc.text('DEPARTAMENTO ACADÉMICO:', 107, 38);
+    doc.text('FECHA', 60, 46, { align: 'center' });
+    doc.text('Inicio:', 85, 46);
+    doc.text('Término:', 135, 46);
+
+    doc.setFont('helvetica', 'normal');
+    doc.text(data.tutorName || '', 55, 38);
+    doc.text(data.academicDept || '', 155, 38);
+    doc.text(data.startDate || '', 100, 46);
+    doc.text(data.endDate || '', 155, 46);
+
+    // --- Subtitle: UNIDAD ACADÉMICA ---
+    doc.setFillColor(0, 0, 0);
+    doc.rect(10, 51, 190, 6, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.text('UNIDAD ACADÉMICA', 105, 55, { align: 'center' });
+
+    // --- Data Block 2 ---
+    doc.setTextColor(0, 0, 0);
+    doc.rect(10, 57, 190, 15); // Outer frame
+    doc.line(80, 57, 80, 64); // Divider 1
+    doc.line(135, 57, 135, 64); // Divider 2
+    doc.line(10, 64, 200, 64); // Bottom horizontal
+
+    doc.setFont('helvetica', 'bold');
+    doc.text('GRUPO:', 12, 61);
+    doc.text('Nº ALUMNOS:', 82, 61);
+    doc.text('PERIODO:', 137, 61);
+    doc.text('CARRERA:', 12, 69);
+
+    doc.setFont('helvetica', 'normal');
+    doc.text(data.groupNum || '', 30, 61);
+    doc.text(data.totalStudentsNum?.toString() || '', 110, 61);
+    doc.text(data.period || '', 160, 61);
+    doc.text(data.program || '', 32, 69);
+
+    // --- Session Table ---
+    autoTable(doc, {
+        startY: 75,
+        head: [
+            ['SESIÓN', 'TOTAL ALUMNOS ATENDIDOS', { content: 'NÚMERO DE ALUMNOS AL ÁREA CANALIZADA', colSpan: 9 }]
+        ],
+        body: [
+            ['', '', 'SP', 'SS', 'AD', 'BM', 'BT', 'BA', 'AA', 'APAA', 'AS'],
+            ...data.sessions.map(s => [
+                s.number,
+                s.attended,
+                s.sp || '',
+                s.ss || '',
+                s.ad || '',
+                s.bm || '',
+                s.bt || '',
+                s.ba || '',
+                s.aa || '',
+                s.apaa || '',
+                s.as || ''
+            ])
+        ],
+        styles: { fontSize: 8, halign: 'center', lineColor: [0, 0, 0], lineWidth: 0.1 },
+        headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
+        columnStyles: {
+            0: { cellWidth: 35 },
+            1: { cellWidth: 35 }
+        },
+        theme: 'grid'
+    });
+
+    // --- Referral Support Matrix ---
+    const finalY = doc.lastAutoTable.finalY + 10;
+
+    doc.setFillColor(0, 0, 0);
+    doc.rect(10, finalY, 190, 6, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(10);
+    doc.text('APOYOS CON LOS QUE CUENTA EL TECNOLÓGICO PARA CANALIZAR A LOS TUTORADO', 105, finalY + 4, { align: 'center' });
+
+    const supportAreasLabels = [
+        { label: 'SERVICIOS PSICOLÓGICOS', abrev: 'SP' },
+        { label: 'SERVICIOS DE SALUD', abrev: 'SS' },
+        { label: 'ADICCIONES', abrev: 'AD' },
+        { label: 'BECA DE MANUTENCIÓN', abrev: 'BM' },
+        { label: 'BECA DE TRANSPORTE', abrev: 'BT' },
+        { label: 'BECA DE ALIMENTACIÓN', abrev: 'BA' },
+        { label: 'ASESORÍA ACADÉMICA', abrev: 'AA' },
+        { label: 'ASESORÍA DE PROCESOS ACADÉMICO-ADMINISTRATIVOS', abrev: 'APAA' },
+        { label: 'APTITUDES SOBRESALIENTES', abrev: 'AS' }
+    ];
+
+    autoTable(doc, {
+        startY: finalY + 6,
+        head: [['APOYO', 'ABREV.', 'ESTANCIA EXTERNA', 'ESTANCIA INTERNA', 'OTRAS', 'NINGUNO']],
+        body: supportAreasLabels.map(area => {
+            const status = data.supportStatus?.[area.abrev] || {};
+            return [
+                area.label,
+                area.abrev,
+                status.externa ? 'X' : '',
+                status.interna ? 'X' : '',
+                status.otras ? 'X' : '',
+                status.ninguno ? 'X' : ''
+            ];
+        }),
+        styles: { fontSize: 7, halign: 'left', lineColor: [0, 0, 0], lineWidth: 0.1 },
+        headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
+        columnStyles: {
+            0: { cellWidth: 70 },
+            1: { cellWidth: 15, halign: 'center' },
+            2: { halign: 'center' },
+            3: { halign: 'center' },
+            4: { halign: 'center' },
+            5: { halign: 'center' }
+        },
+        theme: 'grid'
+    });
+
+    // --- Signatures ---
+    const signatureY = 265;
+    doc.setTextColor(0, 0, 0); // Reset color to black
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+
+    // Left: Coordinator
+    doc.line(10, signatureY, 80, signatureY);
+    doc.text('Nombre y firma del coordinador de', 45, signatureY + 4, { align: 'center' });
+    doc.text('tutoría de Departamento', 45, signatureY + 8, { align: 'center' });
+    doc.text('Académico', 45, signatureY + 12, { align: 'center' });
+
+    // Right: Dept Head
+    doc.line(130, signatureY, 200, signatureY);
+    doc.text('Nombre y firma del jefe de Departamento', 165, signatureY + 4, { align: 'center' });
+    doc.text('Académico', 165, signatureY + 8, { align: 'center' });
+
+    // Bottom Center: Tutor
+    const signatureBottomY = 282;
+    doc.line(70, signatureBottomY, 140, signatureBottomY);
+    doc.text('Nombre y firma del Tutor', 105, signatureBottomY + 4, { align: 'center' });
+
+    doc.save(`reporte_canalizaciones_${data.groupNum || 'tutor'}.pdf`);
+};

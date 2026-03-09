@@ -26,7 +26,7 @@ const TutorReportes = () => {
             subOptions: [
                 { label: 'Semestral por Grupo', action: () => navigate('/reporte-grupal') },
                 { label: 'Detallado por Grupo', action: () => navigate('/reporte-detallado') },
-                { label: 'De Canalizaciones', action: () => { } },
+                { label: 'De Canalizaciones', action: () => navigate('/reporte-canalizaciones') },
             ]
         },
         {

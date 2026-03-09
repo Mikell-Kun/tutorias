@@ -16,6 +16,7 @@ import MisEstudiantes from './views/tutor/MisEstudiantes.jsx';
 import TutorReportes from './views/tutor/Reportes.jsx';
 import SemesterGroupReportForm from './views/tutor/SemesterGroupReportForm.jsx';
 import DetailedGroupReportForm from './views/tutor/DetailedGroupReportForm.jsx';
+import ReferralReportForm from './views/tutor/ReferralReportForm.jsx';
 
 function App() {
   const { user, loading } = useUser();
@@ -46,6 +47,7 @@ function App() {
           <Route path="reportes" element={<TutorReportes />} />
           <Route path="reporte-grupal" element={<SemesterGroupReportForm />} />
           <Route path="reporte-detallado" element={<DetailedGroupReportForm />} />
+          <Route path="reporte-canalizaciones" element={<ReferralReportForm />} />
           <Route path="incidencias" element={<TutorIncidencias />} />
           <Route path="reportar-incidencia" element={<ReportarIncidencia />} />
           <Route path="students" element={
