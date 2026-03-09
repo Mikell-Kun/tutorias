@@ -14,6 +14,8 @@ import TutorHome from './views/tutor/Home.jsx';
 import TutorIncidencias from './views/tutor/Incidencias.jsx';
 import MisEstudiantes from './views/tutor/MisEstudiantes.jsx';
 import TutorReportes from './views/tutor/Reportes.jsx';
+import SemesterGroupReportForm from './views/tutor/SemesterGroupReportForm.jsx';
+import DetailedGroupReportForm from './views/tutor/DetailedGroupReportForm.jsx';
 
 function App() {
   const { user, loading } = useUser();
@@ -29,9 +31,9 @@ function App() {
       <Routes>
         <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
 
-        <Route element={user ? <DashboardLayout /> : <Navigate to="/login" />}>
+        <Route path="/" element={user ? <DashboardLayout /> : <Navigate to="/login" />}>
           {/* Shared/Switching Home Path */}
-          <Route path="/" element={
+          <Route index element={
             user?.role === 'teacher' ? <TeacherHome /> :
               user?.role === 'tutor' ? <TutorHome /> :
                 <StudentHome />
@@ -41,15 +43,17 @@ function App() {
           <Route path="reticula" element={<ReticulaPlaceholder />} />
           <Route path="perfil" element={<Profile role="student" />} />
           <Route path="mensajes" element={<Messages />} />
-          <Route path="/reportes" element={<TutorReportes />} />
-          <Route path="/incidencias" element={<TutorIncidencias />} />
-          <Route path="/reportar-incidencia" element={<ReportarIncidencia />} />
-          <Route path="/students" element={
+          <Route path="reportes" element={<TutorReportes />} />
+          <Route path="reporte-grupal" element={<SemesterGroupReportForm />} />
+          <Route path="reporte-detallado" element={<DetailedGroupReportForm />} />
+          <Route path="incidencias" element={<TutorIncidencias />} />
+          <Route path="reportar-incidencia" element={<ReportarIncidencia />} />
+          <Route path="students" element={
             (user?.role === 'tutor' || user?.role === 'teacher') ? <MisEstudiantes /> :
               <div className="p-8">Sección de Estudiantes (Próximamente)</div>
           } />
-          <Route path="/events" element={<div className="p-8">Sección de Eventos (Próximamente)</div>} />
-          <Route path="/settings" element={<div className="p-8">Configuración</div>} />
+          <Route path="events" element={<div className="p-8">Sección de Eventos (Próximamente)</div>} />
+          <Route path="settings" element={<div className="p-8">Configuración</div>} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" />} />

@@ -1,6 +1,7 @@
 import React from 'react';
 import { FileText, FileBarChart, PieChart, Users, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import Card from '../../components/Card.jsx';
 import { useUser } from '../../context/UserContext.jsx';
 import { Estudiantes } from '../../data/database.js';
@@ -8,27 +9,23 @@ import { generateSemesterReport } from '../../utils/reportGenerator.js';
 
 const TutorReportes = () => {
     const { user } = useUser();
+    const navigate = useNavigate();
 
     // Filter students assigned to this tutor that are at risk
     const atRiskStudents = (Estudiantes || []).filter(s =>
         s && s.tutor_id === user?.id_tutor && s.estatus === 'Riesgo'
     );
 
-    const handleSemesterReport = () => {
-        if (!user) return;
-        generateSemesterReport(user, atRiskStudents);
-    };
-
     const reportTypes = [
         {
-            title: 'Reporte Semestral',
+            title: 'Reportes Generales',
             description: 'Genera el informe detallado de seguimiento académico del ciclo escolar actual.',
             icon: FileBarChart,
             color: 'bg-navy/5 text-navy',
             badge: 'Prioritario',
             subOptions: [
-                { label: 'Semestral por Grupo', action: handleSemesterReport },
-                { label: 'Detallado por Grupo', action: () => { } },
+                { label: 'Semestral por Grupo', action: () => navigate('/reporte-grupal') },
+                { label: 'Detallado por Grupo', action: () => navigate('/reporte-detallado') },
                 { label: 'De Canalizaciones', action: () => { } },
             ]
         },
@@ -55,7 +52,7 @@ const TutorReportes = () => {
                     <FileBarChart size={36} />
                 </div>
                 <div>
-                    <h1 className="text-3xl font-black uppercase tracking-tight text-navy">Centro de Reportes</h1>
+                    <h1 className="text-3xl font-black uppercase tracking-tight text-navy">Reportes Generales</h1>
                     <p className="text-text-muted font-medium">Gestión y generación de informes de tutoría</p>
                 </div>
             </div>
@@ -117,7 +114,7 @@ const TutorReportes = () => {
                     </motion.div>
                 ))}
 
-                {/* Help Section - Moved here! */}
+                {/* Help Section */}
                 <div className="p-8 bg-gold rounded-[2rem] text-navy h-full flex flex-col justify-center shadow-sm">
                     <h4 className="font-black uppercase tracking-tighter text-2xl mb-2">¿Necesitas ayuda?</h4>
                     <p className="text-navy/70 text-sm font-bold mb-6">Consulta la guía de generación de reportes institucionales.</p>

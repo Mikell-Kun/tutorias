@@ -169,3 +169,179 @@ export const generateSemesterReport = (tutor, studentsAtRisk) => {
         alert('Hubo un error al generar el PDF. Revisa la consola para más detalles.');
     }
 };
+
+/**
+ * Main function for generating Group Reports (Semester or Detailed).
+ * 
+ * @param {Object} data - Form data.
+ * @param {string} mainTitle - Title of the report.
+ */
+const generateGroupReportBase = (data, mainTitle) => {
+    try {
+        const doc = new jsPDF();
+        const margin = 10;
+        const pageWidth = 210;
+        const contentWidth = pageWidth - (margin * 2);
+
+        // Header Table Helper
+        const drawFormGrid = (x, y, w, h, label, value = '', isTitle = false) => {
+            doc.rect(x, y, w, h);
+            if (isTitle) {
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'bold');
+                doc.text(label.toUpperCase(), x + (w / 2), y + (h / 2) + 1.5, { align: 'center' });
+            } else {
+                doc.setFontSize(8);
+                doc.setFont('helvetica', 'bold');
+                doc.text(label, x + 1, y + 3.5);
+                if (value) {
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(9);
+                    doc.text(String(value), x + 1, y + (h - 2));
+                }
+            }
+        };
+
+        let currentY = 15;
+
+        // Header Section
+        drawFormGrid(margin, currentY, contentWidth, 8, mainTitle, '', true);
+        currentY += 8;
+        drawFormGrid(margin, currentY, contentWidth, 8, 'Instituto tecnologico', '', true);
+        currentY += 8;
+
+        // Row 3: Tutor Name, Dept, Period
+        const col1W = contentWidth * 0.3;
+        const col2W = contentWidth * 0.2;
+        const col3W = contentWidth * 0.5;
+
+        drawFormGrid(margin, currentY, col1W, 10, 'nombre del tutor/a', data.tutorName);
+        drawFormGrid(margin + col1W, currentY, col2W, 10, 'departamento academico', '');
+        drawFormGrid(margin + col1W + col2W, currentY, col3W, 10, 'Periodo', data.period);
+        currentY += 10;
+
+        // Row 4: Program, Group, Dates
+        const subColW = contentWidth / 4;
+        drawFormGrid(margin, currentY, subColW, 10, 'programa educativo', data.program);
+        drawFormGrid(margin + subColW, currentY, subColW, 10, 'num. grupo', data.groupNum);
+        drawFormGrid(margin + (subColW * 2), currentY, subColW, 10, 'fecha inicio', data.startDate);
+        drawFormGrid(margin + (subColW * 3), currentY, subColW, 10, 'fecha final', data.endDate);
+        currentY += 15;
+
+        // Students Table Title
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'bold');
+        doc.rect(margin, currentY, contentWidth, 8);
+        doc.text('lista de estudiantes', margin + (contentWidth / 2), currentY + 5.5, { align: 'center' });
+        currentY += 8;
+
+        // Student Data
+        const studentsData = data.students.map((s, i) => [i + 1, s.name, s.control]);
+        while (studentsData.length < 15) {
+            studentsData.push([studentsData.length + 1, '', '']);
+        }
+
+        autoTable(doc, {
+            startY: currentY,
+            head: [],
+            body: studentsData,
+            theme: 'grid',
+            styles: { fontSize: 8, cellPadding: 1, minCellHeight: 6 },
+            columnStyles: {
+                0: { cellWidth: 20, halign: 'center' },
+                1: { cellWidth: (contentWidth - 20) * 0.7 },
+                2: { cellWidth: (contentWidth - 20) * 0.3, halign: 'center' }
+            },
+            margin: { left: margin }
+        });
+
+        currentY = doc.lastAutoTable.finalY + 10;
+
+        // Stats Box Title
+        const statsTitle = mainTitle.includes('semestral')
+            ? 'estudiantes atendidos en el semestre'
+            : 'estudiantes atendidos en el periodo';
+        doc.setFont('helvetica', 'bold');
+        doc.rect(margin, currentY, contentWidth, 6);
+        doc.text(statsTitle, margin + (contentWidth / 2), currentY + 4, { align: 'center' });
+        currentY += 6;
+
+        // Stats Headers
+        const statColW = contentWidth / 4;
+        const statHeaders = ['tutoria grupal', 'estudiantes canalizados', 'area con mayor canalizacion', 'Resultado (porcentaje total)'];
+        statHeaders.forEach((h, i) => {
+            doc.rect(margin + (statColW * i), currentY, statColW, 10);
+            doc.setFontSize(7);
+            doc.text(h, margin + (statColW * i) + (statColW / 2), currentY + 6, { align: 'center', maxWidth: statColW - 5 });
+        });
+        currentY += 10;
+
+        // Stats Values
+        const statsRow = [
+            data.groupTutoring.totalStudents,
+            data.groupTutoring.channeledCount,
+            data.groupTutoring.topArea,
+            `${data.groupTutoring.resultPercentage}%`
+        ];
+        statsRow.forEach((v, i) => {
+            doc.rect(margin + (statColW * i), currentY, statColW, 8);
+            doc.setFont('helvetica', 'normal');
+            doc.text(String(v), margin + (statColW * i) + (statColW / 2), currentY + 5.5, { align: 'center' });
+        });
+        currentY += 12;
+
+        // Individual Stats (Placeholder)
+        const indHeaders = ['tutoria individual', 'estudiantes canalizados', 'area con mayor canalizacion', 'Resultado (porcentaje total)'];
+        indHeaders.forEach((h, i) => {
+            doc.rect(margin + (statColW * i), currentY, statColW, 10);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(7);
+            doc.text(h, margin + (statColW * i) + (statColW / 2), currentY + 6, { align: 'center', maxWidth: statColW - 5 });
+        });
+        currentY += 10;
+        for (let i = 0; i < 4; i++) {
+            doc.rect(margin + (statColW * i), currentY, statColW, 8);
+        }
+        currentY += 12;
+
+        // Observations
+        doc.setFont('helvetica', 'bold');
+        doc.rect(margin, currentY, contentWidth, 5);
+        doc.text('observaciones', margin + (contentWidth / 2), currentY + 4, { align: 'center' });
+        currentY += 5;
+        doc.rect(margin, currentY, contentWidth, 20);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.text(data.observations || '', margin + 2, currentY + 5, { maxWidth: contentWidth - 4 });
+        currentY += 30;
+
+        // Signatures
+        const sigW = 50;
+        const sigSpacing = (contentWidth - (sigW * 3)) / 2;
+        doc.line(margin, currentY, margin + sigW, currentY);
+        doc.setFontSize(7);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Nombre y firma del coordinador de tutoría de Departamento Académico', margin + (sigW / 2), currentY + 5, { align: 'center', maxWidth: sigW });
+
+        doc.line(margin + sigW + sigSpacing, currentY, margin + (sigW * 2) + sigSpacing, currentY);
+        doc.text('Nombre y firma del Jefe de Departamento Académico', margin + sigW + sigSpacing + (sigW / 2), currentY + 5, { align: 'center', maxWidth: sigW });
+
+        const tutorSigX = margin + (sigW * 2) + (sigSpacing * 2);
+        doc.line(tutorSigX, currentY, tutorSigX + sigW, currentY);
+        doc.text('Nombre y firma del Tutor', tutorSigX + (sigW / 2), currentY + 5, { align: 'center', maxWidth: sigW });
+
+        doc.save(`${mainTitle.replace(/\s+/g, '_')}_Grupo_${data.groupNum}_${data.tutorName.replace(/\s+/g, '_')}.pdf`);
+
+    } catch (error) {
+        console.error('Error al generar el reporte grupal:', error);
+        alert('Error al generar el PDF del grupo.');
+    }
+};
+
+export const generateGroupSemesterReport = (data) => {
+    generateGroupReportBase(data, 'reporte semestral por grupo del tutor');
+};
+
+export const generateDetailedGroupReport = (data) => {
+    generateGroupReportBase(data, 'reporte detallado por grupo del tutor');
+};
