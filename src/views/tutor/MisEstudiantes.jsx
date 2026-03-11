@@ -48,17 +48,7 @@ const MisEstudiantes = () => {
             };
         }
 
-        // 2. Pendiente: Unread incident + Not contacted yet
-        if (studentIncidencias.length > 0) {
-            return {
-                label: 'Pendiente',
-                type: 'pendiente',
-                color: 'text-orange-600 bg-orange-50',
-                icon: AlertCircle
-            };
-        }
-
-        // 3. Regular: No unread incidents
+        // 2. Regular: No unread incidents or not contacted yet
         return {
             label: 'Regular',
             type: 'regular',
@@ -95,7 +85,6 @@ const MisEstudiantes = () => {
                 {[
                     { id: 'all', label: 'Todos', color: 'bg-navy/5 text-navy border-navy/10' },
                     { id: 'regular', label: 'Regular', color: 'bg-green-50 text-green-600 border-green-100' },
-                    { id: 'pendiente', label: 'Pendiente', color: 'bg-orange-50 text-orange-600 border-orange-100' },
                     { id: 'atendiendo', label: 'Atendiendo', color: 'bg-blue-50 text-blue-600 border-blue-100' },
                 ].map((f) => (
                     <button

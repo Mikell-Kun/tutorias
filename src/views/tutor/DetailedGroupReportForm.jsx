@@ -120,20 +120,30 @@ const DetailedGroupReportForm = () => {
     };
 
     useEffect(() => {
-        // Sync total students and recalculate percentage
-        const total = formData.students.length;
-        const channeled = formData.groupTutoring.channeledCount;
-        const percentage = total > 0 ? ((channeled / total) * 100).toFixed(2) : 0;
+        // Sync Group Tutoring
+        const totalG = formData.students.length;
+        const channeledG = formData.groupTutoring.channeledCount;
+        const percentageG = totalG > 0 ? ((channeledG / totalG) * 100).toFixed(2) : 0;
+
+        // Sync Individual Tutoring
+        const totalI = formData.individualTutoring.totalStudents;
+        const channeledI = formData.individualTutoring.channeledCount;
+        const percentageI = totalI > 0 ? ((channeledI / totalI) * 100).toFixed(2) : 0;
 
         setFormData(prev => ({
             ...prev,
             groupTutoring: {
                 ...prev.groupTutoring,
-                totalStudents: total,
-                resultPercentage: percentage
+                totalStudents: totalG,
+                resultPercentage: percentageG
+            },
+            individualTutoring: {
+                ...prev.individualTutoring,
+                resultPercentage: percentageI
             }
         }));
-    }, [formData.students.length, formData.groupTutoring.channeledCount]);
+    }, [formData.students.length, formData.groupTutoring.channeledCount, formData.individualTutoring.totalStudents, formData.individualTutoring.channeledCount]);
+
 
     return (
         <div className="p-8 space-y-8 animate-in fade-in duration-500">
@@ -344,8 +354,65 @@ const DetailedGroupReportForm = () => {
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Individual Tutoring Section */}
+                            <div className="p-5 bg-gold/5 rounded-3xl border border-gold/10">
+                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-gold mb-4 flex items-center gap-2">
+                                    <BarChart size={14} /> Tutoría Individual
+                                </h4>
+                                <div className="space-y-4">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-gold/60">Alumnos Evaluados Individualmente</label>
+                                        <input
+                                            type="number"
+                                            value={formData.individualTutoring.totalStudents}
+                                            onChange={(e) => setFormData({
+                                                ...formData,
+                                                individualTutoring: { ...formData.individualTutoring, totalStudents: parseInt(e.target.value) || 0 }
+                                            })}
+                                            className="w-full px-4 py-2 bg-white border-2 border-transparent rounded-xl font-bold text-navy focus:border-gold shadow-sm transition-all text-sm"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-gold/60">Estudiantes Canalizados</label>
+                                        <input
+                                            type="number"
+                                            value={formData.individualTutoring.channeledCount}
+                                            onChange={(e) => setFormData({
+                                                ...formData,
+                                                individualTutoring: { ...formData.individualTutoring, channeledCount: parseInt(e.target.value) || 0 }
+                                            })}
+                                            className="w-full px-4 py-2 bg-white border-2 border-transparent rounded-xl font-bold text-navy focus:border-gold shadow-sm transition-all text-sm"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-gold/60">Área Mayor Canalización</label>
+                                        <select
+                                            value={formData.individualTutoring.topArea}
+                                            onChange={(e) => setFormData({
+                                                ...formData,
+                                                individualTutoring: { ...formData.individualTutoring, topArea: e.target.value }
+                                            })}
+                                            className="w-full px-4 py-2 bg-white border-2 border-transparent rounded-xl font-bold text-navy focus:border-gold shadow-sm transition-all text-sm font-sans"
+                                        >
+                                            <option value="">Seleccionar Area</option>
+                                            {supportAreas.map(a => <option key={a.value} value={a.value}>{a.label}</option>)}
+                                        </select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-gold/60">Resultado (% Total)</label>
+                                        <input
+                                            type="text"
+                                            readOnly
+                                            value={`${formData.individualTutoring.resultPercentage}%`}
+                                            className="w-full px-4 py-2 bg-white/50 border-2 border-transparent rounded-xl font-bold text-navy shadow-sm transition-all cursor-not-allowed text-sm"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </Card>
+
 
                     <Card title="Observaciones" subtitle="Notas del seguimiento detallado">
                         <textarea

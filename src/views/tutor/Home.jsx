@@ -44,9 +44,6 @@ const TutorHome = () => {
         if (studentIncidencias.length > 0 && tutorContact) {
             return { label: 'Atendiendo', color: 'bg-blue-50 text-blue-600 border-blue-100' };
         }
-        if (studentIncidencias.length > 0) {
-            return { label: 'Pendiente', color: 'bg-orange-50 text-orange-600 border-orange-100' };
-        }
         return { label: 'Regular', color: 'bg-green-50 text-green-600 border-green-100' };
     };
 

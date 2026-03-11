@@ -21,6 +21,8 @@ import StudentSemesterReportForm from './views/tutor/StudentSemesterReportForm.j
 import DetailedStudentReportForm from './views/tutor/DetailedStudentReportForm.jsx';
 import IncidenceSemesterReportForm from './views/tutor/IncidenceSemesterReportForm.jsx';
 import DetailedIncidenceReportForm from './views/tutor/DetailedIncidenceReportForm.jsx';
+import DocumentacionReportes from './views/tutor/DocumentacionReportes.jsx';
+
 
 function App() {
   const { user, loading } = useUser();
@@ -56,6 +58,8 @@ function App() {
           <Route path="reporte-detallado-alumno" element={<DetailedStudentReportForm />} />
           <Route path="reporte-incidencia" element={<IncidenceSemesterReportForm />} />
           <Route path="reporte-detallado-incidencia" element={<DetailedIncidenceReportForm />} />
+          <Route path="reportes/documentacion" element={<DocumentacionReportes />} />
+
           <Route path="incidencias" element={<TutorIncidencias />} />
           <Route path="reportar-incidencia" element={<ReportarIncidencia />} />
           <Route path="students" element={

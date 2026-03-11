@@ -290,19 +290,43 @@ const generateGroupReportBase = (data, mainTitle) => {
         });
         currentY += 12;
 
-        // Individual Stats (Placeholder)
-        const indHeaders = ['tutoria individual', 'estudiantes canalizados', 'area con mayor canalizacion', 'Resultado (porcentaje total)'];
+        // Individual Stats
+        const indHeaders = ['tutoria individual', 'estudiantes evaluados individualmente', 'estudiantes canalizados', 'area mayor canalizacion', 'Resultado (porcentaje total)'];
+        const indColW = contentWidth / 5;
         indHeaders.forEach((h, i) => {
-            doc.rect(margin + (statColW * i), currentY, statColW, 10);
+            doc.rect(margin + (indColW * i), currentY, indColW, 10);
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(7);
-            doc.text(h, margin + (statColW * i) + (statColW / 2), currentY + 6, { align: 'center', maxWidth: statColW - 5 });
+            doc.text(h, margin + (indColW * i) + (indColW / 2), currentY + 6, { align: 'center', maxWidth: indColW - 5 });
         });
         currentY += 10;
-        for (let i = 0; i < 4; i++) {
-            doc.rect(margin + (statColW * i), currentY, statColW, 8);
-        }
+        
+        const indRow = [
+            data.individualTutoring.totalStudents,
+            data.individualTutoring.totalStudents, // Same for now as per logic
+            data.individualTutoring.channeledCount,
+            data.individualTutoring.topArea,
+            `${data.individualTutoring.resultPercentage}%`
+        ];
+        // Note: The user requested "cuantos alumnos se evaluaron individualmente" and "cuantos fueron atendidos"
+        // In my current state I have: totalStudents, channeledCount, topArea, resultPercentage.
+        // I will map them as logically as possible to the 5 columns (Header, Total, Channeled, Area, %).
+        
+        const indValues = [
+            'Individual',
+            data.individualTutoring.totalStudents,
+            data.individualTutoring.channeledCount,
+            data.individualTutoring.topArea,
+            `${data.individualTutoring.resultPercentage}%`
+        ];
+
+        indValues.forEach((v, i) => {
+            doc.rect(margin + (indColW * i), currentY, indColW, 8);
+            doc.setFont('helvetica', 'normal');
+            doc.text(String(v), margin + (indColW * i) + (indColW / 2), currentY + 5.5, { align: 'center' });
+        });
         currentY += 12;
+
 
         // Observations
         doc.setFont('helvetica', 'bold');

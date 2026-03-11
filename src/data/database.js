@@ -170,22 +170,7 @@ const STORAGE_KEY_INCIDENCIAS = 'tutorias_incidencias_db';
 const STORAGE_KEY_MENSAJES = 'tutorias_mensajes_db';
 
 // Initial data for incidences (pre-populated)
-const initialIncidencias = [
-    {
-        id: 1,
-        estudiante_n_control: 20491198, // Juan Perez
-        estudiante_nombre: 'Juan Pérez García',
-        estudiante_carrera: 'Ingeniería en Sistemas Computacionales',
-        tipo: 'Retardos o ausencias injustificadas',
-        descripcion: 'Acumuló 6 inasistencias sin justificar',
-        materia_codigo: 'SCD-1008',
-        materia_nombre: 'Fundamentos de Programación',
-        docente_nombre: 'Ana Martinez Hernandez',
-        fecha_hora: '27 de enero de 2026, 10:04 a.m.',
-        tutor_id: 20202020,
-        leida: false
-    }
-];
+const initialIncidencias = [];
 
 // Helper to load from storage or use defaults
 const getPersistentData = (key, fallback) => {

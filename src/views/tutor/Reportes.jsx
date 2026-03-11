@@ -96,17 +96,17 @@ const TutorReportes = () => {
             </div>
 
             {/* Selection Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {reportTypes.map((type, idx) => (
                     <motion.div
                         key={idx}
                         whileHover={{ y: -5 }}
                         className="group"
                     >
-                        <Card className="h-full border-none shadow-sm hover:shadow-xl transition-all duration-300 relative overflow-hidden">
-                            <div className="relative z-10 flex flex-col h-full">
+                        <Card className="h-full border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-500 relative overflow-hidden bg-white/50 backdrop-blur-sm">
+                            <div className="relative z-10 flex flex-col h-full p-2">
                                 <div className="flex justify-between items-start mb-6">
-                                    <div className={`p-4 rounded-2xl ${type.color}`}>
+                                    <div className={`p-4 rounded-2xl ${type.color} shadow-inner`}>
                                         <type.icon size={28} />
                                     </div>
                                     <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] ${type.color} border border-current opacity-70`}>
@@ -114,138 +114,154 @@ const TutorReportes = () => {
                                     </span>
                                 </div>
 
-                                <h3 className="text-xl font-black text-navy uppercase tracking-tight mb-2 group-hover:text-gold transition-colors">
+                                <h3 className="text-2xl font-black text-navy uppercase tracking-tight mb-2 group-hover:text-gold transition-colors" style={{ fontFamily: '"Microsoft YaHei UI", sans-serif' }}>
                                     {type.title}
                                 </h3>
                                 <p className="text-sm text-text-muted font-medium mb-8 flex-1">
                                     {type.description}
                                 </p>
 
-                                {type.subOptions ? (
-                                    <div className="grid grid-cols-1 gap-2 mt-4">
+                                {type.subOptions && (
+                                    <div className="flex flex-col gap-4 mt-6">
                                         {type.subOptions.map((opt, i) => (
                                             <button
                                                 key={i}
                                                 onClick={opt.action}
-                                                className="flex items-center justify-between px-4 py-2.5 bg-navy border border-navy/10 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-white hover:bg-gold hover:text-navy hover:border-gold transition-all group/opt shadow-sm"
+                                                className="group/opt flex items-center justify-between text-left transition-all duration-300 w-full"
+                                                style={{ 
+                                                    fontFamily: '"Microsoft YaHei UI", sans-serif',
+                                                }}
                                             >
-                                                {opt.label}
-                                                <ArrowRight size={12} className="opacity-0 group-hover/opt:opacity-100 transition-opacity" />
+                                                <span className="text-sm font-bold uppercase tracking-widest text-[#B0C4DE] border-b border-[#B0C4DE]/30 group-hover/opt:text-blue-600 group-hover/opt:border-blue-600 transition-all duration-300 pb-1">
+                                                    {opt.label}
+                                                </span>
+                                                <ArrowRight size={14} className="text-[#B0C4DE] group-hover/opt:text-blue-600 transition-all transform translate-x-[-10px] group-hover/opt:translate-x-0 opacity-0 group-hover/opt:opacity-100" />
                                             </button>
                                         ))}
                                     </div>
-                                ) : (
-                                    <button
-                                        onClick={type.action}
-                                        className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-navy/40 group-hover:text-gold transition-colors mt-auto"
-                                    >
-                                        Comenzar <ArrowRight size={14} />
-                                    </button>
                                 )}
                             </div>
 
                             {/* Decorative background element */}
-                            <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity transform group-hover:scale-110 duration-500">
-                                <type.icon size={120} />
+                            <div className="absolute -right-8 -bottom-8 opacity-[0.03] group-hover:opacity-[0.08] transition-all transform group-hover:scale-110 group-hover:-rotate-12 duration-700">
+                                <type.icon size={180} />
                             </div>
                         </Card>
                     </motion.div>
                 ))}
+            </div>
 
-                {/* Help Section */}
-                <div className="p-8 bg-gold rounded-[2rem] text-navy h-full flex flex-col justify-center shadow-sm">
-                    <h4 className="font-black uppercase tracking-tighter text-2xl mb-2">¿Necesitas ayuda?</h4>
-                    <p className="text-navy/70 text-sm font-bold mb-6">Consulta la guía de generación de reportes institucionales.</p>
-                    <button className="w-full py-3 bg-navy text-white font-black rounded-xl uppercase tracking-widest text-[10px] hover:bg-navy/90 transition-colors shadow-lg shadow-navy/20">
-                        Ver Documentación
-                    </button>
+            {/* usage Guide Section - Lighter design */}
+            <div className="p-8 bg-slate-50/50 border border-slate-100 rounded-[2rem] text-navy">
+                <div className="flex flex-col md:flex-row items-center gap-8">
+                    <div className="p-6 bg-white rounded-2xl shadow-sm">
+                        <PieChart size={48} className="text-gold" />
+                    </div>
+                    <div className="flex-1 space-y-2">
+                        <h4 className="font-black uppercase tracking-tight text-xl" style={{ fontFamily: '"Microsoft YaHei UI", sans-serif' }}>Guía de Uso de Formatos</h4>
+                        <p className="text-text-muted text-sm font-medium max-w-2xl">
+                            Utiliza los <span className="text-navy font-bold">Reportes Generales</span> para obtener una visión global del grupo o canalizaciones activas. 
+                            Los <span className="text-navy font-bold">Reportes Específicos</span> permiten profundizar en el seguimiento individual de cada alumno o por tipo de incidencia académica detectada.
+                        </p>
+                        <button 
+                            onClick={() => navigate('/reportes/documentacion')}
+                            className="px-6 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl font-bold text-[10px] tracking-widest hover:bg-slate-50 hover:border-slate-300 transition-all uppercase"
+                        >
+                            Documentación Completa
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            {/* Quick Actions / Recent Reports */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-4">
-                <div className="lg:col-span-2">
-                    <Card title="Reportes Generados Recientemente" subtitle="Acceso rápido a los últimos informes descargados">
-                        {history.length > 0 ? (
-                            <div className="mt-6 overflow-hidden rounded-2xl border border-gray-100">
-                                <table className="w-full text-left border-collapse">
-                                    <thead>
-                                        <tr className="bg-gray-50/50 text-[10px] font-black uppercase tracking-widest text-navy/40 border-b border-gray-100">
-                                            <th className="px-6 py-4">Fecha</th>
-                                            <th className="px-6 py-4">Reporte</th>
-                                            <th className="px-6 py-4">Tipo</th>
-                                            <th className="px-6 py-4">Autor</th>
-                                            <th className="px-6 py-4 text-right">Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-50">
-                                        <AnimatePresence mode="popLayout">
-                                            {history.map((entry) => (
-                                                <motion.tr
-                                                    key={entry.id}
-                                                    layout
-                                                    initial={{ opacity: 0, x: -20 }}
-                                                    animate={{ opacity: 1, x: 0 }}
-                                                    exit={{ opacity: 0, scale: 0.95 }}
-                                                    className="hover:bg-gray-50/50 transition-colors group"
-                                                >
-                                                    <td className="px-6 py-4 text-[11px] font-bold text-navy/60">{entry.dateFormatted}</td>
-                                                    <td className="px-6 py-4 text-xs font-black text-navy uppercase tracking-tight">{entry.title}</td>
-                                                    <td className="px-6 py-4">
-                                                        <span className={`px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${entry.type === 'General' ? 'bg-navy/5 text-navy' : 'bg-gold/10 text-gold'}`}>
-                                                            {entry.type}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-6 py-4 text-[11px] font-bold text-navy/40">{entry.author}</td>
-                                                    <td className="px-6 py-4 text-right">
-                                                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                            {entry.data ? (
-                                                                <>
-                                                                    <button
-                                                                        onClick={() => handleDownload(entry)}
-                                                                        className="p-2 text-navy/40 hover:text-navy hover:bg-navy/5 rounded-lg transition-all"
-                                                                        title="Ver/Descargar"
-                                                                    >
-                                                                        <Download size={14} />
-                                                                    </button>
-                                                                    {String(entry.authorId) === String(user?.id_tutor || user?.n_control) && (
-                                                                        <button
-                                                                            onClick={() => handleEdit(entry)}
-                                                                            className="p-2 text-navy/40 hover:text-gold hover:bg-gold/10 rounded-lg transition-all"
-                                                                            title="Editar Datos"
-                                                                        >
-                                                                            <Edit2 size={14} />
-                                                                        </button>
-                                                                    )}
-                                                                </>
-                                                            ) : (
-                                                                <span className="text-[9px] font-bold text-navy/20 italic px-2">Datos no disponibles (Historial antiguo)</span>
-                                                            )}
-                                                            {(String(entry.authorId) === String(user?.id_tutor || user?.n_control) || !entry.authorId) && (
+            {/* Quick Actions / Recent Reports - Full Width */}
+            <div className="mt-4">
+                <Card title="Reportes Generados Recientemente" subtitle="Acceso rápido a los últimos informes descargados">
+                    {history.length > 0 ? (
+                        <div className="mt-6 overflow-hidden rounded-2xl border border-gray-100 shadow-sm bg-white">
+                            <table className="w-full text-left border-collapse">
+                                <thead>
+                                    <tr className="bg-gray-50/50 text-[10px] font-black uppercase tracking-widest text-navy/40 border-b border-gray-100">
+                                        <th className="px-8 py-5">Fecha</th>
+                                        <th className="px-8 py-5">Reporte</th>
+                                        <th className="px-8 py-5">Tipo</th>
+                                        <th className="px-8 py-5">Autor</th>
+                                        <th className="px-8 py-5 text-right">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-50">
+                                    <AnimatePresence mode="popLayout">
+                                        {history.map((entry) => (
+                                            <motion.tr
+                                                key={entry.id}
+                                                layout
+                                                initial={{ opacity: 0, x: -20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                exit={{ opacity: 0, scale: 0.95 }}
+                                                className="hover:bg-blue-50/30 transition-colors group"
+                                            >
+                                                <td className="px-8 py-5 text-[11px] font-bold text-navy/60">{entry.dateFormatted}</td>
+                                                <td className="px-8 py-5 text-xs font-black text-navy uppercase tracking-tight">
+                                                    <div className="flex items-center gap-3">
+                                                        <FileText size={14} className="text-gold opacity-50" />
+                                                        {entry.title}
+                                                    </div>
+                                                </td>
+                                                <td className="px-8 py-5">
+                                                    <span className={`px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${entry.type === 'General' ? 'bg-navy/5 text-navy' : 'bg-gold/10 text-gold'}`}>
+                                                        {entry.type}
+                                                    </span>
+                                                </td>
+                                                <td className="px-8 py-5 text-[11px] font-bold text-navy/40">{entry.author}</td>
+                                                <td className="px-8 py-5 text-right">
+                                                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                                                        {entry.data ? (
+                                                            <>
                                                                 <button
-                                                                    onClick={() => handleDelete(entry.id)}
-                                                                    className="p-2 text-navy/20 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
-                                                                    title="Eliminar del Historial"
+                                                                    onClick={() => handleDownload(entry)}
+                                                                    className="p-2.5 text-navy/40 hover:text-navy hover:bg-navy/5 rounded-xl transition-all"
+                                                                    title="Ver/Descargar"
                                                                 >
-                                                                    <Trash2 size={14} />
+                                                                    <Download size={16} />
                                                                 </button>
-                                                            )}
-                                                        </div>
-                                                    </td>
-                                                </motion.tr>
-                                            ))}
-                                        </AnimatePresence>
-                                    </tbody>
-                                </table>
+                                                                {String(entry.authorId) === String(user?.id_tutor || user?.n_control) && (
+                                                                    <button
+                                                                        onClick={() => handleEdit(entry)}
+                                                                        className="p-2.5 text-navy/40 hover:text-gold hover:bg-gold/10 rounded-xl transition-all"
+                                                                        title="Editar Datos"
+                                                                    >
+                                                                        <Edit2 size={16} />
+                                                                    </button>
+                                                                )}
+                                                            </>
+                                                        ) : (
+                                                            <span className="text-[9px] font-bold text-navy/20 italic px-2">Datos no disponibles</span>
+                                                        )}
+                                                        {(String(entry.authorId) === String(user?.id_tutor || user?.n_control) || !entry.authorId) && (
+                                                            <button
+                                                                onClick={() => handleDelete(entry.id)}
+                                                                className="p-2.5 text-navy/20 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                                                                title="Eliminar del Historial"
+                                                            >
+                                                                <Trash2 size={16} />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                            </motion.tr>
+                                        ))}
+                                    </AnimatePresence>
+                                </tbody>
+                            </table>
+                        </div>
+                    ) : (
+                        <div className="mt-8 py-20 text-center border-2 border-dashed border-gray-100 rounded-[3rem] bg-gray-50/30">
+                            <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+                                <FileText size={40} className="text-navy/10" />
                             </div>
-                        ) : (
-                            <div className="mt-8 py-16 text-center border-2 border-dashed border-gray-100 rounded-[2rem]">
-                                <FileText size={48} className="mx-auto text-navy/10 mb-4" />
-                                <p className="text-navy/30 font-bold uppercase tracking-widest text-xs">No hay reportes recientes para mostrar</p>
-                            </div>
-                        )}
-                    </Card>
-                </div>
+                            <p className="text-navy/30 font-black uppercase tracking-[0.2em] text-xs">Sin actividad reciente de reportes</p>
+                        </div>
+                    )}
+                </Card>
             </div>
         </div>
     );
