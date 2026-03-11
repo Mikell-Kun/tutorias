@@ -53,7 +53,7 @@ export const Estudiantes = [
         nombre_completo: 'Jesus Alejandro Hernandez Lopez',
         fecha_nacimiento: '2000-04-20',
         telefono: '686-123-4567',
-        carrera: 'Ingeniería en Sistemas computacionales',
+        carrera: 'Ingenieria en quimica',
         semestre: '2to Semestre',
         estatus: 'Regular',
         rol: 'estudiante',
@@ -107,6 +107,7 @@ export const Tutores = [
         nombre_completo: 'Roberto Mendez Mendoza',
         telefono: '686-333-4455',
         rol: 'tutor',
+        departamento: 'Sistemas y Computación',
         correo: 'roberto.mendez@itmexicali.edu.mx'
     },
     {
@@ -114,6 +115,7 @@ export const Tutores = [
         nombre_completo: 'Laura Garcia Lopez',
         telefono: '686-555-6677',
         rol: 'tutor',
+        departamento: 'Química',
         correo: 'laura.garcia@itmexicali.edu.mx'
     }
 ];

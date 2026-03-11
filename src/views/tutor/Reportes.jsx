@@ -8,7 +8,11 @@ import { Estudiantes } from '../../data/database.js';
 import {
     generateGroupSemesterReport,
     generateDetailedGroupReport,
-    generateReferralReport
+    generateReferralReport,
+    generateStudentSemesterReport,
+    generateDetailedStudentReport,
+    generateIncidenceSemesterReport,
+    generateDetailedIncidenceReport
 } from '../../utils/reportGenerator.js';
 import { getReportHistory, deleteReportEntry } from '../../utils/reportHistory.js';
 
@@ -27,6 +31,10 @@ const TutorReportes = () => {
         if (entry.reportType === 'semester') generateGroupSemesterReport(entry.data);
         if (entry.reportType === 'detailed') generateDetailedGroupReport(entry.data);
         if (entry.reportType === 'referral') generateReferralReport(entry.data);
+        if (entry.reportType === 'student_semester') generateStudentSemesterReport(entry.data);
+        if (entry.reportType === 'student_detailed') generateDetailedStudentReport(entry.data);
+        if (entry.reportType === 'incidence_semester') generateIncidenceSemesterReport(entry.data);
+        if (entry.reportType === 'incidence_detailed') generateDetailedIncidenceReport(entry.data);
     };
 
     const handleEdit = (entry) => {
@@ -34,6 +42,10 @@ const TutorReportes = () => {
         let route = '/reporte-grupal';
         if (entry.reportType === 'detailed') route = '/reporte-detallado';
         if (entry.reportType === 'referral') route = '/reporte-canalizaciones';
+        if (entry.reportType === 'student_semester') route = '/reporte-alumno';
+        if (entry.reportType === 'student_detailed') route = '/reporte-detallado-alumno';
+        if (entry.reportType === 'incidence_semester') route = '/reporte-incidencia';
+        if (entry.reportType === 'incidence_detailed') route = '/reporte-detallado-incidencia';
         navigate(route, { state: { editData: entry.data } });
     };
 
@@ -62,10 +74,10 @@ const TutorReportes = () => {
             color: 'bg-gold/10 text-gold',
             badge: 'Nuevo',
             subOptions: [
-                { label: 'Semestral por Alumno', action: () => { } },
-                { label: 'Detallado por Alumno', action: () => { } },
-                { label: 'Semestral por Incidencia', action: () => { } },
-                { label: 'Detallado por Incidencia', action: () => { } },
+                { label: 'Semestral por Alumno', action: () => navigate('/reporte-alumno') },
+                { label: 'Detallado por Alumno', action: () => navigate('/reporte-detallado-alumno') },
+                { label: 'Semestral por Incidencia', action: () => navigate('/reporte-incidencia') },
+                { label: 'Detallado por Incidencia', action: () => navigate('/reporte-detallado-incidencia') },
             ]
         },
     ];

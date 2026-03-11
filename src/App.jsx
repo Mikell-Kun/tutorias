@@ -17,6 +17,10 @@ import TutorReportes from './views/tutor/Reportes.jsx';
 import SemesterGroupReportForm from './views/tutor/SemesterGroupReportForm.jsx';
 import DetailedGroupReportForm from './views/tutor/DetailedGroupReportForm.jsx';
 import ReferralReportForm from './views/tutor/ReferralReportForm.jsx';
+import StudentSemesterReportForm from './views/tutor/StudentSemesterReportForm.jsx';
+import DetailedStudentReportForm from './views/tutor/DetailedStudentReportForm.jsx';
+import IncidenceSemesterReportForm from './views/tutor/IncidenceSemesterReportForm.jsx';
+import DetailedIncidenceReportForm from './views/tutor/DetailedIncidenceReportForm.jsx';
 
 function App() {
   const { user, loading } = useUser();
@@ -48,6 +52,10 @@ function App() {
           <Route path="reporte-grupal" element={<SemesterGroupReportForm />} />
           <Route path="reporte-detallado" element={<DetailedGroupReportForm />} />
           <Route path="reporte-canalizaciones" element={<ReferralReportForm />} />
+          <Route path="reporte-alumno" element={<StudentSemesterReportForm />} />
+          <Route path="reporte-detallado-alumno" element={<DetailedStudentReportForm />} />
+          <Route path="reporte-incidencia" element={<IncidenceSemesterReportForm />} />
+          <Route path="reporte-detallado-incidencia" element={<DetailedIncidenceReportForm />} />
           <Route path="incidencias" element={<TutorIncidencias />} />
           <Route path="reportar-incidencia" element={<ReportarIncidencia />} />
           <Route path="students" element={

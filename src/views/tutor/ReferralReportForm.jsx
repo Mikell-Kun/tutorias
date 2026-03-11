@@ -14,7 +14,7 @@ const ReferralReportForm = () => {
 
     const [formData, setFormData] = useState({
         tutorName: user?.nombre_completo || '',
-        academicDept: 'Sistemas y Computación',
+        academicDept: user?.departamento || '',
         period: '',
         program: '',
         groupNum: '',

@@ -216,7 +216,7 @@ const generateGroupReportBase = (data, mainTitle) => {
         const col3W = contentWidth * 0.5;
 
         drawFormGrid(margin, currentY, col1W, 10, 'nombre del tutor/a', data.tutorName);
-        drawFormGrid(margin + col1W, currentY, col2W, 10, 'departamento academico', '');
+        drawFormGrid(margin + col1W, currentY, col2W, 10, 'departamento academico', data.academicDept || '');
         drawFormGrid(margin + col1W + col2W, currentY, col3W, 10, 'Periodo', data.period);
         currentY += 10;
 
@@ -520,4 +520,535 @@ export const generateReferralReport = (data) => {
     doc.text('Nombre y firma del Tutor', 105, signatureBottomY + 4, { align: 'center' });
 
     doc.save(`reporte_canalizaciones_${data.groupNum || 'tutor'}.pdf`);
+};
+
+/**
+ * Generates the "Reporte Semestral por Alumno"
+ */
+export const generateStudentSemesterReport = (data) => {
+    try {
+        const doc = new jsPDF();
+        const margin = 10;
+        const pageWidth = 210;
+        const contentWidth = pageWidth - (margin * 2);
+
+        // Header Table Helper
+        const drawFormGrid = (x, y, w, h, label, value = '', isTitle = false) => {
+            doc.rect(x, y, w, h);
+            if (isTitle) {
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'bold');
+                doc.text(label.toUpperCase(), x + (w / 2), y + (h / 2) + 1.5, { align: 'center' });
+            } else {
+                doc.setFontSize(8);
+                doc.setFont('helvetica', 'bold');
+                doc.text(label, x + 1, y + 3.5);
+                if (value) {
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(9);
+                    doc.text(String(value), x + 1, y + (h - 2));
+                }
+            }
+        };
+
+        let currentY = 15;
+
+        // Header Section
+        drawFormGrid(margin, currentY, contentWidth, 8, 'reporte semestral por alumno del tutor', '', true);
+        currentY += 8;
+        drawFormGrid(margin, currentY, contentWidth, 8, 'Instituto tecnologico', '', true);
+        currentY += 8;
+
+        // Row 3: Tutor Name, Period
+        const halfWidth = contentWidth / 2;
+        drawFormGrid(margin, currentY, halfWidth, 10, 'Nombre del tutor/a', data.tutorName);
+        drawFormGrid(margin + halfWidth, currentY, halfWidth, 10, 'periodo', data.period);
+        currentY += 10;
+
+        // Row 4: Dept, Dates
+        const thirdWidth = contentWidth / 3;
+        drawFormGrid(margin, currentY, thirdWidth, 10, 'departamento academico', data.academicDept);
+        drawFormGrid(margin + thirdWidth, currentY, thirdWidth, 10, 'fecha inicio', data.startDate);
+        drawFormGrid(margin + (thirdWidth * 2), currentY, thirdWidth, 10, 'fecha final', data.endDate);
+        currentY += 10;
+
+        // Row 5: Student Info
+        const quarterWidth = contentWidth / 4;
+        drawFormGrid(margin, currentY, quarterWidth, 10, 'nombre del alumno/a', data.studentName);
+        drawFormGrid(margin + quarterWidth, currentY, quarterWidth, 10, 'matricula', data.controlNumber);
+        drawFormGrid(margin + (quarterWidth * 2), currentY, quarterWidth, 10, 'carrera', data.career);
+        drawFormGrid(margin + (quarterWidth * 3), currentY, quarterWidth, 10, 'semestre', data.semester);
+        currentY += 15;
+
+        // Sessions Table
+        const sessionsData = data.sessions.map((s, i) => [
+            s.number || `sesion ${i + 1}`,
+            s.area || '-',
+            s.supportType || '-',
+            s.date || '-'
+        ]);
+
+        // Fill empty rows to maintain layout (at least 10)
+        while (sessionsData.length < 10) {
+            sessionsData.push(['-', '-', '-', '-']);
+        }
+
+        autoTable(doc, {
+            startY: currentY,
+            head: [['no. sesion', 'area canalizada', 'tipo de apoyo', 'fecha de atencion']],
+            body: sessionsData,
+            theme: 'grid',
+            styles: { fontSize: 8, cellPadding: 2, halign: 'center' },
+            headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
+            margin: { left: margin }
+        });
+
+        currentY = doc.lastAutoTable.finalY + 10;
+
+        // Summary Stats Row
+        const statColW = contentWidth / 3;
+        const statsLabels = ['sesiones en total', 'area con mayor canalizacion', 'Resultado (porcentaje total)'];
+        statsLabels.forEach((label, i) => {
+            drawFormGrid(margin + (statColW * i), currentY, statColW, 8, label, '', false);
+        });
+        currentY += 8;
+
+        const statsValues = [
+            data.totalSessions || '0',
+            data.topArea || '-',
+            `${data.resultPercentage || '0'}%`
+        ];
+        statsValues.forEach((val, i) => {
+            doc.rect(margin + (statColW * i), currentY, statColW, 10);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.text(String(val), margin + (statColW * i) + (statColW / 2), currentY + 6, { align: 'center' });
+        });
+        currentY += 15;
+
+        // Observations
+        drawFormGrid(margin, currentY, contentWidth, 8, 'observaciones', '', false);
+        currentY += 8;
+        doc.rect(margin, currentY, contentWidth, 25);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.text(data.observations || '', margin + 2, currentY + 6, { maxWidth: contentWidth - 4 });
+        currentY += 40;
+
+        // Signatures
+        const sigW = 60;
+        const sigY = currentY;
+        const spacing = (contentWidth - (sigW * 3)) / 2;
+
+        doc.line(margin, sigY, margin + sigW, sigY);
+        doc.setFontSize(7);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Nombre y firma del coordinador de tutoría de Departamento Académico', margin + (sigW / 2), sigY + 5, { align: 'center', maxWidth: sigW });
+
+        doc.line(margin + sigW + spacing, sigY, margin + (sigW * 2) + spacing, sigY);
+        doc.text('Nombre y firma del Jefe de Departamento Académico', margin + sigW + spacing + (sigW / 2), sigY + 5, { align: 'center', maxWidth: sigW });
+
+        doc.line(margin + (sigW * 2) + (spacing * 2), sigY, margin + (sigW * 3) + (spacing * 2), sigY);
+        doc.text('Nombre y firma del Tutor', margin + (sigW * 2) + (spacing * 2) + (sigW / 2), sigY + 5, { align: 'center', maxWidth: sigW });
+
+        doc.save(`Reporte_Semestral_Alumno_${data.studentName.replace(/\s+/g, '_')}.pdf`);
+    } catch (error) {
+        console.error('Error al generar el reporte del alumno:', error);
+        alert('Error al generar el PDF del alumno.');
+    }
+};
+
+/**
+ * Generates the "Reporte Detallado por Alumno"
+ */
+export const generateDetailedStudentReport = (data) => {
+    try {
+        const doc = new jsPDF();
+        const margin = 10;
+        const pageWidth = 210;
+        const contentWidth = pageWidth - (margin * 2);
+
+        // Header Table Helper
+        const drawFormGrid = (x, y, w, h, label, value = '', isTitle = false) => {
+            doc.rect(x, y, w, h);
+            if (isTitle) {
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'bold');
+                doc.text(label.toUpperCase(), x + (w / 2), y + (h / 2) + 1.5, { align: 'center' });
+            } else {
+                doc.setFontSize(8);
+                doc.setFont('helvetica', 'bold');
+                doc.text(label, x + 1, y + 3.5);
+                if (value) {
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(9);
+                    doc.text(String(value), x + 1, y + (h - 2));
+                }
+            }
+        };
+
+        let currentY = 15;
+
+        // Header Section
+        drawFormGrid(margin, currentY, contentWidth, 8, 'reporte detallado por alumno del tutor', '', true);
+        currentY += 8;
+        drawFormGrid(margin, currentY, contentWidth, 8, 'Instituto tecnologico', '', true);
+        currentY += 8;
+
+        // Row 3: Tutor Name, Period
+        const halfWidth = contentWidth / 2;
+        drawFormGrid(margin, currentY, halfWidth, 10, 'Nombre del tutor/a', data.tutorName);
+        drawFormGrid(margin + halfWidth, currentY, halfWidth, 10, 'periodo', data.period);
+        currentY += 10;
+
+        // Row 4: Dept, Dates
+        const thirdWidth = contentWidth / 3;
+        drawFormGrid(margin, currentY, thirdWidth, 10, 'departamento academico', data.academicDept);
+        drawFormGrid(margin + thirdWidth, currentY, thirdWidth, 10, 'fecha inicio', data.startDate);
+        drawFormGrid(margin + (thirdWidth * 2), currentY, thirdWidth, 10, 'fecha final', data.endDate);
+        currentY += 10;
+
+        // Row 5: Student Info
+        const quarterWidth = contentWidth / 4;
+        drawFormGrid(margin, currentY, quarterWidth, 10, 'nombre del alumno/a', data.studentName);
+        drawFormGrid(margin + quarterWidth, currentY, quarterWidth, 10, 'matricula', data.controlNumber);
+        drawFormGrid(margin + (quarterWidth * 2), currentY, quarterWidth, 10, 'carrera', data.career);
+        drawFormGrid(margin + (quarterWidth * 3), currentY, quarterWidth, 10, 'semestre', data.semester);
+        currentY += 15;
+
+        // Sessions Table
+        const sessionsData = data.sessions.map((s, i) => [
+            s.number || `sesion ${i + 1}`,
+            s.area || '-',
+            s.supportType || '-',
+            s.date || '-'
+        ]);
+
+        while (sessionsData.length < 10) {
+            sessionsData.push(['-', '-', '-', '-']);
+        }
+
+        autoTable(doc, {
+            startY: currentY,
+            head: [['no. sesion', 'area canalizada', 'tipo de apoyo', 'fecha de atencion']],
+            body: sessionsData,
+            theme: 'grid',
+            styles: { fontSize: 8, cellPadding: 2, halign: 'center' },
+            headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
+            margin: { left: margin }
+        });
+
+        currentY = doc.lastAutoTable.finalY + 10;
+
+        // Summary Stats Row
+        const statColW = contentWidth / 3;
+        const statsLabels = ['sesiones en total', 'area con mayor canalizacion', 'Resultado (porcentaje total)'];
+        statsLabels.forEach((label, i) => {
+            drawFormGrid(margin + (statColW * i), currentY, statColW, 8, label, '', false);
+        });
+        currentY += 8;
+
+        const statsValues = [
+            data.totalSessions || '0',
+            data.topArea || '-',
+            `${data.resultPercentage || '0'}%`
+        ];
+        statsValues.forEach((val, i) => {
+            doc.rect(margin + (statColW * i), currentY, statColW, 10);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.text(String(val), margin + (statColW * i) + (statColW / 2), currentY + 6, { align: 'center' });
+        });
+        currentY += 15;
+
+        // Observations
+        drawFormGrid(margin, currentY, contentWidth, 8, 'observaciones', '', false);
+        currentY += 8;
+        doc.rect(margin, currentY, contentWidth, 25);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.text(data.observations || '', margin + 2, currentY + 6, { maxWidth: contentWidth - 4 });
+        currentY += 40;
+
+        // Signatures
+        const sigW = 60;
+        const sigY = currentY;
+        const spacing = (contentWidth - (sigW * 3)) / 2;
+
+        doc.line(margin, sigY, margin + sigW, sigY);
+        doc.setFontSize(7);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Nombre y firma del coordinador de tutoría de Departamento Académico', margin + (sigW / 2), sigY + 5, { align: 'center', maxWidth: sigW });
+
+        doc.line(margin + sigW + spacing, sigY, margin + (sigW * 2) + spacing, sigY);
+        doc.text('Nombre y firma del Jefe de Departamento Académico', margin + sigW + spacing + (sigW / 2), sigY + 5, { align: 'center', maxWidth: sigW });
+
+        doc.line(margin + (sigW * 2) + (spacing * 2), sigY, margin + (sigW * 3) + (spacing * 2), sigY);
+        doc.text('Nombre y firma del Tutor', margin + (sigW * 2) + (spacing * 2) + (sigW / 2), sigY + 5, { align: 'center', maxWidth: sigW });
+
+        doc.save(`Reporte_Detallado_Alumno_${data.studentName.replace(/\s+/g, '_')}.pdf`);
+    } catch (error) {
+        console.error('Error al generar el reporte detallado del alumno:', error);
+        alert('Error al generar el PDF del alumno.');
+    }
+};
+
+/**
+ * Generates the "Reporte Semestral por Tipo de Incidencia"
+ */
+export const generateIncidenceSemesterReport = (data) => {
+    try {
+        const doc = new jsPDF();
+        const margin = 10;
+        const pageWidth = 210;
+        const width = pageWidth - (margin * 2);
+
+        // Header Table Helper
+        const drawFormGrid = (x, y, w, h, label, value = '', isTitle = false) => {
+            doc.rect(x, y, w, h);
+            if (isTitle) {
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'bold');
+                doc.text(label.toUpperCase(), x + (w / 2), y + (h / 2) + 1.5, { align: 'center' });
+            } else {
+                doc.setFontSize(8);
+                doc.setFont('helvetica', 'bold');
+                doc.text(label, x + 1, y + 3.5);
+                if (value) {
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(9);
+                    doc.text(String(value), x + 1, y + (h - 2));
+                }
+            }
+        };
+
+        let currentY = 15;
+
+        // Header Section
+        drawFormGrid(margin, currentY, width, 8, 'reporte semestral por tipo de incidencia del tutor', '', true);
+        currentY += 8;
+        drawFormGrid(margin, currentY, width, 8, 'Instituto tecnologico', '', true);
+        currentY += 8;
+
+        // Row 3: Tutor Name, Period
+        const halfWidth = width / 2;
+        drawFormGrid(margin, currentY, halfWidth, 10, 'Nombre del tutor/a', data.tutorName);
+        drawFormGrid(margin + halfWidth, currentY, halfWidth, 10, 'periodo', data.period);
+        currentY += 10;
+
+        // Row 4: Dept, Dates
+        const thirdWidth = width / 3;
+        drawFormGrid(margin, currentY, thirdWidth, 10, 'departamento academico', data.academicDept);
+        drawFormGrid(margin + thirdWidth, currentY, thirdWidth, 10, 'fecha inicio', data.startDate);
+        drawFormGrid(margin + (thirdWidth * 2), currentY, thirdWidth, 10, 'fecha final', data.endDate);
+        currentY += 10;
+
+        // Row 5: Incidence & Support
+        drawFormGrid(margin, currentY, halfWidth, 10, 'tipo de incidencia', data.incidenceType);
+        drawFormGrid(margin + halfWidth, currentY, halfWidth, 10, 'apoyo que se brindo', data.supportProvided);
+        currentY += 15;
+
+        // Students Table
+        const tableBody = (data.students || []).map(std => [
+            std.name || '-',
+            std.attentionDate || '-'
+        ]);
+
+        while (tableBody.length < 15) {
+            tableBody.push(['-', '-']);
+        }
+
+        autoTable(doc, {
+            startY: currentY,
+            head: [['lista de estudiantes', 'fecha de atencion']],
+            body: tableBody,
+            theme: 'grid',
+            styles: { fontSize: 8, cellPadding: 2, halign: 'center' },
+            headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
+            margin: { left: margin }
+        });
+
+        currentY = doc.lastAutoTable.finalY + 10;
+
+        // Summary Stats Row
+        const thirdWidthStats = width / 3;
+        drawFormGrid(margin, currentY, thirdWidthStats, 8, 'total de estudiantes', '', false);
+        drawFormGrid(margin + thirdWidthStats, currentY, thirdWidthStats, 8, 'carrera mas en comun', '', false);
+        drawFormGrid(margin + (thirdWidthStats * 2), currentY, thirdWidthStats, 8, 'Resultado (porcentaje total)', '', false);
+        currentY += 8;
+
+        doc.rect(margin, currentY, thirdWidthStats, 10);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.text(String(data.totalAffected || '0'), margin + (thirdWidthStats / 2), currentY + 6, { align: 'center' });
+
+        doc.rect(margin + thirdWidthStats, currentY, thirdWidthStats, 10);
+        doc.setFontSize(7);
+        doc.text(String(data.topCareer || 'N/A').toUpperCase(), margin + thirdWidthStats + (thirdWidthStats / 2), currentY + 6, { align: 'center', maxWidth: thirdWidthStats - 2 });
+
+        doc.rect(margin + (thirdWidthStats * 2), currentY, thirdWidthStats, 10);
+        doc.setFontSize(10);
+        doc.text(`${data.careerPercentage || '0'}%`, margin + (thirdWidthStats * 2) + (thirdWidthStats / 2), currentY + 6, { align: 'center' });
+        currentY += 15;
+
+        // Observations
+        drawFormGrid(margin, currentY, width, 8, 'observaciones', '', false);
+        currentY += 8;
+        doc.rect(margin, currentY, width, 25);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.text(data.observations || '', margin + 2, currentY + 6, { maxWidth: width - 4 });
+        currentY += 40;
+
+        // Signatures
+        const sigW = 60;
+        const sigY = currentY;
+        const spacing = (width - (sigW * 3)) / 2;
+
+        doc.line(margin, sigY, margin + sigW, sigY);
+        doc.setFontSize(7);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Nombre y firma del coordinador de tutoría de Departamento Académico', margin + (sigW / 2), sigY + 5, { align: 'center', maxWidth: sigW });
+
+        doc.line(margin + sigW + spacing, sigY, margin + (sigW * 2) + spacing, sigY);
+        doc.text('Nombre y firma del Jefe de Departamento Académico', margin + sigW + spacing + (sigW / 2), sigY + 5, { align: 'center', maxWidth: sigW });
+
+        doc.line(margin + (sigW * 2) + (spacing * 2), sigY, margin + (sigW * 3) + (spacing * 2), sigY);
+        doc.text('Nombre y firma del Tutor', margin + (sigW * 2) + (spacing * 2) + (sigW / 2), sigY + 5, { align: 'center', maxWidth: sigW });
+
+        doc.save(`Reporte_Semestral_Incidencia_${data.incidenceType.replace(/\s+/g, '_')}.pdf`);
+    } catch (error) {
+        console.error('Error al generar el reporte de incidencia:', error);
+        alert('Error al generar el PDF de incidencia.');
+    }
+};
+
+/**
+ * Generates the "Reporte Detallado por Tipo de Incidencia"
+ */
+export const generateDetailedIncidenceReport = (data) => {
+    try {
+        const doc = new jsPDF();
+        const margin = 10;
+        const pageWidth = 210;
+        const width = pageWidth - (margin * 2);
+
+        // Header Table Helper
+        const drawFormGrid = (x, y, w, h, label, value = '', isTitle = false) => {
+            doc.rect(x, y, w, h);
+            if (isTitle) {
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'bold');
+                doc.text(label.toUpperCase(), x + (w / 2), y + (h / 2) + 1.5, { align: 'center' });
+            } else {
+                doc.setFontSize(8);
+                doc.setFont('helvetica', 'bold');
+                doc.text(label, x + 1, y + 3.5);
+                if (value) {
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(9);
+                    doc.text(String(value), x + 1, y + (h - 2));
+                }
+            }
+        };
+
+        let currentY = 15;
+
+        // Header Section
+        drawFormGrid(margin, currentY, width, 8, 'reporte detallado por tipo de incidencia del tutor', '', true);
+        currentY += 8;
+        drawFormGrid(margin, currentY, width, 8, 'Instituto tecnologico', '', true);
+        currentY += 8;
+
+        // Row 3: Tutor Name, Period
+        const halfWidth = width / 2;
+        drawFormGrid(margin, currentY, halfWidth, 10, 'Nombre del tutor/a', data.tutorName);
+        drawFormGrid(margin + halfWidth, currentY, halfWidth, 10, 'periodo', data.period);
+        currentY += 10;
+
+        // Row 4: Dept, Dates
+        const thirdWidth = width / 3;
+        drawFormGrid(margin, currentY, thirdWidth, 10, 'departamento academico', data.academicDept);
+        drawFormGrid(margin + thirdWidth, currentY, thirdWidth, 10, 'fecha inicio', data.startDate);
+        drawFormGrid(margin + (thirdWidth * 2), currentY, thirdWidth, 10, 'fecha final', data.endDate);
+        currentY += 10;
+
+        // Row 5: Incidence & Support
+        drawFormGrid(margin, currentY, halfWidth, 10, 'tipo de incidencia', data.incidenceType);
+        drawFormGrid(margin + halfWidth, currentY, halfWidth, 10, 'apoyo que se brindo', data.supportProvided);
+        currentY += 15;
+
+        // Students Table
+        const tableBody = (data.students || []).map(std => [
+            std.name || '-',
+            std.attentionDate || '-'
+        ]);
+
+        while (tableBody.length < 15) {
+            tableBody.push(['-', '-']);
+        }
+
+        autoTable(doc, {
+            startY: currentY,
+            head: [['lista de estudiantes', 'fecha de atencion']],
+            body: tableBody,
+            theme: 'grid',
+            styles: { fontSize: 8, cellPadding: 2, halign: 'center' },
+            headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
+            margin: { left: margin }
+        });
+
+        currentY = doc.lastAutoTable.finalY + 10;
+
+        // Summary Stats Row
+        const thirdWidthStats = width / 3;
+        drawFormGrid(margin, currentY, thirdWidthStats, 8, 'total de estudiantes', '', false);
+        drawFormGrid(margin + thirdWidthStats, currentY, thirdWidthStats, 8, 'carrera mas en comun', '', false);
+        drawFormGrid(margin + (thirdWidthStats * 2), currentY, thirdWidthStats, 8, 'Resultado (porcentaje total)', '', false);
+        currentY += 8;
+
+        doc.rect(margin, currentY, thirdWidthStats, 10);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.text(String(data.totalAffected || '0'), margin + (thirdWidthStats / 2), currentY + 6, { align: 'center' });
+
+        doc.rect(margin + thirdWidthStats, currentY, thirdWidthStats, 10);
+        doc.setFontSize(7);
+        doc.text(String(data.topCareer || 'N/A').toUpperCase(), margin + thirdWidthStats + (thirdWidthStats / 2), currentY + 6, { align: 'center', maxWidth: thirdWidthStats - 2 });
+
+        doc.rect(margin + (thirdWidthStats * 2), currentY, thirdWidthStats, 10);
+        doc.setFontSize(10);
+        doc.text(`${data.careerPercentage || '0'}%`, margin + (thirdWidthStats * 2) + (thirdWidthStats / 2), currentY + 6, { align: 'center' });
+        currentY += 15;
+
+        // Observations
+        drawFormGrid(margin, currentY, width, 8, 'observaciones', '', false);
+        currentY += 8;
+        doc.rect(margin, currentY, width, 25);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.text(data.observations || '', margin + 2, currentY + 6, { maxWidth: width - 4 });
+        currentY += 40;
+
+        // Signatures
+        const sigW = 60;
+        const sigY = currentY;
+        const spacing = (width - (sigW * 3)) / 2;
+
+        doc.line(margin, sigY, margin + sigW, sigY);
+        doc.setFontSize(7);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Nombre y firma del coordinador de tutoría de Departamento Académico', margin + (sigW / 2), sigY + 5, { align: 'center', maxWidth: sigW });
+
+        doc.line(margin + sigW + spacing, sigY, margin + (sigW * 2) + spacing, sigY);
+        doc.text('Nombre y firma del Jefe de Departamento Académico', margin + sigW + spacing + (sigW / 2), sigY + 5, { align: 'center', maxWidth: sigW });
+
+        doc.line(margin + (sigW * 2) + (spacing * 2), sigY, margin + (sigW * 3) + (spacing * 2), sigY);
+        doc.text('Nombre y firma del Tutor', margin + (sigW * 2) + (spacing * 2) + (sigW / 2), sigY + 5, { align: 'center', maxWidth: sigW });
+
+        doc.save(`Reporte_Detallado_Incidencia_${data.incidenceType.replace(/\s+/g, '_')}.pdf`);
+    } catch (error) {
+        console.error('Error al generar el reporte de incidencia:', error);
+        alert('Error al generar el PDF de incidencia.');
+    }
 };

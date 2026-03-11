@@ -15,6 +15,7 @@ const DetailedGroupReportForm = () => {
 
     const [formData, setFormData] = useState({
         tutorName: user?.nombre_completo || '',
+        academicDept: user?.departamento || '',
         institute: 'Instituto Tecnológico de Mexicali',
         period: '',
         program: '',
@@ -168,6 +169,15 @@ const DetailedGroupReportForm = () => {
                                 <input
                                     type="text"
                                     value={formData.institute}
+                                    readOnly
+                                    className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl font-bold text-navy"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Departamento Académico</label>
+                                <input
+                                    type="text"
+                                    value={formData.academicDept}
                                     readOnly
                                     className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl font-bold text-navy"
                                 />
