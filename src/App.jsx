@@ -1,26 +1,26 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useUser } from './context/UserContext';
-import Login from './views/Login.jsx';
-import DashboardLayout from './components/DashboardLayout.jsx';
+import { useUser } from './context/ContextoUsuario';
+import IniciarSesion from './views/IniciarSesion.jsx';
+import EstructuraPrincipal from './components/EstructuraPrincipal.jsx';
 import StudentHome from './views/student/Home.jsx';
 import TeacherHome from './views/docentes/Home.jsx';
 import ReportarIncidencia from './views/docentes/ReportarIncidencia.jsx';
-import Profile from './views/student/Profile.jsx';
-import Messages from './views/Messages.jsx';
+import Perfil from './views/student/Perfil.jsx';
+import Mensajes from './views/Mensajes.jsx';
 import {
   ReticulaPlaceholder
-} from './views/Placeholders.jsx';
+} from './views/VistasTemporales.jsx';
 import TutorHome from './views/tutor/Home.jsx';
 import TutorIncidencias from './views/tutor/Incidencias.jsx';
 import MisEstudiantes from './views/tutor/MisEstudiantes.jsx';
 import TutorReportes from './views/tutor/Reportes.jsx';
-import SemesterGroupReportForm from './views/tutor/SemesterGroupReportForm.jsx';
-import DetailedGroupReportForm from './views/tutor/DetailedGroupReportForm.jsx';
-import ReferralReportForm from './views/tutor/ReferralReportForm.jsx';
-import StudentSemesterReportForm from './views/tutor/StudentSemesterReportForm.jsx';
-import DetailedStudentReportForm from './views/tutor/DetailedStudentReportForm.jsx';
-import IncidenceSemesterReportForm from './views/tutor/IncidenceSemesterReportForm.jsx';
-import DetailedIncidenceReportForm from './views/tutor/DetailedIncidenceReportForm.jsx';
+import FormularioReporteGrupalSemestral from './views/tutor/FormularioReporteGrupalSemestral.jsx';
+import FormularioReporteGrupalDetallado from './views/tutor/FormularioReporteGrupalDetallado.jsx';
+import FormularioReporteCanalizacion from './views/tutor/FormularioReporteCanalizacion.jsx';
+import FormularioReporteEstudianteSemestral from './views/tutor/FormularioReporteEstudianteSemestral.jsx';
+import FormularioReporteEstudianteDetallado from './views/tutor/FormularioReporteEstudianteDetallado.jsx';
+import FormularioReporteSemestralIncidencias from './views/tutor/FormularioReporteSemestralIncidencias.jsx';
+import FormularioReporteIncidenciasDetallado from './views/tutor/FormularioReporteIncidenciasDetallado.jsx';
 import DocumentacionReportes from './views/tutor/DocumentacionReportes.jsx';
 
 
@@ -36,9 +36,9 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
+        <Route path="/login" element={!user ? <IniciarSesion /> : <Navigate to="/" />} />
 
-        <Route path="/" element={user ? <DashboardLayout /> : <Navigate to="/login" />}>
+        <Route path="/" element={user ? <EstructuraPrincipal /> : <Navigate to="/login" />}>
           {/* Shared/Switching Home Path */}
           <Route index element={
             user?.role === 'teacher' ? <TeacherHome /> :
@@ -48,16 +48,16 @@ function App() {
 
           {/* Sub Routes */}
           <Route path="reticula" element={<ReticulaPlaceholder />} />
-          <Route path="perfil" element={<Profile role="student" />} />
-          <Route path="mensajes" element={<Messages />} />
+          <Route path="perfil" element={<Perfil role="student" />} />
+          <Route path="mensajes" element={<Mensajes />} />
           <Route path="reportes" element={<TutorReportes />} />
-          <Route path="reporte-grupal" element={<SemesterGroupReportForm />} />
-          <Route path="reporte-detallado" element={<DetailedGroupReportForm />} />
-          <Route path="reporte-canalizaciones" element={<ReferralReportForm />} />
-          <Route path="reporte-alumno" element={<StudentSemesterReportForm />} />
-          <Route path="reporte-detallado-alumno" element={<DetailedStudentReportForm />} />
-          <Route path="reporte-incidencia" element={<IncidenceSemesterReportForm />} />
-          <Route path="reporte-detallado-incidencia" element={<DetailedIncidenceReportForm />} />
+          <Route path="reporte-grupal" element={<FormularioReporteGrupalSemestral />} />
+          <Route path="reporte-detallado" element={<FormularioReporteGrupalDetallado />} />
+          <Route path="reporte-canalizaciones" element={<FormularioReporteCanalizacion />} />
+          <Route path="reporte-alumno" element={<FormularioReporteEstudianteSemestral />} />
+          <Route path="reporte-detallado-alumno" element={<FormularioReporteEstudianteDetallado />} />
+          <Route path="reporte-incidencia" element={<FormularioReporteSemestralIncidencias />} />
+          <Route path="reporte-detallado-incidencia" element={<FormularioReporteIncidenciasDetallado />} />
           <Route path="reportes/documentacion" element={<DocumentacionReportes />} />
 
           <Route path="incidencias" element={<TutorIncidencias />} />

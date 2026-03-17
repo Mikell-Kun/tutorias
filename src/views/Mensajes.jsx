@@ -12,7 +12,7 @@ import {
     CheckCheck,
     Clock
 } from 'lucide-react';
-import { useUser } from '../context/UserContext.jsx';
+import { useUser } from '../context/ContextoUsuario.jsx';
 import { useLocation } from 'react-router-dom';
 import {
     getMensajes,
@@ -21,9 +21,9 @@ import {
     getContactosDisponibles,
     getUserByControl
 } from '../data/database.js';
-import Card from '../components/Card.jsx';
+import Tarjeta from '../components/Tarjeta.jsx';
 
-const Messages = () => {
+const Mensajes = () => {
     const { user } = useUser();
     const location = useLocation();
     const [messages, setMessages] = useState([]);
@@ -140,7 +140,7 @@ const Messages = () => {
 
     return (
         <div className="h-[calc(100vh-160px)] flex gap-6 p-8 relative">
-            {/* Sidebar list */}
+            {/* BarraLateral list */}
             <div className="w-96 flex flex-col gap-6">
                 <div className="flex items-center gap-4 border-b border-slate-100 pb-4">
                     <div className="p-3 bg-navy/5 rounded-lg text-navy">
@@ -152,7 +152,7 @@ const Messages = () => {
                     </div>
                 </div>
 
-                <Card className="flex-1 flex flex-col p-0 overflow-hidden">
+                <Tarjeta className="flex-1 flex flex-col p-0 overflow-hidden">
                     <div className="p-4 border-b border-gray-50 bg-gray-50/30">
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" size={18} />
@@ -216,13 +216,13 @@ const Messages = () => {
                     >
                         <Plus size={16} /> Nueva Conversación
                     </button>
-                </Card>
+                </Tarjeta>
             </div>
 
             {/* Chat area */}
             <div className="flex-1">
                 {activeContact ? (
-                    <Card className="h-full flex flex-col p-0 overflow-hidden bg-white shadow-xl border-navy/5">
+                    <Tarjeta className="h-full flex flex-col p-0 overflow-hidden bg-white shadow-xl border-navy/5">
                         {/* Header */}
                         <div className="p-4 border-b border-slate-50 flex items-center justify-between bg-white">
                             <div className="flex items-center gap-4">
@@ -247,7 +247,7 @@ const Messages = () => {
                             </button>
                         </div>
 
-                        {/* Messages Area */}
+                        {/* Mensajes Area */}
                         <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/30 custom-scrollbar">
                             {currentChatMessages.map(m => {
                                 const isMe = parseInt(m.remitente_id, 10) === (user.n_control || user.id_tutor);
@@ -302,9 +302,9 @@ const Messages = () => {
                                 <Send size={20} />
                             </motion.button>
                         </form>
-                    </Card>
+                    </Tarjeta>
                 ) : (
-                    <Card className="h-full flex flex-col items-center justify-center text-center p-12 space-y-6 border-dashed border-gray-200">
+                    <Tarjeta className="h-full flex flex-col items-center justify-center text-center p-12 space-y-6 border-dashed border-gray-200">
                         <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center text-gray-200">
                             <MessageSquare size={48} />
                         </div>
@@ -312,7 +312,7 @@ const Messages = () => {
                             <h2 className="text-xl font-bold text-navy mb-2">Selecciona una conversación</h2>
                             <p className="text-sm text-text-muted">Elige un contacto de la izquierda para comenzar a chatear o inicia una nueva conversación.</p>
                         </div>
-                    </Card>
+                    </Tarjeta>
                 )}
             </div>
 
@@ -375,4 +375,4 @@ const Messages = () => {
     );
 };
 
-export default Messages;
+export default Mensajes;

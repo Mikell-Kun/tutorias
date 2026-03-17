@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldCheck, GraduationCap, Briefcase, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from '../context/UserContext.jsx';
+import { useUser } from '../context/ContextoUsuario.jsx';
 import { validateCredentials } from '../data/database.js';
 
-const Login = () => {
+const IniciarSesion = () => {
     const [selectedRole, setSelectedRole] = useState('estudiante');
     const [nControl, setNControl] = useState('');
     const [password, setPassword] = useState('');
@@ -156,4 +156,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default IniciarSesion;

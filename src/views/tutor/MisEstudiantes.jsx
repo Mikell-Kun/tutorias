@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Users, User, BookOpen, Clock, AlertCircle, CheckCircle, MessageSquare } from 'lucide-react';
-import { useUser } from '../../context/UserContext.jsx';
+import { useUser } from '../../context/ContextoUsuario.jsx';
 import { Estudiantes, getIncidencias, getMensajes, Tutores } from '../../data/database.js';
 
 const MisEstudiantes = () => {
@@ -60,12 +60,7 @@ const MisEstudiantes = () => {
         };
     };
 
-    const getIncidentType = (student) => {
-        const studentIncidencias = allIncidencias.filter(i =>
-            parseInt(i.estudiante_n_control, 10) === parseInt(student.n_control, 10) && !i.leida
-        );
-        return studentIncidencias.length > 0 ? studentIncidencias[0].tipo : 'Ninguna';
-    };
+
 
     return (
         <div className="p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 min-h-full">
@@ -107,7 +102,7 @@ const MisEstudiantes = () => {
                         <thead className="bg-gray-50/50">
                             <tr className="text-[10px] font-black text-navy/40 uppercase tracking-[0.2em]">
                                 <th className="px-8 py-6">Estudiante / Carrera</th>
-                                <th className="px-8 py-6">Incidencia</th>
+
                                 <th className="px-8 py-6">Estatus</th>
                                 <th className="px-8 py-6">Primer Contacto</th>
                             </tr>
@@ -154,12 +149,7 @@ const MisEstudiantes = () => {
                                             </div>
                                         </td>
 
-                                        {/* Incident Type */}
-                                        <td className="px-8 py-6">
-                                            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter ${getIncidentType(student) !== 'Ninguna' ? 'bg-orange-50 text-orange-600 border border-orange-100' : 'bg-gray-50 text-gray-400 border border-gray-100'}`}>
-                                                {getIncidentType(student)}
-                                            </span>
-                                        </td>
+
 
                                         {/* Status */}
                                         <td className="px-8 py-6">
@@ -171,7 +161,7 @@ const MisEstudiantes = () => {
 
                                         {/* First Contact */}
                                         <td className="px-8 py-6 text-sm">
-                                            {contactInfo ? (
+                                            {status.type === 'atendiendo' && contactInfo ? (
                                                 <div className="space-y-1">
                                                     <div className="flex items-center gap-2 text-navy font-bold">
                                                         <User size={14} className="text-gold" />
@@ -183,7 +173,7 @@ const MisEstudiantes = () => {
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <span className="text-navy/20 font-medium">Sin contacto previo</span>
+                                                <span className="text-navy/20 font-medium">-</span>
                                             )}
                                         </td>
                                     </motion.tr>

@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { User, Mail, Phone, ShieldCheck, GraduationCap, Award, UserCircle } from 'lucide-react';
-import { useUser } from '../../context/UserContext.jsx';
+import { useUser } from '../../context/ContextoUsuario.jsx';
 
-const Profile = () => {
+const Perfil = () => {
     const { user, logout } = useUser();
 
     const isStudent = user?.rol === 'estudiante';
@@ -52,7 +52,7 @@ const Profile = () => {
                 </p>
             </div>
 
-            {/* Profile Content Card */}
+            {/* Perfil Content Tarjeta */}
             <div className="max-w-4xl mx-auto">
                 <div className="bg-white rounded-xl p-10 shadow-sm border border-slate-100">
                     <h2 className="text-xl font-black text-navy uppercase tracking-tight mb-8 border-l-4 border-gold pl-4">
@@ -78,4 +78,4 @@ const Profile = () => {
     );
 };
 
-export default Profile;
+export default Perfil;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, User, MessageSquare, Clock, BookOpen, Send } from 'lucide-react';
-import { useUser } from '../../context/UserContext.jsx';
+import { useUser } from '../../context/ContextoUsuario.jsx';
 import { getIncidencias, markIncidenciaAsRead, addMensaje } from '../../data/database.js';
 
 const TutorIncidencias = () => {

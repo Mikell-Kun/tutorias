@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Megaphone, Trash2, Send, AlertCircle } from 'lucide-react';
-import Card from '../../components/Card.jsx';
+import Tarjeta from '../../components/Tarjeta.jsx';
 import { Estudiantes, Materias, Tutores, addIncidencia } from '../../data/database.js';
-import { useUser } from '../../context/UserContext.jsx';
+import { useUser } from '../../context/ContextoUsuario.jsx';
 
 const ReportarIncidencia = () => {
     const { user } = useUser();
@@ -103,7 +103,7 @@ const ReportarIncidencia = () => {
                 </div>
             </div>
 
-            <Card>
+            <Tarjeta>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Estudiante */}
@@ -208,7 +208,7 @@ const ReportarIncidencia = () => {
                         </motion.button>
                     </div>
                 </form>
-            </Card>
+            </Tarjeta>
         </div>
     );
 };

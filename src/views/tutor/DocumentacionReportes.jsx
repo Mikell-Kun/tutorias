@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, FileText, ClipboardList, AlertCircle, CheckCircle2, Info } from 'lucide-react';
-import Card from '../../components/Card';
+import Tarjeta from '../../components/Tarjeta';
 
 const DocumentacionReportes = () => {
     const navigate = useNavigate();
@@ -118,7 +118,7 @@ const DocumentacionReportes = () => {
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: rIndex * 0.1 + sIndex * 0.2 }}
                                 >
-                                    <Card className="h-full border-none shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:shadow-blue-200/20 transition-all duration-500 overflow-hidden bg-white/70 backdrop-blur-sm group">
+                                    <Tarjeta className="h-full border-none shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:shadow-blue-200/20 transition-all duration-500 overflow-hidden bg-white/70 backdrop-blur-sm group">
                                         <div className="p-6 relative">
                                             <div className="mb-6 flex items-start justify-between">
                                                 <div className="p-3 rounded-2xl bg-white shadow-inner group-hover:scale-110 transition-transform duration-500">
@@ -150,7 +150,7 @@ const DocumentacionReportes = () => {
                                             </div>
                                         </div>
                                         <div className="absolute -bottom-4 -right-4 h-24 w-24 bg-slate-50 rounded-full group-hover:bg-blue-50 transition-colors duration-500" />
-                                    </Card>
+                                    </Tarjeta>
                                 </motion.div>
                             ))}
                         </div>

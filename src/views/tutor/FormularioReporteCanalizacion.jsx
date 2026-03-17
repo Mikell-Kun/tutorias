@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Save, Plus, Trash2, FileText, Users, MapPin, CheckCircle2 } from 'lucide-react';
-import Card from '../../components/Card';
-import { useUser } from '../../context/UserContext';
+import Tarjeta from '../../components/Tarjeta';
+import { useUser } from '../../context/ContextoUsuario';
 import { generateReferralReport } from '../../utils/reportGenerator';
 import { saveReportEntry } from '../../utils/reportHistory';
 
-const ReferralReportForm = () => {
+const FormularioReporteCanalizacion = () => {
     const { user } = useUser();
     const navigate = useNavigate();
     const location = useLocation();
@@ -129,7 +129,7 @@ const ReferralReportForm = () => {
 
             <form onSubmit={handleSubmit} className="space-y-8">
                 {/* General Data */}
-                <Card title="Datos Generales" subtitle="Información técnica del grupo y periodo">
+                <Tarjeta title="Datos Generales" subtitle="Información técnica del grupo y periodo">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
                         <div className="space-y-2 lg:col-span-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Tutor</label>
@@ -148,8 +148,8 @@ const ReferralReportForm = () => {
                             <input type="date" required value={formData.endDate} onChange={(e) => setFormData({ ...formData, endDate: e.target.value })} className="w-full px-5 py-3.5 bg-white border-2 border-gray-100 rounded-2xl font-bold text-navy focus:border-gold transition-all" />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Grupo</label>
-                            <input type="text" required placeholder="Ej. 1A" value={formData.groupNum} onChange={(e) => setFormData({ ...formData, groupNum: e.target.value })} className="w-full px-5 py-3.5 bg-white border-2 border-gray-100 rounded-2xl font-bold text-navy focus:border-gold transition-all" />
+                            <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Num. Grupo</label>
+                            <input type="number" min="1" required placeholder="Ej. 1" value={formData.groupNum} onChange={(e) => setFormData({ ...formData, groupNum: e.target.value })} className="w-full px-5 py-3.5 bg-white border-2 border-gray-100 rounded-2xl font-bold text-navy focus:border-gold transition-all" />
                         </div>
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Nº Alumnos</label>
@@ -163,14 +163,19 @@ const ReferralReportForm = () => {
                             </select>
                         </div>
                         <div className="space-y-2 lg:col-span-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Periodo</label>
-                            <input type="text" required placeholder="Ej. 2026-1" value={formData.period} onChange={(e) => setFormData({ ...formData, period: e.target.value })} className="w-full px-5 py-3.5 bg-white border-2 border-gray-100 rounded-2xl font-bold text-navy focus:border-gold transition-all" />
+                            <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Periodo escolar</label>
+                            <input type="text" required placeholder="Ej. 2026-1" value={formData.period} onChange={(e) => {
+                                const val = e.target.value;
+                                if (val === '' || /^\d{1,4}$/.test(val) || /^\d{4}-$/.test(val) || /^\d{4}-[12]$/.test(val)) {
+                                    setFormData({ ...formData, period: val });
+                                }
+                            }} className="w-full px-5 py-3.5 bg-white border-2 border-gray-100 rounded-2xl font-bold text-navy focus:border-gold transition-all" />
                         </div>
                     </div>
-                </Card>
+                </Tarjeta>
 
                 {/* Session Table */}
-                <Card
+                <Tarjeta
                     title="Resumen de Sesiones"
                     subtitle="Distribución de canalizaciones por área"
                     actions={
@@ -215,10 +220,10 @@ const ReferralReportForm = () => {
                             </tbody>
                         </table>
                     </div>
-                </Card>
+                </Tarjeta>
 
                 {/* Support Matrix */}
-                <Card title="Estatus de Apoyos" subtitle="Tipo de vinculación por programa educativo">
+                <Tarjeta title="Estatus de Apoyos" subtitle="Tipo de vinculación por programa educativo">
                     <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {supportAreas.map(area => (
                             <div key={area.id} className="p-4 bg-gray-50 rounded-2xl space-y-3">
@@ -244,7 +249,7 @@ const ReferralReportForm = () => {
                             </div>
                         ))}
                     </div>
-                </Card>
+                </Tarjeta>
 
                 {/* Actions */}
                 <div className="flex gap-4">
@@ -260,4 +265,4 @@ const ReferralReportForm = () => {
     );
 };
 
-export default ReferralReportForm;
+export default FormularioReporteCanalizacion;

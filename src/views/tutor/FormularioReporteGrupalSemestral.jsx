@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Save, X, Plus, Trash2, UserPlus, FileText, Calendar, Users, BarChart } from 'lucide-react';
-import Card from '../../components/Card';
-import { useUser } from '../../context/UserContext';
+import Tarjeta from '../../components/Tarjeta';
+import { useUser } from '../../context/ContextoUsuario';
 import { Estudiantes } from '../../data/database';
 import { generateGroupSemesterReport } from '../../utils/reportGenerator';
 import { saveReportEntry } from '../../utils/reportHistory';
 
-const SemesterGroupReportForm = () => {
+const FormularioReporteGrupalSemestral = () => {
     const { user } = useUser();
     const navigate = useNavigate();
     const location = useLocation();
@@ -45,7 +45,7 @@ const SemesterGroupReportForm = () => {
         }
     }, [editData]);
 
-    const periods = ['2026-1', '2026-2', '2027-1', '2027-2'];
+
     const programs = [
         'Ing. Bioquímica',
         'Ing. Sistemas Computacionales',
@@ -166,7 +166,7 @@ const SemesterGroupReportForm = () => {
             <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* General Info */}
                 <div className="lg:col-span-2 space-y-8">
-                    <Card title="Información General" subtitle="Datos del periodo y adscripción">
+                    <Tarjeta title="Información General" subtitle="Datos del periodo y adscripción">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Nombre del Tutor</label>
@@ -196,16 +196,20 @@ const SemesterGroupReportForm = () => {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Periodo</label>
-                                <select
+                                <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Periodo escolar</label>
+                                <input
+                                    type="text"
+                                    placeholder="Ej. 2026-1"
                                     required
                                     value={formData.period}
-                                    onChange={(e) => setFormData({ ...formData, period: e.target.value })}
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        if (val === '' || /^\d{1,4}$/.test(val) || /^\d{4}-$/.test(val) || /^\d{4}-[12]$/.test(val)) {
+                                            setFormData({ ...formData, period: val });
+                                        }
+                                    }}
                                     className="w-full px-5 py-3.5 bg-white border-2 border-gray-100 rounded-2xl font-bold text-navy focus:border-gold transition-all"
-                                >
-                                    <option value="">Seleccionar Periodo</option>
-                                    {periods.map(p => <option key={p} value={p}>{p}</option>)}
-                                </select>
+                                />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Programa Educativo</label>
@@ -222,8 +226,9 @@ const SemesterGroupReportForm = () => {
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Num. Grupo</label>
                                 <input
-                                    type="text"
-                                    placeholder="Ej. Grupo 1"
+                                    type="number"
+                                    min="1"
+                                    placeholder="Ej. 1"
                                     required
                                     value={formData.groupNum}
                                     onChange={(e) => setFormData({ ...formData, groupNum: e.target.value })}
@@ -253,10 +258,10 @@ const SemesterGroupReportForm = () => {
                                 </div>
                             </div>
                         </div>
-                    </Card>
+                    </Tarjeta>
 
                     {/* Student List */}
-                    <Card
+                    <Tarjeta
                         title="Lista de Estudiantes"
                         subtitle="Integrantes del grupo para este reporte"
                         actions={
@@ -305,12 +310,12 @@ const SemesterGroupReportForm = () => {
                                 </div>
                             )}
                         </div>
-                    </Card>
+                    </Tarjeta>
                 </div>
 
                 {/* Stats & Actions */}
                 <div className="space-y-8">
-                    <Card title="Estadísticas Semestrales" subtitle="Resultados de atención">
+                    <Tarjeta title="Estadísticas Semestrales" subtitle="Resultados de atención">
                         <div className="space-y-6 mt-6">
                             <div className="p-5 bg-navy/5 rounded-3xl border border-navy/5">
                                 <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-navy mb-4 flex items-center gap-2">
@@ -325,6 +330,7 @@ const SemesterGroupReportForm = () => {
                                         <label className="text-[10px] font-black uppercase tracking-widest text-navy/40">Estudiantes Canalizados</label>
                                         <input
                                             type="number"
+                                            min="0"
                                             value={formData.groupTutoring.channeledCount}
                                             onChange={(e) => setFormData({
                                                 ...formData,
@@ -368,6 +374,7 @@ const SemesterGroupReportForm = () => {
                                         <label className="text-[10px] font-black uppercase tracking-widest text-gold/60">Alumnos Evaluados Individualmente</label>
                                         <input
                                             type="number"
+                                            min="0"
                                             value={formData.individualTutoring.totalStudents}
                                             onChange={(e) => setFormData({
                                                 ...formData,
@@ -380,6 +387,7 @@ const SemesterGroupReportForm = () => {
                                         <label className="text-[10px] font-black uppercase tracking-widest text-gold/60">Estudiantes Canalizados</label>
                                         <input
                                             type="number"
+                                            min="0"
                                             value={formData.individualTutoring.channeledCount}
                                             onChange={(e) => setFormData({
                                                 ...formData,
@@ -415,9 +423,9 @@ const SemesterGroupReportForm = () => {
                             </div>
 
                         </div>
-                    </Card>
+                    </Tarjeta>
 
-                    <Card title="Observaciones" subtitle="Notas adicionales del semestre">
+                    <Tarjeta title="Observaciones" subtitle="Notas adicionales del semestre">
                         <textarea
                             rows="4"
                             placeholder="Anote actividades adicionales, impactos o comentarios relevantes..."
@@ -425,7 +433,7 @@ const SemesterGroupReportForm = () => {
                             onChange={(e) => setFormData({ ...formData, observations: e.target.value })}
                             className="w-full mt-4 p-5 bg-gray-50 border-none rounded-3xl font-medium text-navy focus:ring-2 focus:ring-gold/50 transition-all text-sm"
                         ></textarea>
-                    </Card>
+                    </Tarjeta>
 
                     <div className="flex gap-4">
                         <button
@@ -448,4 +456,4 @@ const SemesterGroupReportForm = () => {
     );
 };
 
-export default SemesterGroupReportForm;
+export default FormularioReporteGrupalSemestral;

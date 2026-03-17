@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Save, Plus, Trash2, UserPlus, FileText, Calendar, Users, BarChart } from 'lucide-react';
-import Card from '../../components/Card';
-import { useUser } from '../../context/UserContext';
+import Tarjeta from '../../components/Tarjeta';
+import { useUser } from '../../context/ContextoUsuario';
 import { Estudiantes } from '../../data/database';
-import { generateDetailedStudentReport } from '../../utils/reportGenerator';
+import { generateStudentSemesterReport } from '../../utils/reportGenerator';
 import { saveReportEntry } from '../../utils/reportHistory';
 
-const DetailedStudentReportForm = () => {
+const FormularioReporteEstudianteSemestral = () => {
     const { user } = useUser();
     const navigate = useNavigate();
     const location = useLocation();
@@ -38,6 +38,12 @@ const DetailedStudentReportForm = () => {
             setFormData(editData);
         }
     }, [editData]);
+
+    const programs = [
+        'Ing. Bioquímica', 'Ing. Sistemas Computacionales', 'Contador Público', 'Ing. Semiconductores',
+        'Ing. Desarrollo de Aplicaciones Móviles', 'Ing. Eléctrica', 'Ing. Logística', 'Ing. Mecatrónica',
+        'Ing. Química', 'Ing. Mecánica', 'Ing. Electrónica', 'Ing. Industrial', 'Ing. Gestión Empresarial', 'Ing. Administración'
+    ];
 
     const supportAreas = [
         { label: 'Servicios Psicológicos (SP)', value: 'SP' },
@@ -82,11 +88,9 @@ const DetailedStudentReportForm = () => {
     };
 
     const handleSessionChange = (index, field, value) => {
-        setFormData(prev => {
-            const newSessions = [...prev.sessions];
-            newSessions[index] = { ...newSessions[index], [field]: value };
-            return { ...prev, sessions: newSessions };
-        });
+        const newSessions = [...formData.sessions];
+        newSessions[index][field] = value;
+        setFormData(prev => ({ ...prev, sessions: newSessions }));
     };
 
     useEffect(() => {
@@ -119,14 +123,14 @@ const DetailedStudentReportForm = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        generateDetailedStudentReport(formData);
+        generateStudentSemesterReport(formData);
 
         saveReportEntry({
             author: user?.nombre_completo || 'Tutor',
             authorId: user?.id_tutor || user?.n_control,
             type: 'Específico',
-            reportType: 'student_detailed',
-            title: `Detallado por Alumno - ${formData.studentName || 'S/N'}`,
+            reportType: 'student_semester',
+            title: `Semestral por Alumno - ${formData.studentName || 'S/N'}`,
             data: formData
         });
     };
@@ -136,26 +140,31 @@ const DetailedStudentReportForm = () => {
             <div className="flex justify-between items-center bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
                 <div className="flex items-center gap-4">
                     <div className="p-4 bg-navy text-white rounded-2xl shadow-lg shadow-navy/20">
-                        <FileText size={28} />
+                        <UserPlus size={28} />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-black text-navy uppercase tracking-tight">Reporte Detallado</h1>
-                        <p className="text-text-muted font-bold uppercase text-[10px] tracking-[0.2em]">Formato por Alumno (Rango Específico)</p>
+                        <h1 className="text-2xl font-black text-navy uppercase tracking-tight">Reporte Semestral</h1>
+                        <p className="text-text-muted font-bold uppercase text-[10px] tracking-[0.2em]">Formato por Alumno</p>
                     </div>
                 </div>
             </div>
 
             <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-8">
-                    <Card title="Información General" subtitle="Datos del tutor y periodo específico">
+                    <Tarjeta title="Información General" subtitle="Datos del tutor y periodo">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Nombre del Tutor</label>
                                 <input type="text" value={formData.tutorName} readOnly className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl font-bold text-navy" />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Periodo (Semanal/Mensual)</label>
-                                <input type="text" placeholder="Periodo específico" required value={formData.period} onChange={(e) => setFormData({ ...formData, period: e.target.value })} className="w-full px-5 py-3.5 bg-white border-2 border-gray-100 rounded-2xl font-bold text-navy focus:border-gold transition-all" />
+                                <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Periodo escolar</label>
+                                <input type="text" placeholder="Ej. 2026-1" required value={formData.period} onChange={(e) => {
+                                    const val = e.target.value;
+                                    if (val === '' || /^\d{1,4}$/.test(val) || /^\d{4}-$/.test(val) || /^\d{4}-[12]$/.test(val)) {
+                                        setFormData({ ...formData, period: val });
+                                    }
+                                }} className="w-full px-5 py-3.5 bg-white border-2 border-gray-100 rounded-2xl font-bold text-navy focus:border-gold transition-all" />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Departamento Académico</label>
@@ -172,9 +181,9 @@ const DetailedStudentReportForm = () => {
                                 </div>
                             </div>
                         </div>
-                    </Card>
+                    </Tarjeta>
 
-                    <Card title="Datos del Alumno" subtitle="Información del estudiante atendido">
+                    <Tarjeta title="Datos del Alumno" subtitle="Información del estudiante atendido">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Nombre del Alumno/a</label>
@@ -193,9 +202,9 @@ const DetailedStudentReportForm = () => {
                                 <input type="text" readOnly value={formData.semester} className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl font-bold text-navy" />
                             </div>
                         </div>
-                    </Card>
+                    </Tarjeta>
 
-                    <Card title="Sesiones Detalladas" subtitle="Registro de actividades en el periodo" actions={
+                    <Tarjeta title="Sesiones de Atención" subtitle="Registro de sesiones durante el semestre" actions={
                         <button type="button" onClick={addSession} className="flex items-center gap-2 px-4 py-2 bg-navy text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-gold hover:text-navy transition-all">
                             <Plus size={14} /> Agregar Sesión
                         </button>
@@ -236,11 +245,11 @@ const DetailedStudentReportForm = () => {
                                 </div>
                             ))}
                         </div>
-                    </Card>
+                    </Tarjeta>
                 </div>
 
                 <div className="space-y-8">
-                    <Card title="Resumen Estadístico" subtitle="Cálculos automáticos">
+                    <Tarjeta title="Resumen Estadístico" subtitle="Cálculos automáticos">
                         <div className="space-y-6 mt-6">
                             <div className="p-5 bg-navy/5 rounded-3xl border border-navy/5 space-y-6">
                                 <div className="space-y-2">
@@ -257,11 +266,11 @@ const DetailedStudentReportForm = () => {
                                 </div>
                             </div>
                         </div>
-                    </Card>
+                    </Tarjeta>
 
-                    <Card title="Observaciones" subtitle="Comentarios adicionales">
+                    <Tarjeta title="Observaciones" subtitle="Comentarios adicionales">
                         <textarea rows="4" value={formData.observations} onChange={(e) => setFormData({ ...formData, observations: e.target.value })} className="w-full mt-4 p-5 bg-gray-50 border-none rounded-3xl font-medium text-navy focus:ring-2 focus:ring-gold/50 transition-all text-sm" placeholder="Añadir observaciones relevantes..." />
-                    </Card>
+                    </Tarjeta>
 
                     <div className="flex gap-4">
                         <button type="button" onClick={() => navigate('/reportes')} className="flex-1 py-4 bg-gray-100 text-navy font-black uppercase tracking-widest text-[10px] rounded-2xl hover:bg-gray-200 transition-all">Cancelar</button>
@@ -275,4 +284,4 @@ const DetailedStudentReportForm = () => {
     );
 };
 
-export default DetailedStudentReportForm;
+export default FormularioReporteEstudianteSemestral;

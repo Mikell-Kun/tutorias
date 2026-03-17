@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Bell, ChevronRight, Award, Clock, FileText, LayoutDashboard } from 'lucide-react';
-import Card from '../../components/Card.jsx';
-import { useUser } from '../../context/UserContext.jsx';
+import Tarjeta from '../../components/Tarjeta.jsx';
+import { useUser } from '../../context/ContextoUsuario.jsx';
 
 const StudentHome = () => {
     const { user } = useUser();
@@ -22,23 +22,23 @@ const StudentHome = () => {
 
             {/* Stats Row - Top horizontal */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card title="Promedio General" subtitle="Basado en el último semestre" icon={Award}>
+                <Tarjeta title="Promedio General" subtitle="Basado en el último semestre" icon={Award}>
                     <div className="flex items-baseline gap-2 mt-2">
                         <span className="text-4xl font-black text-navy">88.8</span>
                         <span className="text-xs font-bold text-green-500 bg-green-50 px-2 py-1 rounded-md">+1.2%</span>
                     </div>
-                </Card>
-                <Card title="Créditos Acumulados" subtitle="Progreso total" icon={FileText}>
+                </Tarjeta>
+                <Tarjeta title="Créditos Acumulados" subtitle="Progreso total" icon={FileText}>
                     <div className="flex items-baseline gap-2 mt-2">
                         <span className="text-4xl font-black text-navy">63</span>
                         <span className="text-[10px] font-black text-navy/40 uppercase tracking-[0.2em]">28.6% del total</span>
                     </div>
-                </Card>
-                <Card title="Mensajes de Tutor" subtitle="Bandeja de entrada" icon={Bell}>
+                </Tarjeta>
+                <Tarjeta title="Mensajes de Tutor" subtitle="Bandeja de entrada" icon={Bell}>
                     <div className="flex items-baseline gap-2 mt-2">
                         <span className="text-sm font-medium text-text-muted">Consulta tus conversaciones activas</span>
                     </div>
-                </Card>
+                </Tarjeta>
             </div>
 
             {/* Main Content Grid - Two Columns side-by-side */}
@@ -46,7 +46,7 @@ const StudentHome = () => {
 
                 {/* Left: Próximos Eventos */}
                 <div className="lg:col-span-8">
-                    <Card
+                    <Tarjeta
                         title="Próximos Eventos"
                         subtitle="Calendario institucional"
                         icon={Calendar}
@@ -78,12 +78,12 @@ const StudentHome = () => {
                                 </div>
                             ))}
                         </div>
-                    </Card>
+                    </Tarjeta>
                 </div>
 
                 {/* Right: Información Escolar */}
                 <div className="lg:col-span-4">
-                    <Card title="Información Escolar" subtitle="Detalles académicos" icon={FileText}>
+                    <Tarjeta title="Información Escolar" subtitle="Detalles académicos" icon={FileText}>
                         <div className="space-y-8 pt-4">
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black text-navy/40 uppercase tracking-[0.2em]">Matrícula</label>
@@ -112,7 +112,7 @@ const StudentHome = () => {
                                 </div>
                             </div>
                         </div>
-                    </Card>
+                    </Tarjeta>
                 </div>
             </div>
         </div>

@@ -13,9 +13,9 @@ import {
     ChevronLeft,
     Menu
 } from 'lucide-react';
-import { useUser } from '../context/UserContext.jsx';
+import { useUser } from '../context/ContextoUsuario.jsx';
 
-const Sidebar = ({ isCollapsed, onToggle }) => {
+const BarraLateral = ({ isCollapsed, onToggle }) => {
     const { user, logout } = useUser();
 
     const studentLinks = [
@@ -107,4 +107,4 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
     );
 };
 
-export default Sidebar;
+export default BarraLateral;

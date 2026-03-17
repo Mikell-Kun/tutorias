@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Users, AlertTriangle, MessageCircle, MoreVertical, GraduationCap, LayoutDashboard } from 'lucide-react';
-import Card from '../../components/Card.jsx';
-import { useUser } from '../../context/UserContext.jsx';
+import Tarjeta from '../../components/Tarjeta.jsx';
+import { useUser } from '../../context/ContextoUsuario.jsx';
 import { Estudiantes, getIncidencias, getMensajes, Tutores } from '../../data/database.js';
 import { useNavigate } from 'react-router-dom';
 
@@ -78,7 +78,7 @@ const TutorHome = () => {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {stats.map((stat, i) => (
-                    <Card key={i} className="border-none shadow-sm hover:shadow-md transition-shadow">
+                    <Tarjeta key={i} className="border-none shadow-sm hover:shadow-md transition-shadow">
                         <div className="flex items-center gap-4">
                             <div className="p-4 bg-navy/5 text-navy rounded-lg">
                                 <stat.icon size={24} />
@@ -88,12 +88,12 @@ const TutorHome = () => {
                                 <p className="text-2xl font-black text-navy">{stat.value}</p>
                             </div>
                         </div>
-                    </Card>
+                    </Tarjeta>
                 ))}
             </div>
 
             {/* Assigned Students List */}
-            <Card title="Alumnos en Atención" subtitle="Estudiantes que requieren seguimiento activo">
+            <Tarjeta title="Alumnos en Atención" subtitle="Estudiantes que requieren seguimiento activo">
                 <div className="mt-4 overflow-hidden border border-slate-100 rounded-lg">
                     <table className="w-full text-left border-collapse">
                         <thead>
@@ -149,7 +149,7 @@ const TutorHome = () => {
                         </tbody>
                     </table>
                 </div>
-            </Card>
+            </Tarjeta>
 
             {/* Risk Alert Section (Optional but helpful for UI) */}
             {atRiskStudents.length > 0 && (

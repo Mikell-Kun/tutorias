@@ -2,8 +2,8 @@ import React from 'react';
 import { FileText, FileBarChart, PieChart, Users, ArrowRight, Eye, Download, Edit2, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import Card from '../../components/Card.jsx';
-import { useUser } from '../../context/UserContext.jsx';
+import Tarjeta from '../../components/Tarjeta.jsx';
+import { useUser } from '../../context/ContextoUsuario.jsx';
 import { Estudiantes } from '../../data/database.js';
 import {
     generateGroupSemesterReport,
@@ -103,7 +103,7 @@ const TutorReportes = () => {
                         whileHover={{ y: -5 }}
                         className="group"
                     >
-                        <Card className="h-full border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-500 relative overflow-hidden bg-white/50 backdrop-blur-sm">
+                        <Tarjeta className="h-full border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-500 relative overflow-hidden bg-white/50 backdrop-blur-sm">
                             <div className="relative z-10 flex flex-col h-full p-2">
                                 <div className="flex justify-between items-start mb-6">
                                     <div className={`p-4 rounded-2xl ${type.color} shadow-inner`}>
@@ -146,7 +146,7 @@ const TutorReportes = () => {
                             <div className="absolute -right-8 -bottom-8 opacity-[0.03] group-hover:opacity-[0.08] transition-all transform group-hover:scale-110 group-hover:-rotate-12 duration-700">
                                 <type.icon size={180} />
                             </div>
-                        </Card>
+                        </Tarjeta>
                     </motion.div>
                 ))}
             </div>
@@ -175,7 +175,7 @@ const TutorReportes = () => {
 
             {/* Quick Actions / Recent Reports - Full Width */}
             <div className="mt-4">
-                <Card title="Reportes Generados Recientemente" subtitle="Acceso rápido a los últimos informes descargados">
+                <Tarjeta title="Reportes Generados Recientemente" subtitle="Acceso rápido a los últimos informes descargados">
                     {history.length > 0 ? (
                         <div className="mt-6 overflow-hidden rounded-2xl border border-gray-100 shadow-sm bg-white">
                             <table className="w-full text-left border-collapse">
@@ -261,7 +261,7 @@ const TutorReportes = () => {
                             <p className="text-navy/30 font-black uppercase tracking-[0.2em] text-xs">Sin actividad reciente de reportes</p>
                         </div>
                     )}
-                </Card>
+                </Tarjeta>
             </div>
         </div>
     );

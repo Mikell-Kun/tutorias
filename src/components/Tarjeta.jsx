@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Card = ({ children, title, subtitle, icon: Icon, actions, className = "" }) => {
+const Tarjeta = ({ children, title, subtitle, icon: Icon, actions, className = "" }) => {
     return (
         <div className={`glass p-6 ${className}`}>
             {(title || Icon || actions) && (
@@ -24,4 +24,4 @@ const Card = ({ children, title, subtitle, icon: Icon, actions, className = "" }
     );
 };
 
-export default Card;
+export default Tarjeta;

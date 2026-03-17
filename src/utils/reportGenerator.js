@@ -64,7 +64,7 @@ export const generateSemesterReport = (tutor, studentsAtRisk) => {
 
         // Row 3
         drawCell(10, startY + (rowH * 2), 80, rowH, 'Programa educativo', 'Programa de Tutorías');
-        drawCell(90, startY + (rowH * 2), 60, rowH, 'Grupo', '');
+        drawCell(90, startY + (rowH * 2), 60, rowH, 'Num. grupo', '');
         drawCell(150, startY + (rowH * 2), 50, rowH, 'Hora', timeStr);
 
         // Students Table
@@ -207,7 +207,7 @@ const generateGroupReportBase = (data, mainTitle) => {
         // Header Section
         drawFormGrid(margin, currentY, contentWidth, 8, mainTitle, '', true);
         currentY += 8;
-        drawFormGrid(margin, currentY, contentWidth, 8, 'Instituto tecnologico', '', true);
+        drawFormGrid(margin, currentY, contentWidth, 8, 'Instituto Tecnológico de Mexicali', '', true);
         currentY += 8;
 
         // Row 3: Tutor Name, Dept, Period
@@ -431,13 +431,13 @@ export const generateReferralReport = (data) => {
     doc.line(10, 64, 200, 64); // Bottom horizontal
 
     doc.setFont('helvetica', 'bold');
-    doc.text('GRUPO:', 12, 61);
+    doc.text('NUM. GRUPO:', 12, 61);
     doc.text('Nº ALUMNOS:', 82, 61);
     doc.text('PERIODO:', 137, 61);
     doc.text('CARRERA:', 12, 69);
 
     doc.setFont('helvetica', 'normal');
-    doc.text(data.groupNum || '', 30, 61);
+    doc.text(data.groupNum || '', 36, 61);
     doc.text(data.totalStudentsNum?.toString() || '', 110, 61);
     doc.text(data.period || '', 160, 61);
     doc.text(data.program || '', 32, 69);
@@ -580,7 +580,7 @@ export const generateStudentSemesterReport = (data) => {
         // Header Section
         drawFormGrid(margin, currentY, contentWidth, 8, 'reporte semestral por alumno del tutor', '', true);
         currentY += 8;
-        drawFormGrid(margin, currentY, contentWidth, 8, 'Instituto tecnologico', '', true);
+        drawFormGrid(margin, currentY, contentWidth, 8, 'Instituto Tecnológico de Mexicali', '', true);
         currentY += 8;
 
         // Row 3: Tutor Name, Period
@@ -716,7 +716,7 @@ export const generateDetailedStudentReport = (data) => {
         // Header Section
         drawFormGrid(margin, currentY, contentWidth, 8, 'reporte detallado por alumno del tutor', '', true);
         currentY += 8;
-        drawFormGrid(margin, currentY, contentWidth, 8, 'Instituto tecnologico', '', true);
+        drawFormGrid(margin, currentY, contentWidth, 8, 'Instituto Tecnológico de Mexicali', '', true);
         currentY += 8;
 
         // Row 3: Tutor Name, Period

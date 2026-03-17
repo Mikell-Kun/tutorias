@@ -1,15 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getUserByControl } from '../data/database.js';
 
-const UserContext = createContext();
+const ContextoUsuario = createContext();
 
-export const UserProvider = ({ children }) => {
+export const ProveedorUsuario = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         // Check for existing session
-        const savedUser = localStorage.getItem('tutorias_user');
+        const savedUser = sessionStorage.getItem('tutorias_user');
         if (savedUser) {
             const parsedUser = JSON.parse(savedUser);
 
@@ -21,8 +21,8 @@ export const UserProvider = ({ children }) => {
                     ...freshData
                 };
                 setUser(updatedUser);
-                // Optional: persist the fresh data back to localStorage
-                localStorage.setItem('tutorias_user', JSON.stringify(updatedUser));
+                // Optional: persist the fresh data back to sessionStorage
+                sessionStorage.setItem('tutorias_user', JSON.stringify(updatedUser));
             } else {
                 setUser(parsedUser);
             }
@@ -32,25 +32,25 @@ export const UserProvider = ({ children }) => {
 
     const login = (userData) => {
         setUser(userData);
-        localStorage.setItem('tutorias_user', JSON.stringify(userData));
+        sessionStorage.setItem('tutorias_user', JSON.stringify(userData));
     };
 
     const logout = () => {
         setUser(null);
-        localStorage.removeItem('tutorias_user');
+        sessionStorage.removeItem('tutorias_user');
     };
 
     return (
-        <UserContext.Provider value={{ user, login, logout, loading }}>
+        <ContextoUsuario.Provider value={{ user, login, logout, loading }}>
             {children}
-        </UserContext.Provider>
+        </ContextoUsuario.Provider>
     );
 };
 
 export const useUser = () => {
-    const context = useContext(UserContext);
+    const context = useContext(ContextoUsuario);
     if (!context) {
-        throw new Error('useUser must be used within a UserProvider');
+        throw new Error('useUser must be used within a ProveedorUsuario');
     }
     return context;
 };

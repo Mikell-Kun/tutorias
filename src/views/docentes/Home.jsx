@@ -2,8 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Users, AlertTriangle, MessageSquare, Calendar, Building2, ExternalLink, LayoutDashboard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import Card from '../../components/Card.jsx';
-import { useUser } from '../../context/UserContext.jsx';
+import Tarjeta from '../../components/Tarjeta.jsx';
+import { useUser } from '../../context/ContextoUsuario.jsx';
 
 const TeacherHome = () => {
     const { user } = useUser();
@@ -32,21 +32,21 @@ const TeacherHome = () => {
 
             {/* Top Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="border-none shadow-xl shadow-navy/5 overflow-hidden group" icon={Building2}>
+                <Tarjeta className="border-none shadow-xl shadow-navy/5 overflow-hidden group" icon={Building2}>
                     <div>
                         <p className="text-[10px] font-black text-gold uppercase tracking-[0.2em]">Departamento</p>
                         <h3 className="text-xl font-bold text-navy leading-tight">{user?.departamento || 'No asignado'}</h3>
                     </div>
-                </Card>
+                </Tarjeta>
 
-                <Card className="border-none shadow-xl shadow-navy/5 overflow-hidden group" icon={MessageSquare}>
+                <Tarjeta className="border-none shadow-xl shadow-navy/5 overflow-hidden group" icon={MessageSquare}>
                     <div>
                         <p className="text-[10px] font-black text-navy/40 uppercase tracking-[0.2em]">Mensajes Nuevos</p>
                         <h3 className="text-3xl font-black text-navy">0</h3>
                     </div>
-                </Card>
+                </Tarjeta>
 
-                <Card
+                <Tarjeta
                     className="border-none shadow-xl shadow-navy/5 overflow-hidden group cursor-pointer"
                     icon={AlertTriangle}
                     onClick={() => navigate('/reportar-incidencia')}
@@ -58,12 +58,12 @@ const TeacherHome = () => {
                         </div>
                         <ExternalLink size={20} className="text-navy/20 group-hover:text-navy transition-colors ml-4" />
                     </div>
-                </Card>
+                </Tarjeta>
             </div>
 
             {/* Recent Info */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card title="Tutorados Bajo Seguimiento" subtitle="Estudiantes que requieren atención">
+                <Tarjeta title="Tutorados Bajo Seguimiento" subtitle="Estudiantes que requieren atención">
                     <div className="mt-4 flex flex-col items-center justify-center py-12 text-center text-text-muted space-y-4">
                         <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center">
                             <Users size={32} className="opacity-20" />
@@ -73,9 +73,9 @@ const TeacherHome = () => {
                             <p className="text-[10px] font-black text-navy/20 uppercase tracking-[0.2em] mt-1">Sección en desarrollo</p>
                         </div>
                     </div>
-                </Card>
+                </Tarjeta>
 
-                <Card title="Próximos Eventos" subtitle="Calendario de actividades">
+                <Tarjeta title="Próximos Eventos" subtitle="Calendario de actividades">
                     <div className="mt-4 space-y-4">
                         <div className="border border-gray-100 rounded-2xl p-4 flex items-center gap-4 hover:border-navy/20 transition-colors cursor-pointer">
                             <div className="w-12 h-12 bg-gold/10 text-gold rounded-xl flex flex-col items-center justify-center font-black">
@@ -88,7 +88,7 @@ const TeacherHome = () => {
                             </div>
                         </div>
                     </div>
-                </Card>
+                </Tarjeta>
             </div>
         </div>
     );

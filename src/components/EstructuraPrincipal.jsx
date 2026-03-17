@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
-import Sidebar from './Sidebar.jsx';
+import BarraLateral from './BarraLateral.jsx';
 import { Bell, ChevronDown, User as UserIcon, LogOut } from 'lucide-react';
-import { useUser } from '../context/UserContext.jsx';
+import { useUser } from '../context/ContextoUsuario.jsx';
 import { getIncidencias, getMensajes } from '../data/database.js';
 
-const DashboardLayout = () => {
+const EstructuraPrincipal = () => {
     const { user, logout } = useUser();
     const [refresh, setRefresh] = React.useState(0);
     const [showProfileMenu, setShowProfileMenu] = React.useState(false);
@@ -47,7 +47,7 @@ const DashboardLayout = () => {
 
     return (
         <div className="flex min-h-screen bg-slate-50">
-            <Sidebar isCollapsed={isSidebarCollapsed} onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)} />
+            <BarraLateral isCollapsed={isSidebarCollapsed} onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)} />
 
             <main className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
                 {/* Top Navbar */}
@@ -129,4 +129,4 @@ const DashboardLayout = () => {
     );
 };
 
-export default DashboardLayout;
+export default EstructuraPrincipal;
