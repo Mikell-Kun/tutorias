@@ -48,7 +48,7 @@ export const generateSemesterReport = (tutor, studentsAtRisk) => {
             doc.text(`${label}:`, x + 2, y + 5);
             if (value) {
                 doc.setFont('helvetica', 'normal');
-                doc.text(String(value), x + 2, y + 10);
+                doc.text(String(value), x + 2, y + 10, { maxWidth: w - 4 });
             }
         };
 
@@ -196,8 +196,7 @@ const generateGroupReportBase = (data, mainTitle) => {
                 doc.text(label, x + 1, y + 3.5);
                 if (value) {
                     doc.setFont('helvetica', 'normal');
-                    doc.setFontSize(9);
-                    doc.text(String(value), x + 1, y + (h - 2));
+                    doc.text(String(value), x + 1, y + (h - 2), { maxWidth: w - 2 });
                 }
             }
         };
@@ -221,11 +220,13 @@ const generateGroupReportBase = (data, mainTitle) => {
         currentY += 10;
 
         // Row 4: Program, Group, Dates
-        const subColW = contentWidth / 4;
-        drawFormGrid(margin, currentY, subColW, 10, 'programa educativo', data.program);
-        drawFormGrid(margin + subColW, currentY, subColW, 10, 'num. grupo', data.groupNum);
-        drawFormGrid(margin + (subColW * 2), currentY, subColW, 10, 'fecha inicio', data.startDate);
-        drawFormGrid(margin + (subColW * 3), currentY, subColW, 10, 'fecha final', data.endDate);
+        const colWProg = contentWidth * 0.4;
+        const colWGrp = contentWidth * 0.15;
+        const colWDate = contentWidth * 0.225;
+        drawFormGrid(margin, currentY, colWProg, 10, 'programa educativo', data.program);
+        drawFormGrid(margin + colWProg, currentY, colWGrp, 10, 'num. grupo', data.groupNum);
+        drawFormGrid(margin + colWProg + colWGrp, currentY, colWDate, 10, 'fecha inicio', data.startDate);
+        drawFormGrid(margin + colWProg + colWGrp + colWDate, currentY, colWDate, 10, 'fecha final', data.endDate);
         currentY += 15;
 
         // Students Table Title
@@ -570,7 +571,7 @@ export const generateStudentSemesterReport = (data) => {
                 if (value) {
                     doc.setFont('helvetica', 'normal');
                     doc.setFontSize(9);
-                    doc.text(String(value), x + 1, y + (h - 2));
+                    doc.text(String(value), x + 1, y + (h - 2), { maxWidth: w - 2 });
                 }
             }
         };
@@ -597,11 +598,14 @@ export const generateStudentSemesterReport = (data) => {
         currentY += 10;
 
         // Row 5: Student Info
-        const quarterWidth = contentWidth / 4;
-        drawFormGrid(margin, currentY, quarterWidth, 10, 'nombre del alumno/a', data.studentName);
-        drawFormGrid(margin + quarterWidth, currentY, quarterWidth, 10, 'matricula', data.controlNumber);
-        drawFormGrid(margin + (quarterWidth * 2), currentY, quarterWidth, 10, 'carrera', data.career);
-        drawFormGrid(margin + (quarterWidth * 3), currentY, quarterWidth, 10, 'semestre', data.semester);
+        const colWName = contentWidth * 0.35;
+        const colWControl = contentWidth * 0.15;
+        const colWCareer = contentWidth * 0.35;
+        const colWSemester = contentWidth * 0.15;
+        drawFormGrid(margin, currentY, colWName, 10, 'nombre del alumno/a', data.studentName);
+        drawFormGrid(margin + colWName, currentY, colWControl, 10, 'matricula', data.controlNumber);
+        drawFormGrid(margin + colWName + colWControl, currentY, colWCareer, 10, 'carrera', data.career);
+        drawFormGrid(margin + colWName + colWControl + colWCareer, currentY, colWSemester, 10, 'semestre', data.semester);
         currentY += 15;
 
         // Sessions Table
@@ -706,7 +710,7 @@ export const generateDetailedStudentReport = (data) => {
                 if (value) {
                     doc.setFont('helvetica', 'normal');
                     doc.setFontSize(9);
-                    doc.text(String(value), x + 1, y + (h - 2));
+                    doc.text(String(value), x + 1, y + (h - 2), { maxWidth: w - 2 });
                 }
             }
         };
@@ -733,11 +737,14 @@ export const generateDetailedStudentReport = (data) => {
         currentY += 10;
 
         // Row 5: Student Info
-        const quarterWidth = contentWidth / 4;
-        drawFormGrid(margin, currentY, quarterWidth, 10, 'nombre del alumno/a', data.studentName);
-        drawFormGrid(margin + quarterWidth, currentY, quarterWidth, 10, 'matricula', data.controlNumber);
-        drawFormGrid(margin + (quarterWidth * 2), currentY, quarterWidth, 10, 'carrera', data.career);
-        drawFormGrid(margin + (quarterWidth * 3), currentY, quarterWidth, 10, 'semestre', data.semester);
+        const colWName = contentWidth * 0.35;
+        const colWControl = contentWidth * 0.15;
+        const colWCareer = contentWidth * 0.35;
+        const colWSemester = contentWidth * 0.15;
+        drawFormGrid(margin, currentY, colWName, 10, 'nombre del alumno/a', data.studentName);
+        drawFormGrid(margin + colWName, currentY, colWControl, 10, 'matricula', data.controlNumber);
+        drawFormGrid(margin + colWName + colWControl, currentY, colWCareer, 10, 'carrera', data.career);
+        drawFormGrid(margin + colWName + colWControl + colWCareer, currentY, colWSemester, 10, 'semestre', data.semester);
         currentY += 15;
 
         // Sessions Table
@@ -841,7 +848,7 @@ export const generateIncidenceSemesterReport = (data) => {
                 if (value) {
                     doc.setFont('helvetica', 'normal');
                     doc.setFontSize(9);
-                    doc.text(String(value), x + 1, y + (h - 2));
+                    doc.text(String(value), x + 1, y + (h - 2), { maxWidth: w - 2 });
                 }
             }
         };
@@ -971,7 +978,7 @@ export const generateDetailedIncidenceReport = (data) => {
                 if (value) {
                     doc.setFont('helvetica', 'normal');
                     doc.setFontSize(9);
-                    doc.text(String(value), x + 1, y + (h - 2));
+                    doc.text(String(value), x + 1, y + (h - 2), { maxWidth: w - 2 });
                 }
             }
         };
