@@ -119,7 +119,7 @@ const IniciarSesion = () => {
                                     <input
                                         type={showPassword ? "text" : "password"}
                                         value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
+                                        onChange={(e) => setPassword(e.target.value.replace(/\s/g, ''))}
                                         className="input-formal-modern"
                                         style={{ paddingRight: '54px' }}
                                         placeholder="••••••••"
