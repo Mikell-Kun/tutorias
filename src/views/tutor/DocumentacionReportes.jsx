@@ -10,35 +10,28 @@ const DocumentacionReportes = () => {
     const sections = [
         {
             title: "Reportes Generales",
-            description: "Informes diseñados para dar seguimiento al progreso grupal y gestiones administrativas.",
+            description: "Informes de seguimiento grupal y administrativo. La principal diferencia entre Semestral y Detallado radica en las Fechas de Periodo que se evalúan.",
             reports: [
                 {
-                    name: "Semestral por Grupo",
-                    purpose: "Resumen estadístico del desempeño del grupo durante el ciclo escolar.",
+                    name: "Reportes por Grupo (Semestral y Detallado)",
+                    purpose: "Evalúa las aptitudes, canales de atención y desarrollo general de los estudiantes de un mismo grupo.",
                     content: [
-                        "Métricas de aprobación y reprobación global.",
-                        "Identificación de materias con mayor índice de reprobación.",
-                        "Promedio general del grupo."
+                        "Programa Educativo: La carrera profesional a la que pertenece el grupo evaluado.",
+                        "Grupo: Identificador alfanumérico exacto de 2 caracteres (ej. 1A, 3C).",
+                        "Periodo (Fechas): En el reporte Semestral abarcará todo el ciclo escolar, mientras que en el Detallado se ajusta a lapsos más cortos (ej. un mes, unidad).",
+                        "Lista de Estudiantes: Registro uno a uno de los alumnos con su Nombre y Número de Control.",
+                        "Estadísticas Grupales e Individuales: Desglose exacto de áreas de apoyo (Psicología, Beca, Académica, etc.), cuántos alumnos se canalizaron a cada una y su porcentaje real frente al total de la clase o evaluados."
                     ],
                     icon: <FileText className="text-blue-500" />
                 },
                 {
-                    name: "Detallado por Grupo",
-                    purpose: "Listado pormenorizado del estatus académico de cada estudiante del grupo.",
+                    name: "Reporte de Canalizaciones",
+                    purpose: "Listado oficial de todos los alumnos que fueron derivados a un área de apoyo especializada.",
                     content: [
-                        "Estatus individual (Regular/Irregular).",
-                        "Número de incidencias reportadas por alumno.",
-                        "Alertas de riesgo académico por inasistencias."
-                    ],
-                    icon: <ClipboardList className="text-indigo-500" />
-                },
-                {
-                    name: "De Canalizaciones",
-                    purpose: "Seguimiento de alumnos derivados a servicios de apoyo institucional.",
-                    content: [
-                        "Listado de canalizaciones a Psicología, Servicios Médicos o Asesorías Académicas.",
-                        "Estatus de la canalización (Atendida/Pendiente).",
-                        "Observaciones del tutor sobre el seguimiento."
+                        "Datos del Documento: Incluye Carrera, Grupo, Fechas y el Número Total de Alumnos canalizados.",
+                        "Motivo de Canalización: Justificación breve escrita por el tutor del porqué se está enviando al alumno.",
+                        "Área Derivada: Especifica a qué departamento se envió (Salud, Adicciones, Asesoría Académica, etc.).",
+                        "Observaciones: Notas extra sobre la situación particular del estudiante durante la tutoría."
                     ],
                     icon: <CheckCircle2 className="text-green-500" />
                 }
@@ -46,25 +39,27 @@ const DocumentacionReportes = () => {
         },
         {
             title: "Reportes Específicos",
-            description: "Informes detallados por entidad (alumno o tipo de incidencia) para un análisis profundo.",
+            description: "Informes enfocados en un solo alumno o en una incidencia particular detectada.",
             reports: [
                 {
-                    name: "Por Alumno (Semestral/Detallado)",
-                    purpose: "Expediente completo de la trayectoria de un estudiante específico.",
+                    name: "Reporte por Alumno (Semestral y Detallado)",
+                    purpose: "Expediente de entrevista individual y rendimiento personal de un estudiante.",
                     content: [
-                        "Historial de incidencias y acciones de tutoría.",
-                        "Seguimiento de compromisos adquiridos por el alumno.",
-                        "Detalle de reuniones y acuerdos mutuos."
+                        "Datos del Estudiante: Semestre actual, Edad, Sexo, Estado Civil, Situación Laboral y si cuenta con beca.",
+                        "Áreas Evaluadas: Calificaciones subjetivas del tutor sobre el aspecto Cognitivo, Afectivo, Somático y un Diagnóstico general.",
+                        "Compromisos: Acuerdos escritos establecidos entre el estudiante y el tutor a cumplir en el periodo.",
+                        "Periodo: Al igual que el grupal, el Semestral abarca el ciclo completo y el Detallado un periodo particular de evaluación."
                     ],
                     icon: <Info className="text-orange-500" />
                 },
                 {
-                    name: "Por Incidencia (Semestral/Detallado)",
-                    purpose: "Análisis recurrente de causas raíz de problemas académicos.",
+                    name: "Reporte de Incidencias (Semestral y Detallado)",
+                    purpose: "Registro formal de faltas, reportes de disciplina o alertas académicas graves emitidas por docentes.",
                     content: [
-                        "Agrupación de reportes por tipo de incidencia (Conducta, Académica, etc.).",
-                        "Frecuencia de reportes por docente.",
-                        "Resolución de conflictos y efectividad de las tutorías."
+                        "Docente Reportador: Nombre del maestro que levanta la alerta o queja.",
+                        "Estudiante Implicado: A quién va dirigida la incidencia.",
+                        "Tipo de Incidencia: Clasificación del problema (Falta de respeto, Inasistencias, Bajo rendimiento, Plagio, etc.).",
+                        "Evidencias y Resoluciones: Pasos que se tomaron para corregir la actitud o estado del estudiante."
                     ],
                     icon: <AlertCircle className="text-red-500" />
                 }

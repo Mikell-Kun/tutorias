@@ -733,21 +733,27 @@ export const generateStudentSemesterReport = (data) => {
         doc.text(data.observations || '', margin + 2, currentY + 6, { maxWidth: contentWidth - 4 });
         currentY += 40;
 
-        // Signatures
+        // Validations and Signatures
+        const stampW = 40;
+        const stampH = 40;
+        const sigY = currentY - 10;
         const sigW = 60;
-        const sigY = currentY;
-        const spacing = (contentWidth - (sigW * 3)) / 2;
 
-        doc.line(margin, sigY, margin + sigW, sigY);
-        doc.setFontSize(7);
+        // Sello Box (Left)
+        doc.rect(margin, sigY, stampW, stampH);
+        doc.setFontSize(8);
         doc.setFont('helvetica', 'bold');
-        doc.text('Nombre y firma del coordinador de tutoría de Departamento Académico', margin + (sigW / 2), sigY + 5, { align: 'center', maxWidth: sigW });
+        doc.setTextColor(200, 200, 200); // Light gray to indicate it's a zone for stamping
+        doc.text('SELLO', margin + (stampW / 2), sigY + (stampH / 2) - 4, { align: 'center' });
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(7);
+        doc.text('Instituto Tecnológico', margin + (stampW / 2), sigY + stampH - 6, { align: 'center', maxWidth: stampW - 2 });
+        doc.text('de Mexicali', margin + (stampW / 2), sigY + stampH - 2, { align: 'center' });
 
-        doc.line(margin + sigW + spacing, sigY, margin + (sigW * 2) + spacing, sigY);
-        doc.text('Nombre y firma del Jefe de Departamento Académico', margin + sigW + spacing + (sigW / 2), sigY + 5, { align: 'center', maxWidth: sigW });
-
-        doc.line(margin + (sigW * 2) + (spacing * 2), sigY, margin + (sigW * 3) + (spacing * 2), sigY);
-        doc.text('Nombre y firma del Tutor', margin + (sigW * 2) + (spacing * 2) + (sigW / 2), sigY + 5, { align: 'center', maxWidth: sigW });
+        // Tutor Signature (Right)
+        const tutorSigX = margin + contentWidth - sigW;
+        doc.line(tutorSigX, sigY + stampH - 10, tutorSigX + sigW, sigY + stampH - 10);
+        doc.text('Nombre y firma del Tutor', tutorSigX + (sigW / 2), sigY + stampH - 5, { align: 'center', maxWidth: sigW });
 
         doc.save(`Reporte_Semestral_Alumno_${data.studentName.replace(/\s+/g, '_')}.pdf`);
     } catch (error) {
@@ -871,21 +877,27 @@ export const generateDetailedStudentReport = (data) => {
         doc.text(data.observations || '', margin + 2, currentY + 6, { maxWidth: contentWidth - 4 });
         currentY += 40;
 
-        // Signatures
+        // Validations and Signatures
+        const stampW = 40;
+        const stampH = 40;
+        const sigY = currentY - 10;
         const sigW = 60;
-        const sigY = currentY;
-        const spacing = (contentWidth - (sigW * 3)) / 2;
 
-        doc.line(margin, sigY, margin + sigW, sigY);
-        doc.setFontSize(7);
+        // Sello Box (Left)
+        doc.rect(margin, sigY, stampW, stampH);
+        doc.setFontSize(8);
         doc.setFont('helvetica', 'bold');
-        doc.text('Nombre y firma del coordinador de tutoría de Departamento Académico', margin + (sigW / 2), sigY + 5, { align: 'center', maxWidth: sigW });
+        doc.setTextColor(200, 200, 200); // Light gray to indicate it's a zone for stamping
+        doc.text('SELLO', margin + (stampW / 2), sigY + (stampH / 2) - 4, { align: 'center' });
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(7);
+        doc.text('Instituto Tecnológico', margin + (stampW / 2), sigY + stampH - 6, { align: 'center', maxWidth: stampW - 2 });
+        doc.text('de Mexicali', margin + (stampW / 2), sigY + stampH - 2, { align: 'center' });
 
-        doc.line(margin + sigW + spacing, sigY, margin + (sigW * 2) + spacing, sigY);
-        doc.text('Nombre y firma del Jefe de Departamento Académico', margin + sigW + spacing + (sigW / 2), sigY + 5, { align: 'center', maxWidth: sigW });
-
-        doc.line(margin + (sigW * 2) + (spacing * 2), sigY, margin + (sigW * 3) + (spacing * 2), sigY);
-        doc.text('Nombre y firma del Tutor', margin + (sigW * 2) + (spacing * 2) + (sigW / 2), sigY + 5, { align: 'center', maxWidth: sigW });
+        // Tutor Signature (Right)
+        const tutorSigX = margin + contentWidth - sigW;
+        doc.line(tutorSigX, sigY + stampH - 10, tutorSigX + sigW, sigY + stampH - 10);
+        doc.text('Nombre y firma del Tutor', tutorSigX + (sigW / 2), sigY + stampH - 5, { align: 'center', maxWidth: sigW });
 
         doc.save(`Reporte_Detallado_Alumno_${data.studentName.replace(/\s+/g, '_')}.pdf`);
     } catch (error) {
