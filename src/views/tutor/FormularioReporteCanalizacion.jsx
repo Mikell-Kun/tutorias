@@ -148,8 +148,21 @@ const FormularioReporteCanalizacion = () => {
                             <input type="date" required value={formData.endDate} onChange={(e) => setFormData({ ...formData, endDate: e.target.value })} className="w-full px-5 py-3.5 bg-white border-2 border-gray-100 rounded-2xl font-bold text-navy focus:border-gold transition-all" />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Num. Grupo</label>
-                            <input type="number" min="1" required placeholder="Ej. 1" value={formData.groupNum} onChange={(e) => setFormData({ ...formData, groupNum: e.target.value })} className="w-full px-5 py-3.5 bg-white border-2 border-gray-100 rounded-2xl font-bold text-navy focus:border-gold transition-all" />
+                            <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Grupo</label>
+                            <input 
+                                type="text"
+                                maxLength="2"
+                                placeholder="Ej. 1A" 
+                                required 
+                                value={formData.groupNum} 
+                                onChange={(e) => {
+                                    const val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                                    if (val.length <= 2) {
+                                        setFormData({ ...formData, groupNum: val });
+                                    }
+                                }} 
+                                className="w-full px-5 py-3.5 bg-white border-2 border-gray-100 rounded-2xl font-bold text-navy focus:border-gold transition-all uppercase" 
+                            />
                         </div>
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Nº Alumnos</label>

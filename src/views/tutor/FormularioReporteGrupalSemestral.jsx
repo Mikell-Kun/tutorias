@@ -25,15 +25,11 @@ const FormularioReporteGrupalSemestral = () => {
         students: [], // { name: '', control: '', autoFilled: false }
         groupTutoring: {
             totalStudents: 0,
-            channeledCount: 0,
-            topArea: '',
-            resultPercentage: 0
+            referrals: { SP: 0, SS: 0, AD: 0, BM: 0, BT: 0, BA: 0, AA: 0, APAA: 0, AS: 0 }
         },
         individualTutoring: {
             totalStudents: 0,
-            channeledCount: 0,
-            topArea: '',
-            resultPercentage: 0
+            referrals: { SP: 0, SS: 0, AD: 0, BM: 0, BT: 0, BA: 0, AA: 0, APAA: 0, AS: 0 }
         },
         observations: ''
     });
@@ -121,29 +117,15 @@ const FormularioReporteGrupalSemestral = () => {
     };
 
     useEffect(() => {
-        // Sync Group Tutoring
         const totalG = formData.students.length;
-        const channeledG = formData.groupTutoring.channeledCount;
-        const percentageG = totalG > 0 ? ((channeledG / totalG) * 100).toFixed(2) : 0;
-
-        // Sync Individual Tutoring
-        const totalI = formData.individualTutoring.totalStudents;
-        const channeledI = formData.individualTutoring.channeledCount;
-        const percentageI = totalI > 0 ? ((channeledI / totalI) * 100).toFixed(2) : 0;
-
         setFormData(prev => ({
             ...prev,
             groupTutoring: {
                 ...prev.groupTutoring,
-                totalStudents: totalG,
-                resultPercentage: percentageG
-            },
-            individualTutoring: {
-                ...prev.individualTutoring,
-                resultPercentage: percentageI
+                totalStudents: totalG
             }
         }));
-    }, [formData.students.length, formData.groupTutoring.channeledCount, formData.individualTutoring.totalStudents, formData.individualTutoring.channeledCount]);
+    }, [formData.students.length]);
 
     // ... (rest of the component structure remains similar until stats section)
 
@@ -224,15 +206,20 @@ const FormularioReporteGrupalSemestral = () => {
                                 </select>
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Num. Grupo</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Grupo</label>
                                 <input
-                                    type="number"
-                                    min="1"
-                                    placeholder="Ej. 1"
+                                    type="text"
+                                    maxLength="2"
+                                    placeholder="Ej. 1A"
                                     required
                                     value={formData.groupNum}
-                                    onChange={(e) => setFormData({ ...formData, groupNum: e.target.value })}
-                                    className="w-full px-5 py-3.5 bg-white border-2 border-gray-100 rounded-2xl font-bold text-navy focus:border-gold transition-all"
+                                    onChange={(e) => {
+                                        const val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                                        if (val.length <= 2) {
+                                            setFormData({ ...formData, groupNum: val });
+                                        }
+                                    }}
+                                    className="w-full px-5 py-3.5 bg-white border-2 border-gray-100 rounded-2xl font-bold text-navy focus:border-gold transition-all uppercase"
                                 />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
@@ -321,47 +308,55 @@ const FormularioReporteGrupalSemestral = () => {
                                 <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-navy mb-4 flex items-center gap-2">
                                     <Users size={14} /> Tutoría Grupal
                                 </h4>
-                                <div className="space-y-4">
-                                    <div className="flex justify-between items-center text-xs font-bold text-navy/60 uppercase tracking-tighter">
+                                <div className="space-y-3">
+                                    <div className="flex justify-between items-center text-xs font-bold text-navy/60 uppercase tracking-tighter mb-4">
                                         <span>Total Estudiantes</span>
                                         <span className="text-navy">{formData.groupTutoring.totalStudents}</span>
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-navy/40">Estudiantes Canalizados</label>
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            value={formData.groupTutoring.channeledCount}
-                                            onChange={(e) => setFormData({
-                                                ...formData,
-                                                groupTutoring: { ...formData.groupTutoring, channeledCount: parseInt(e.target.value) || 0 }
-                                            })}
-                                            className="w-full px-4 py-2 bg-white border-2 border-transparent rounded-xl font-bold text-navy focus:border-gold shadow-sm transition-all"
-                                        />
+                                    
+                                    <div className="grid grid-cols-12 gap-2 text-[10px] font-black uppercase tracking-widest text-navy/40 mb-2">
+                                        <div className="col-span-8">Área de Canalización</div>
+                                        <div className="col-span-2 text-center">Cant.</div>
+                                        <div className="col-span-2 text-center">%</div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-navy/40">Área Mayor Canalización</label>
-                                        <select
-                                            value={formData.groupTutoring.topArea}
-                                            onChange={(e) => setFormData({
-                                                ...formData,
-                                                groupTutoring: { ...formData.groupTutoring, topArea: e.target.value }
-                                            })}
-                                            className="w-full px-4 py-2 bg-white border-2 border-transparent rounded-xl font-bold text-navy focus:border-gold shadow-sm transition-all"
-                                        >
-                                            <option value="">Seleccionar Area</option>
-                                            {supportAreas.map(a => <option key={a.value} value={a.value}>{a.label}</option>)}
-                                        </select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-navy/40">Resultado (% Total)</label>
-                                        <input
-                                            type="text"
-                                            readOnly
-                                            value={`${formData.groupTutoring.resultPercentage}%`}
-                                            className="w-full px-4 py-2 bg-gray-50 border-2 border-transparent rounded-xl font-bold text-navy shadow-sm transition-all cursor-not-allowed"
-                                        />
-                                    </div>
+
+                                    {supportAreas.map(area => {
+                                        const count = formData.groupTutoring.referrals[area.value] || 0;
+                                        const percentage = formData.students.length > 0 ? ((count / formData.students.length) * 100).toFixed(2) : '0.00';
+                                        return (
+                                            <div key={`group-${area.value}`} className="grid grid-cols-12 gap-2 items-center">
+                                                <div className="col-span-8 text-[10px] font-bold text-navy/70 line-clamp-1" title={area.label}>
+                                                    {area.label}
+                                                </div>
+                                                <div className="col-span-2">
+                                                    <input
+                                                        type="number"
+                                                        min="0"
+                                                        value={count}
+                                                        onChange={(e) => {
+                                                            const val = parseInt(e.target.value) || 0;
+                                                            setFormData({
+                                                                ...formData,
+                                                                groupTutoring: {
+                                                                    ...formData.groupTutoring,
+                                                                    referrals: { ...formData.groupTutoring.referrals, [area.value]: val }
+                                                                }
+                                                            });
+                                                        }}
+                                                        className="w-full px-1 py-1.5 bg-white border-2 border-transparent rounded-lg font-bold text-navy focus:border-gold shadow-sm transition-all text-xs text-center"
+                                                    />
+                                                </div>
+                                                <div className="col-span-2">
+                                                    <input
+                                                        type="text"
+                                                        readOnly
+                                                        value={`${percentage}%`}
+                                                        className="w-full px-0 py-1.5 bg-transparent border-none font-bold text-navy/60 cursor-not-allowed text-[10px] text-center"
+                                                    />
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
 
@@ -369,9 +364,11 @@ const FormularioReporteGrupalSemestral = () => {
                                 <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-gold mb-4 flex items-center gap-2">
                                     <BarChart size={14} /> Tutoría Individual
                                 </h4>
-                                <div className="space-y-4">
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-gold/60">Alumnos Evaluados Individualmente</label>
+                                <div className="space-y-3">
+                                    <div className="flex justify-between items-center mb-4">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-gold/80">
+                                            Alumnos Evaluados Individualmente
+                                        </label>
                                         <input
                                             type="number"
                                             min="0"
@@ -380,45 +377,54 @@ const FormularioReporteGrupalSemestral = () => {
                                                 ...formData,
                                                 individualTutoring: { ...formData.individualTutoring, totalStudents: parseInt(e.target.value) || 0 }
                                             })}
-                                            className="w-full px-4 py-2 bg-white border-2 border-transparent rounded-xl font-bold text-navy focus:border-gold shadow-sm transition-all text-sm"
+                                            className="w-16 px-2 py-1.5 bg-white border-2 border-transparent rounded-lg font-bold text-navy focus:border-gold shadow-sm transition-all text-sm text-center"
                                         />
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-gold/60">Estudiantes Canalizados</label>
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            value={formData.individualTutoring.channeledCount}
-                                            onChange={(e) => setFormData({
-                                                ...formData,
-                                                individualTutoring: { ...formData.individualTutoring, channeledCount: parseInt(e.target.value) || 0 }
-                                            })}
-                                            className="w-full px-4 py-2 bg-white border-2 border-transparent rounded-xl font-bold text-navy focus:border-gold shadow-sm transition-all text-sm"
-                                        />
+
+                                    <div className="grid grid-cols-12 gap-2 text-[10px] font-black uppercase tracking-widest text-gold/60 mb-2 mt-4">
+                                        <div className="col-span-8">Área de Canalización</div>
+                                        <div className="col-span-2 text-center">Cant.</div>
+                                        <div className="col-span-2 text-center">%</div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-gold/60">Área Mayor Canalización</label>
-                                        <select
-                                            value={formData.individualTutoring.topArea}
-                                            onChange={(e) => setFormData({
-                                                ...formData,
-                                                individualTutoring: { ...formData.individualTutoring, topArea: e.target.value }
-                                            })}
-                                            className="w-full px-4 py-2 bg-white border-2 border-transparent rounded-xl font-bold text-navy focus:border-gold shadow-sm transition-all text-sm font-sans"
-                                        >
-                                            <option value="">Seleccionar Area</option>
-                                            {supportAreas.map(a => <option key={a.value} value={a.value}>{a.label}</option>)}
-                                        </select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-gold/60">Resultado (% Total)</label>
-                                        <input
-                                            type="text"
-                                            readOnly
-                                            value={`${formData.individualTutoring.resultPercentage}%`}
-                                            className="w-full px-4 py-2 bg-white/50 border-2 border-transparent rounded-xl font-bold text-navy shadow-sm transition-all cursor-not-allowed text-sm"
-                                        />
-                                    </div>
+
+                                    {supportAreas.map(area => {
+                                        const count = formData.individualTutoring.referrals[area.value] || 0;
+                                        const baseTotal = formData.individualTutoring.totalStudents || 0;
+                                        const percentage = baseTotal > 0 ? ((count / baseTotal) * 100).toFixed(2) : '0.00';
+                                        return (
+                                            <div key={`indiv-${area.value}`} className="grid grid-cols-12 gap-2 items-center">
+                                                <div className="col-span-8 text-[10px] font-bold text-gold/80 line-clamp-1" title={area.label}>
+                                                    {area.label}
+                                                </div>
+                                                <div className="col-span-2">
+                                                    <input
+                                                        type="number"
+                                                        min="0"
+                                                        value={count}
+                                                        onChange={(e) => {
+                                                            const val = parseInt(e.target.value) || 0;
+                                                            setFormData({
+                                                                ...formData,
+                                                                individualTutoring: {
+                                                                    ...formData.individualTutoring,
+                                                                    referrals: { ...formData.individualTutoring.referrals, [area.value]: val }
+                                                                }
+                                                            });
+                                                        }}
+                                                        className="w-full px-1 py-1.5 bg-white border-2 border-transparent rounded-lg font-bold text-navy focus:border-gold shadow-sm transition-all text-xs text-center"
+                                                    />
+                                                </div>
+                                                <div className="col-span-2">
+                                                    <input
+                                                        type="text"
+                                                        readOnly
+                                                        value={`${percentage}%`}
+                                                        className="w-full px-0 py-1.5 bg-transparent border-none font-bold text-gold/80 cursor-not-allowed text-[10px] text-center"
+                                                    />
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
 

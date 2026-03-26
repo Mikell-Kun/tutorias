@@ -64,7 +64,7 @@ export const generateSemesterReport = (tutor, studentsAtRisk) => {
 
         // Row 3
         drawCell(10, startY + (rowH * 2), 80, rowH, 'Programa educativo', 'Programa de Tutorías');
-        drawCell(90, startY + (rowH * 2), 60, rowH, 'Num. grupo', '');
+        drawCell(90, startY + (rowH * 2), 60, rowH, 'Grupo', '');
         drawCell(150, startY + (rowH * 2), 50, rowH, 'Hora', timeStr);
 
         // Students Table
@@ -224,7 +224,7 @@ const generateGroupReportBase = (data, mainTitle) => {
         const colWGrp = contentWidth * 0.15;
         const colWDate = contentWidth * 0.225;
         drawFormGrid(margin, currentY, colWProg, 10, 'programa educativo', data.program);
-        drawFormGrid(margin + colWProg, currentY, colWGrp, 10, 'num. grupo', data.groupNum);
+        drawFormGrid(margin + colWProg, currentY, colWGrp, 10, 'grupo', data.groupNum);
         drawFormGrid(margin + colWProg + colWGrp, currentY, colWDate, 10, 'fecha inicio', data.startDate);
         drawFormGrid(margin + colWProg + colWGrp + colWDate, currentY, colWDate, 10, 'fecha final', data.endDate);
         currentY += 15;
@@ -260,73 +260,143 @@ const generateGroupReportBase = (data, mainTitle) => {
 
         // Stats Box Title
         const statsTitle = mainTitle.includes('semestral')
-            ? 'estudiantes atendidos en el semestre'
-            : 'estudiantes atendidos en el periodo';
+            ? 'estadísticas de atención en el periodo'
+            : 'estadísticas de atención en el periodo';
         doc.setFont('helvetica', 'bold');
         doc.rect(margin, currentY, contentWidth, 6);
         doc.text(statsTitle, margin + (contentWidth / 2), currentY + 4, { align: 'center' });
         currentY += 6;
 
-        // Stats Headers
-        const statColW = contentWidth / 4;
-        const statHeaders = ['tutoria grupal', 'estudiantes canalizados', 'area con mayor canalizacion', 'Resultado (porcentaje total)'];
-        statHeaders.forEach((h, i) => {
-            doc.rect(margin + (statColW * i), currentY, statColW, 10);
-            doc.setFontSize(7);
-            doc.text(h, margin + (statColW * i) + (statColW / 2), currentY + 6, { align: 'center', maxWidth: statColW - 5 });
-        });
-        currentY += 10;
-
-        // Stats Values
-        const statsRow = [
-            data.groupTutoring.totalStudents,
-            data.groupTutoring.channeledCount,
-            data.groupTutoring.topArea,
-            `${data.groupTutoring.resultPercentage}%`
+        // Support Areas
+        const supportAreas = [
+            { label: 'Servicios Psicológicos (SP)', value: 'SP' },
+            { label: 'Servicios de Salud (SS)', value: 'SS' },
+            { label: 'Adicciones (AD)', value: 'AD' },
+            { label: 'Beca de Manutención (BM)', value: 'BM' },
+            { label: 'Beca de Transporte (BT)', value: 'BT' },
+            { label: 'Beca de Alimentación (BA)', value: 'BA' },
+            { label: 'Asesoría Académica (AA)', value: 'AA' },
+            { label: 'Asesoría de Procesos (APAA)', value: 'APAA' },
+            { label: 'Aptitudes Sobresalientes (AS)', value: 'AS' }
         ];
-        statsRow.forEach((v, i) => {
+
+        // --- Grp Stats ---
+        const totalG = data.students.length || 0;
+        let sumG = 0;
+        let maxG = -1;
+        let topAreaG = 'Ninguna';
+        
+        Object.keys(data.groupTutoring?.referrals || {}).forEach(k => {
+            const v = data.groupTutoring.referrals[k];
+            sumG += v;
+            if (v > maxG && v > 0) { 
+                maxG = v; 
+                topAreaG = k; 
+            }
+        });
+        const topPercG = totalG > 0 && maxG > 0 ? ((maxG / totalG) * 100).toFixed(2) : '0.00';
+
+        // Grp Summary Row
+        const statColW = contentWidth / 4;
+        const grpHeaders = ['alumnos en tutoria grupal', 'estudiantes canalizados', 'area con mayor canalizacion', 'Resultado (porcentaje total)'];
+        grpHeaders.forEach((h, i) => {
+            doc.rect(margin + (statColW * i), currentY, statColW, 8);
+            doc.setFontSize(7);
+            doc.setFont('helvetica', 'bold');
+            doc.text(h, margin + (statColW * i) + (statColW / 2), currentY + 5, { align: 'center', maxWidth: statColW - 2 });
+        });
+        currentY += 8;
+        const grpValues = [totalG.toString(), sumG.toString(), topAreaG, `${topPercG}%`];
+        grpValues.forEach((v, i) => {
             doc.rect(margin + (statColW * i), currentY, statColW, 8);
             doc.setFont('helvetica', 'normal');
             doc.text(String(v), margin + (statColW * i) + (statColW / 2), currentY + 5.5, { align: 'center' });
         });
-        currentY += 12;
+        currentY += 12; // Added gap before detailed table
 
-        // Individual Stats
-        const indHeaders = ['tutoria individual', 'estudiantes evaluados individualmente', 'estudiantes canalizados', 'area mayor canalizacion', 'Resultado (porcentaje total)'];
-        const indColW = contentWidth / 5;
+        // Grp Table
+        const grpTableBody = supportAreas.map(area => {
+            const c = data.groupTutoring?.referrals?.[area.value] || 0;
+            const p = totalG > 0 ? ((c / totalG) * 100).toFixed(2) : '0.00';
+            return [area.label, c.toString(), `${p}%`];
+        });
+
+        autoTable(doc, {
+            startY: currentY,
+            head: [['Área de Canalización (Grupal)', 'Cantidad', 'Porcentaje']],
+            body: grpTableBody,
+            theme: 'grid',
+            styles: { fontSize: 7, cellPadding: 1, minCellHeight: 5 },
+            headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold', halign: 'center' },
+            columnStyles: {
+                0: { cellWidth: contentWidth * 0.6 },
+                1: { cellWidth: contentWidth * 0.2, halign: 'center' },
+                2: { cellWidth: contentWidth * 0.2, halign: 'center' }
+            },
+            margin: { left: margin }
+        });
+        
+        // Espacio visual entre modalidades
+        currentY = doc.lastAutoTable.finalY + 25;
+
+        // --- Indiv Stats ---
+        if (currentY > 230) {
+            doc.addPage();
+            currentY = margin;
+        }
+
+        const totalI = data.individualTutoring?.totalStudents || 0;
+        let sumI = 0;
+        let maxI = -1;
+        let topAreaI = 'Ninguna';
+        Object.keys(data.individualTutoring?.referrals || {}).forEach(k => {
+            const v = data.individualTutoring.referrals[k];
+            sumI += v;
+            if (v > maxI && v > 0) { 
+                maxI = v; 
+                topAreaI = k; 
+            }
+        });
+        const topPercI = totalI > 0 && maxI > 0 ? ((maxI / totalI) * 100).toFixed(2) : '0.00';
+
+        const indHeaders = ['alumnos en tutoria individual', 'estudiantes canalizados', 'area con mayor canalizacion', 'Resultado (porcentaje total)'];
         indHeaders.forEach((h, i) => {
-            doc.rect(margin + (indColW * i), currentY, indColW, 10);
-            doc.setFont('helvetica', 'bold');
+            doc.rect(margin + (statColW * i), currentY, statColW, 8);
             doc.setFontSize(7);
-            doc.text(h, margin + (indColW * i) + (indColW / 2), currentY + 6, { align: 'center', maxWidth: indColW - 5 });
+            doc.setFont('helvetica', 'bold');
+            doc.text(h, margin + (statColW * i) + (statColW / 2), currentY + 5, { align: 'center', maxWidth: statColW - 2 });
         });
-        currentY += 10;
-        
-        const indRow = [
-            data.individualTutoring.totalStudents,
-            data.individualTutoring.totalStudents, // Same for now as per logic
-            data.individualTutoring.channeledCount,
-            data.individualTutoring.topArea,
-            `${data.individualTutoring.resultPercentage}%`
-        ];
-        // Note: The user requested "cuantos alumnos se evaluaron individualmente" and "cuantos fueron atendidos"
-        // In my current state I have: totalStudents, channeledCount, topArea, resultPercentage.
-        // I will map them as logically as possible to the 5 columns (Header, Total, Channeled, Area, %).
-        
-        const indValues = [
-            'Individual',
-            data.individualTutoring.totalStudents,
-            data.individualTutoring.channeledCount,
-            data.individualTutoring.topArea,
-            `${data.individualTutoring.resultPercentage}%`
-        ];
-
+        currentY += 8;
+        const indValues = [totalI.toString(), sumI.toString(), topAreaI, `${topPercI}%`];
         indValues.forEach((v, i) => {
-            doc.rect(margin + (indColW * i), currentY, indColW, 8);
+            doc.rect(margin + (statColW * i), currentY, statColW, 8);
             doc.setFont('helvetica', 'normal');
-            doc.text(String(v), margin + (indColW * i) + (indColW / 2), currentY + 5.5, { align: 'center' });
+            doc.text(String(v), margin + (statColW * i) + (statColW / 2), currentY + 5.5, { align: 'center' });
         });
-        currentY += 12;
+        currentY += 12; // Added gap before detailed table
+
+        // Indiv Table
+        const indTableBody = supportAreas.map(area => {
+            const c = data.individualTutoring?.referrals?.[area.value] || 0;
+            const p = totalI > 0 ? ((c / totalI) * 100).toFixed(2) : '0.00';
+            return [area.label, c.toString(), `${p}%`];
+        });
+
+        autoTable(doc, {
+            startY: currentY,
+            head: [['Área de Canalización (Individual)', 'Cantidad', 'Porcentaje']],
+            body: indTableBody,
+            theme: 'grid',
+            styles: { fontSize: 7, cellPadding: 1, minCellHeight: 5 },
+            headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold', halign: 'center' },
+            columnStyles: {
+                0: { cellWidth: contentWidth * 0.6 },
+                1: { cellWidth: contentWidth * 0.2, halign: 'center' },
+                2: { cellWidth: contentWidth * 0.2, halign: 'center' }
+            },
+            margin: { left: margin }
+        });
+        currentY = doc.lastAutoTable.finalY + 10;
 
 
         // Observations
@@ -432,7 +502,7 @@ export const generateReferralReport = (data) => {
     doc.line(10, 64, 200, 64); // Bottom horizontal
 
     doc.setFont('helvetica', 'bold');
-    doc.text('NUM. GRUPO:', 12, 61);
+    doc.text('GRUPO:', 12, 61);
     doc.text('Nº ALUMNOS:', 82, 61);
     doc.text('PERIODO:', 137, 61);
     doc.text('CARRERA:', 12, 69);
