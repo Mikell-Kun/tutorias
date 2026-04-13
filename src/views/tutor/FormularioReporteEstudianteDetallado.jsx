@@ -52,19 +52,23 @@ const FormularioReporteEstudianteDetallado = () => {
     ];
 
     const handleStudentSearch = (value) => {
-        setFormData(prev => ({ ...prev, studentName: value }));
-        if (value.length > 3) {
-            const found = Estudiantes.find(e => e.nombre_completo.toLowerCase().includes(value.toLowerCase()));
-            if (found) {
-                setFormData(prev => ({
-                    ...prev,
-                    studentName: found.nombre_completo,
-                    controlNumber: found.n_control,
-                    career: found.carrera,
-                    semester: found.semestre
-                }));
+        setFormData(prev => {
+            const isDeleting = prev.studentName && value.length < prev.studentName.length;
+            const updated = { ...prev, studentName: value };
+            
+            if (value.length > 3) {
+                const found = Estudiantes.find(e => e.nombre_completo.toLowerCase().includes(value.toLowerCase()));
+                if (found) {
+                    updated.controlNumber = found.n_control;
+                    updated.career = found.carrera;
+                    updated.semester = found.semestre;
+                    if (!isDeleting) {
+                        updated.studentName = found.nombre_completo;
+                    }
+                }
             }
-        }
+            return updated;
+        });
     };
 
     const addSession = () => {
@@ -182,15 +186,15 @@ const FormularioReporteEstudianteDetallado = () => {
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Matrícula</label>
-                                <input type="text" readOnly value={formData.controlNumber} className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl font-bold text-navy" />
+                                <input type="text" value={formData.controlNumber} onChange={(e) => setFormData({ ...formData, controlNumber: e.target.value })} className="w-full px-5 py-3.5 bg-white border-2 border-gray-100 rounded-2xl font-bold text-navy focus:border-gold transition-all" />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Carrera</label>
-                                <input type="text" readOnly value={formData.career} className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl font-bold text-navy" />
+                                <input type="text" value={formData.career} onChange={(e) => setFormData({ ...formData, career: e.target.value })} className="w-full px-5 py-3.5 bg-white border-2 border-gray-100 rounded-2xl font-bold text-navy focus:border-gold transition-all" />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-navy/40 ml-1">Semestre</label>
-                                <input type="text" readOnly value={formData.semester} className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl font-bold text-navy" />
+                                <input type="text" value={formData.semester} onChange={(e) => setFormData({ ...formData, semester: e.target.value })} className="w-full px-5 py-3.5 bg-white border-2 border-gray-100 rounded-2xl font-bold text-navy focus:border-gold transition-all" />
                             </div>
                         </div>
                     </Tarjeta>
