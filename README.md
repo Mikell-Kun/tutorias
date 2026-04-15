@@ -1,16 +1,47 @@
-# React + Vite
+# Sistema de Tutorías
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este es un sistema web para la gestión de tutorías y reporte de atención a estudiantes, diseñado con una interfaz moderna y funcionalidades de generación de reportes automáticos en PDF.
 
-Currently, two official plugins are available:
+## 🛠️ Herramientas Principales Utilizadas
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+El proyecto está construido bajo un entorno de desarrollo web moderno:
 
-## React Compiler
+* **[React](https://react.dev/)**: Biblioteca principal para la construcción de interfaces de usuario.
+* **[Vite](https://vitejs.dev/)**: Entorno de desarrollo ultrarrápido y empaquetador web.
+* **[Tailwind CSS](https://tailwindcss.com/)**: Framework de CSS para la creación de un diseño rápido, escalable y adaptable (responsive).
+* **[React Router DOM](https://reactrouter.com/)**: Encargado del manejo de la navegación entre las distintas secciones del sistema (Dashboard, Reportes, Historial, Mensajería, etc.).
+* **[jsPDF](https://artskydj.github.io/jsPDF/docs/jsPDF.html) y [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable)**: Herramientas utilizadas para generar y dar esquema a reportes semestrales y por estudiante nativamente hacia formato PDF.
+* **[Framer Motion](https://www.framer.com/motion/)**: Para agregar transiciones fluidas y animaciones interactivas a la interfaz.
+* **[Lucide React](https://lucide.dev/)**: Colección de iconos modernos y consistentes.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 📋 Requisitos Previos
 
-## Expanding the ESLint configuration
+Para poder levantar este proyecto en tu computadora de manera local, necesitas lo siguiente:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+* **[Node.js](https://nodejs.org/es)** (Se recomienda usar una versión LTS, como v18 o v20 o posterior). Instalar Node.js también instala la herramienta `npm`.
+* Un editor de código, como [Visual Studio Code](https://code.visualstudio.com/).
+
+## 🚀 Cómo inicializar y ejecutar el proyecto localmente
+
+Sigue estos pasos en tu terminal (o consola de comandos de tu editor de código):
+
+1. **Abre una terminal** asegurándote de que la ruta apunte a la carpeta raíz de este proyecto (donde se encuentra este archivo `README.md`).
+2. **Instala las dependencias necesarias**. Ejecuta el siguiente comando para que NPM descargue todas las librerías mencionadas:
+   ```bash
+   npm install
+   ```
+3. **Inicia el servidor de desarrollo**. Una vez finalizada la instalación, ejecuta el proyecto usando:
+   ```bash
+   npm run dev
+   ```
+4. **Abre el proyecto en tu navegador**. El comando anterior te mostrará en la terminal una URL local (usualmente algo como `http://localhost:5173/`). Puedes copiar y pegar esa url en Chrome, Edge o Firefox, o hacer "Ctrl + clic" para abrir el sistema directamente.
+
+## 💡 Notas sobre el uso de la plataforma
+
+El sistema actualmente opera utilizando un ambiente de persistencia temporal simulado en memoria y empleando el `localStorage` de tu navegador (`src/data/database.js`).
+
+* **Inicio de Sesión:** Al abrir el proyecto te encontrarás con una pantalla de Login. Puedes emplear cualquiera de los usuarios de prueba definidos en el código.
+  * **Tutor de prueba:** Usuario `20202020` / Contraseña `Tutor123`
+  * **Docente de prueba:** Usuario `10101010` / Contraseña `Docente123`
+  * **Estudiante de prueba:** Usuario `20491199` / Contraseña `Gatitofeliz3`
+* **Generación de Reportes:** Cuando un usuario Tutor inicia sesión, puede generar reportes y el sistema automáticamente le descargará en su computadora el archivo `.pdf` con los datos suministrados. Al hacer esto el reporte aparecerá también en la pestaña de Historial Reportes.
