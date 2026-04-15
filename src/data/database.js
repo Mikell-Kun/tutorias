@@ -66,18 +66,82 @@ export const Estudiantes = [
 export const Docentes = [
     {
         n_control: 10101010,
-        nombre_completo: 'Elena Rodriguez Gonzalez',
+        nombre_completo: 'Docente1',
         rol: 'docente',
         departamento: 'Sistemas Computacionales',
-        correo: 'elena.rodriguez@itmexicali.edu.mx',
+        correo: 'docente1@itmexicali.edu.mx',
+        telefono: '686-111-2233'
+    },
+    {
+        n_control: 20202020,
+        nombre_completo: 'Docente2',
+        rol: 'docente',
+        departamento: 'Sistemas Computacionales',
+        correo: 'docente2@itmexicali.edu.mx',
         telefono: '686-111-2233'
     },
     {
         n_control: 30303030,
-        nombre_completo: 'Ana Martinez Hernandez',
+        nombre_completo: 'Docente3',
         rol: 'docente',
         departamento: 'Sistemas Computacionales',
-        correo: 'ana.martinez@itmexicali.edu.mx',
+        correo: 'docente2@itmexicali.edu.mx',
+        telefono: '686-444-5566'
+    },
+    {
+        n_control: 40404040,
+        nombre_completo: 'Docente4',
+        rol: 'docente',
+        departamento: 'Sistemas Computacionales',
+        correo: 'docente2@itmexicali.edu.mx',
+        telefono: '686-444-5566'
+    },
+    {
+        n_control: 50505050,
+        nombre_completo: 'Docente5',
+        rol: 'docente',
+        departamento: 'Sistemas Computacionales',
+        correo: 'docente2@itmexicali.edu.mx',
+        telefono: '686-444-5566'
+    },
+    {
+        n_control: 60606060,
+        nombre_completo: 'Docente6',
+        rol: 'docente',
+        departamento: 'Sistemas Computacionales',
+        correo: 'docente2@itmexicali.edu.mx',
+        telefono: '686-444-5566'
+    },
+    {
+        n_control: 70707070,
+        nombre_completo: 'Docente7',
+        rol: 'docente',
+        departamento: 'Sistemas Computacionales',
+        correo: 'docente2@itmexicali.edu.mx',
+        telefono: '686-444-5566'
+    },
+    {
+        n_control: 80808080,
+        nombre_completo: 'Docente8',
+        rol: 'docente',
+        departamento: 'Sistemas Computacionales',
+        correo: 'docente2@itmexicali.edu.mx',
+        telefono: '686-444-5566'
+    },
+    {
+        n_control: 90909090,
+        nombre_completo: 'Docente9',
+        rol: 'docente',
+        departamento: 'Sistemas Computacionales',
+        correo: 'docente2@itmexicali.edu.mx',
+        telefono: '686-444-5566'
+    },
+    {
+        n_control: 10101010,
+        nombre_completo: 'Docente10',
+        rol: 'docente',
+        departamento: 'Sistemas Computacionales',
+        correo: 'docente2@itmexicali.edu.mx',
         telefono: '686-444-5566'
     }
 ];
@@ -103,31 +167,111 @@ export const Materias = {
 
 export const Tutores = [
     {
-        id_tutor: 20202020,
-        nombre_completo: 'Roberto Mendez Mendoza',
+        id_tutor: 10101010,
+        nombre_completo: 'Tutor1',
         telefono: '686-333-4455',
         rol: 'tutor',
         departamento: 'Sistemas y Computación',
-        correo: 'roberto.mendez@itmexicali.edu.mx'
+        correo: 'tutor1@itmexicali.edu.mx'
     },
     {
-        id_tutor: 40404040,
-        nombre_completo: 'Laura Garcia Lopez',
+        id_tutor: 20202020,
+        nombre_completo: 'Tutor2',
+        telefono: '686-333-4455',
+        rol: 'tutor',
+        departamento: 'Sistemas y Computación',
+        correo: 'tutor2@itmexicali.edu.mx'
+    },
+    {
+        id_tutor: 30303030,
+        nombre_completo: 'Tutor3',
         telefono: '686-555-6677',
         rol: 'tutor',
         departamento: 'Química',
-        correo: 'laura.garcia@itmexicali.edu.mx'
+        correo: 'tutor3@itmexicali.edu.mx'
+    },
+    {
+        id_tutor: 40404040,
+        nombre_completo: 'Tutor4',
+        telefono: '686-555-6677',
+        rol: 'tutor',
+        departamento: 'Química',
+        correo: 'tutor4@itmexicali.edu.mx'
+    },
+    {
+        id_tutor: 50505050,
+        nombre_completo: 'Tutor5',
+        telefono: '686-555-6677',
+        rol: 'tutor',
+        departamento: 'Química',
+        correo: 'tutor5@itmexicali.edu.mx'
+    },
+    {
+        id_tutor: 60606060,
+        nombre_completo: 'Tutor6',
+        telefono: '686-555-6677',
+        rol: 'tutor',
+        departamento: 'Química',
+        correo: 'tutor6@itmexicali.edu.mx'
+    },
+    {
+        id_tutor: 70707070,
+        nombre_completo: 'Tutor7',
+        telefono: '686-555-6677',
+        rol: 'tutor',
+        departamento: 'Química',
+        correo: 'tutor7@itmexicali.edu.mx'
+    },
+    {
+        id_tutor: 80808080,
+        nombre_completo: 'Tutor8',
+        telefono: '686-555-6677',
+        rol: 'tutor',
+        departamento: 'Química',
+        correo: 'tutor8@itmexicali.edu.mx'
+    },
+    {
+        id_tutor: 90909090,
+        nombre_completo: 'Tutor9',
+        telefono: '686-555-6677',
+        rol: 'tutor',
+        departamento: 'Química',
+        correo: 'tutor9@itmexicali.edu.mx'
+    },
+    {
+        id_tutor: 10101010,
+        nombre_completo: 'Tutor10',
+        telefono: '686-555-6677',
+        rol: 'tutor',
+        departamento: 'Química',
+        correo: 'tutor10@itmexicali.edu.mx'
     }
 ];
 
 export const TutoresAuth = [
+    { id_tutor: 10101010, contrasena: 'Tutor123' },
     { id_tutor: 20202020, contrasena: 'Tutor123' },
-    { id_tutor: 40404040, contrasena: 'Tutor123' }
+    { id_tutor: 30303030, contrasena: 'Tutor123' },
+    { id_tutor: 40404040, contrasena: 'Tutor123' },
+    { id_tutor: 50505050, contrasena: 'Tutor123' },
+    { id_tutor: 60606060, contrasena: 'Tutor123' },
+    { id_tutor: 70707070, contrasena: 'Tutor123' },
+    { id_tutor: 80808080, contrasena: 'Tutor123' },
+    { id_tutor: 90909090, contrasena: 'Tutor123' },
+    { id_tutor: 10101010, contrasena: 'Tutor123' }
 ];
 
 export const DocentesAuth = [
     { n_control: 10101010, contrasena: 'Docente123' },
-    { n_control: 30303030, contrasena: 'Docente123' }
+    { n_control: 20202020, contrasena: 'Docente123' },
+    { n_control: 30303030, contrasena: 'Docente123' },
+    { n_control: 40404040, contrasena: 'Docente123' },
+    { n_control: 50505050, contrasena: 'Docente123' },
+    { n_control: 60606060, contrasena: 'Docente123' },
+    { n_control: 70707070, contrasena: 'Docente123' },
+    { n_control: 80808080, contrasena: 'Docente123' },
+    { n_control: 90909090, contrasena: 'Docente123' },
+    { n_control: 10101010, contrasena: 'Docente123' }
 ];
 
 export const EstudiantesAuth = [
