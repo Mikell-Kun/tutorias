@@ -1,31 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { AlertTriangle, User, MessageSquare, Clock, BookOpen, Send } from 'lucide-react';
+import { AlertTriangle, MessageSquare } from 'lucide-react';
 import { useUser } from '../../context/ContextoUsuario.jsx';
 import { getIncidencias, markIncidenciaAsRead, addMensaje } from '../../data/database.js';
 
 const TutorIncidencias = () => {
     const { user } = useUser();
     const navigate = useNavigate();
-    const [incidencias, setIncidencias] = useState(getIncidencias() || []);
+    const [incidencias, setIncidencias] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const data = await getIncidencias();
+            setIncidencias(data || []);
+        };
+        fetchData();
+        
+        const handleUpdate = () => fetchData();
+        window.addEventListener('databaseUpdated', handleUpdate);
+        return () => window.removeEventListener('databaseUpdated', handleUpdate);
+    }, []);
 
     // Filter only unread incidents for the tutor view
     const myIncidencias = (incidencias || []).filter(i => !i.leida);
 
-    const handleMarkAsRead = (id) => {
-        const updated = markIncidenciaAsRead(id);
-        setIncidencias(updated);
+    const handleMarkAsRead = async (id) => {
+        await markIncidenciaAsRead(id);
+        // Optimistic update
+        setIncidencias(prev => prev.map(i => i.id === id ? { ...i, leida: true } : i));
     };
 
-    const handleContactStudent = (incidencia) => {
+    const handleContactStudent = async (incidencia) => {
         const tutorId = user.id_tutor;
-        const studentId = incidencia.estudiante_n_control;
-        const nombreEstudiante = incidencia.estudiante_nombre.split(' ')[0];
-        const content = `Reporte de Incidencia: Hola ${nombreEstudiante}, te contacto respecto al reporte en la materia ${incidencia.materia_nombre} (${incidencia.tipo}). ¿Podemos platicar al respecto?`;
+        const studentId = incidencia.estudiante_n_control || incidencia.estudiante_relacionado;
+        // Dependiendo de como se guardó el nombre en la base de datos (como JSON en 'datos' o relacion)
+        const nombreEstudiante = incidencia.datos?.estudiante_nombre ? incidencia.datos.estudiante_nombre.split(' ')[0] : 'Estudiante';
+        const content = `Reporte de Incidencia: Hola ${nombreEstudiante}, te contacto respecto al reporte en la materia ${incidencia.datos?.materia_nombre || 'N/A'} (${incidencia.tipo}). ¿Podemos platicar al respecto?`;
 
         // Send message
-        addMensaje(tutorId, studentId, content);
+        await addMensaje(tutorId, studentId, content);
 
         // Navigate to messages with the contact selected
         navigate('/mensajes', { state: { contactId: studentId } });
@@ -91,15 +105,15 @@ const TutorIncidencias = () => {
                                 <div className="flex flex-wrap gap-x-8 gap-y-4">
                                     <div className="space-y-1">
                                         <p className="text-[10px] font-black text-navy/20 uppercase tracking-[0.2em]">Materia</p>
-                                        <p className="font-bold text-navy">{incidencia.materia_codigo} - {incidencia.materia_nombre}</p>
+                                        <p className="font-bold text-navy">{incidencia.datos?.materia_codigo || '-'} - {incidencia.datos?.materia_nombre || '-'}</p>
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-[10px] font-black text-navy/20 uppercase tracking-[0.2em]">Profesor</p>
-                                        <p className="font-bold text-navy/60">{incidencia.docente_nombre}</p>
+                                        <p className="font-bold text-navy/60">{incidencia.datos?.docente_nombre || '-'}</p>
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-[10px] font-black text-navy/20 uppercase tracking-[0.2em]">Fecha</p>
-                                        <p className="font-bold text-navy/60">{incidencia.fecha_hora}</p>
+                                        <p className="font-bold text-navy/60">{new Date(incidencia.fecha_hora).toLocaleDateString()}</p>
                                     </div>
                                 </div>
                             </div>

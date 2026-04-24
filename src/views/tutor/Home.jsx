@@ -1,43 +1,64 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Users, AlertTriangle, MessageCircle, MoreVertical, GraduationCap, LayoutDashboard } from 'lucide-react';
 import Tarjeta from '../../components/Tarjeta.jsx';
 import { useUser } from '../../context/ContextoUsuario.jsx';
-import { Estudiantes, getIncidencias, getMensajes, Tutores } from '../../data/database.js';
+import { fetchEstudiantes, getIncidencias, getMensajes, fetchTutores } from '../../data/database.js';
 import { useNavigate } from 'react-router-dom';
 
 const TutorHome = () => {
     const { user } = useUser();
     const navigate = useNavigate();
-    const [refresh, setRefresh] = React.useState(0);
+    const [refresh, setRefresh] = useState(0);
 
-    React.useEffect(() => {
+    const [Estudiantes, setEstudiantes] = useState([]);
+    const [incidencias, setIncidencias] = useState([]);
+    const [mensajes, setMensajes] = useState([]);
+    const [tutores, setTutores] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const loadAllData = async () => {
+            setLoading(true);
+            const est = await fetchEstudiantes();
+            const inc = await getIncidencias();
+            const tut = await fetchTutores();
+            
+            const userId = user?.n_control || user?.id_tutor;
+            let msgs = [];
+            if(userId) msgs = await getMensajes(userId);
+
+            setEstudiantes(est || []);
+            setIncidencias(inc || []);
+            setMensajes(msgs || []);
+            setTutores(tut || []);
+            setLoading(false);
+        };
+        loadAllData();
+
         const handleUpdate = () => setRefresh(prev => prev + 1);
         window.addEventListener('databaseUpdated', handleUpdate);
         return () => window.removeEventListener('databaseUpdated', handleUpdate);
-    }, []);
+    }, [refresh, user]);
 
     // Filter students assigned to this tutor
     const assignedStudents = (Estudiantes || []).filter(s => s && s.tutor_id === user?.id_tutor);
     const atRiskStudents = assignedStudents.filter(s => s && s.estatus === 'Riesgo');
 
-
     // Filter system incidents for THIS tutor
-    const incidencias = getIncidencias() || [];
     const tutorIncidencias = incidencias.filter(i => i.tutor_id === user?.id_tutor);
     const unreadIncidencias = tutorIncidencias.filter(i => !i.leida);
 
     // Status Logic
     const getStudentDashboardStatus = (student) => {
         const studentIncidencias = incidencias.filter(i =>
-            parseInt(i.estudiante_n_control, 10) === parseInt(student.n_control, 10) && !i.leida
+            parseInt(i.estudiante_n_control || i.estudiante_relacionado, 10) === parseInt(student.n_control, 10) && !i.leida
         );
 
-        const studentMessages = getMensajes(student.n_control) || [];
-        const tutorContact = [...studentMessages]
+        const tutorContact = [...mensajes]
             .filter(m =>
-                parseInt(m.destinatario_id, 10) === parseInt(student.n_control, 10) &&
-                Tutores.some(t => t.id_tutor === parseInt(m.remitente_id, 10))
+                (parseInt(m.destinatario_id, 10) === parseInt(student.n_control, 10) || parseInt(m.remitente_id, 10) === parseInt(student.n_control, 10)) &&
+                tutores.some(t => t.id_tutor === parseInt(m.remitente_id, 10))
             )
             .sort((a, b) => new Date(a.fecha_hora) - new Date(b.fecha_hora))[0];
 
@@ -47,8 +68,7 @@ const TutorHome = () => {
         return { label: 'Regular', color: 'bg-green-50 text-green-600 border-green-100' };
     };
 
-    const messages = getMensajes(user?.id_tutor) || [];
-    const unreadCount = messages.filter(m =>
+    const unreadCount = mensajes.filter(m =>
         parseInt(m.destinatario_id, 10) === user?.id_tutor && !m.leido
     ).length;
 
@@ -62,6 +82,8 @@ const TutorHome = () => {
         const status = getStudentDashboardStatus(student);
         return status.label === 'Atendiendo';
     });
+
+    if (loading) return <div className="p-8 text-center text-navy font-bold text-lg animate-pulse">Cargando base de datos...</div>;
 
     return (
         <div className="p-8 space-y-8 animate-in slide-in-from-bottom-4 duration-700">

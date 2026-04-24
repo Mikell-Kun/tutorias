@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Megaphone, Trash2, Send, AlertCircle } from 'lucide-react';
 import Tarjeta from '../../components/Tarjeta.jsx';
-import { Estudiantes, Materias, Tutores, addIncidencia } from '../../data/database.js';
+import { fetchEstudiantes, fetchMaterias, addIncidencia } from '../../data/database.js';
 import { useUser } from '../../context/ContextoUsuario.jsx';
 
 const ReportarIncidencia = () => {
@@ -16,6 +16,24 @@ const ReportarIncidencia = () => {
         descripcion: ''
     });
     const [status, setStatus] = useState({ type: '', message: '' });
+    
+    const [Estudiantes, setEstudiantes] = useState([]);
+    const [Materias, setMaterias] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const [materiaSearch, setMateriaSearch] = useState('');
+    const [showMateriaDropdown, setShowMateriaDropdown] = useState(false);
+
+    useEffect(() => {
+        const loadInitialData = async () => {
+            const est = await fetchEstudiantes();
+            const mat = await fetchMaterias();
+            setEstudiantes(est || []);
+            setMaterias(mat || []);
+            setLoading(false);
+        };
+        loadInitialData();
+    }, []);
 
     const incidentTypes = [
         'Retardos o ausencias injustificadas',
@@ -48,7 +66,7 @@ const ReportarIncidencia = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!formData.estudiante_n_control || !formData.tipo || !formData.descripcion) {
@@ -57,26 +75,33 @@ const ReportarIncidencia = () => {
         }
 
         const student = Estudiantes.find(s => s.n_control === parseInt(formData.estudiante_n_control, 10));
-        const materiaObj = Materias[user.departamento]?.find(m => m.codigo === formData.materia);
+        const materiaObj = myMaterias.find(m => m.codigo === formData.materia);
 
+        // Nuevo formato para el backend
         const newIncident = {
-            estudiante_n_control: student.n_control,
-            estudiante_nombre: student.nombre_completo,
-            estudiante_carrera: student.carrera,
+            remitente_id: user.n_control || user.id_tutor,
+            estudiante_relacionado: student.n_control,
             tipo: formData.tipo,
+            titulo: 'Reporte de Incidencia',
             descripcion: formData.descripcion,
-            materia_codigo: materiaObj?.codigo || 'N/A',
-            materia_nombre: materiaObj?.nombre || formData.materia || 'No especificada',
-            docente_nombre: user.nombre_completo,
-            fecha_hora: new Date().toLocaleString('es-MX')
+            datos: {
+                materia_codigo: materiaObj?.codigo || 'N/A',
+                materia_nombre: materiaObj?.nombre || formData.materia || 'No especificada',
+                docente_nombre: user.nombre_completo,
+                estudiante_nombre: student.nombre_completo,
+                estudiante_carrera: student.carrera
+            }
         };
 
-        addIncidencia(newIncident);
-        setStatus({ type: 'success', message: 'Incidencia reportada exitosamente.' });
-
-        setTimeout(() => {
-            navigate('/');
-        }, 1500);
+        const result = await addIncidencia(newIncident);
+        if(result) {
+            setStatus({ type: 'success', message: 'Incidencia reportada exitosamente.' });
+            setTimeout(() => {
+                navigate('/');
+            }, 1500);
+        } else {
+            setStatus({ type: 'error', message: 'Hubo un error reportando la incidencia.' });
+        }
     };
 
     const handleClear = () => {
@@ -86,10 +111,32 @@ const ReportarIncidencia = () => {
             materia: '',
             descripcion: ''
         });
+        setMateriaSearch('');
         setStatus({ type: '', message: '' });
     };
 
-    const subjects = Materias[user?.departamento] || [];
+    const myMaterias = Materias.filter(m => m.departamento === user?.departamento);
+
+    const filteredMaterias = myMaterias.filter(m => 
+        m.nombre.toLowerCase().includes(materiaSearch.toLowerCase()) || 
+        m.codigo.toLowerCase().includes(materiaSearch.toLowerCase())
+    );
+
+    const handleSelectMateria = (materia) => {
+         setFormData(prev => ({ ...prev, materia: materia.codigo }));
+         setMateriaSearch(materia.nombre);
+         setShowMateriaDropdown(false);
+    };
+
+    const handleMateriaSearchChange = (e) => {
+         setMateriaSearch(e.target.value);
+         if (!e.target.value) {
+             setFormData(prev => ({ ...prev, materia: '' }));
+         }
+         if (!showMateriaDropdown) setShowMateriaDropdown(true);
+    };
+
+    if (loading) return <div className="p-8 text-center text-navy font-bold text-lg animate-pulse">Cargando base de datos...</div>;
 
     return (
         <div className="p-8 space-y-8 animate-in fade-in duration-700">
@@ -141,19 +188,39 @@ const ReportarIncidencia = () => {
                         </div>
 
                         {/* Materia */}
-                        <div className="space-y-2">
+                        <div className="space-y-2 relative">
                             <label className="text-sm font-bold text-navy uppercase tracking-wider">Materia (Opcional)</label>
-                            <select
-                                name="materia"
-                                value={formData.materia}
-                                onChange={handleInputChange}
+                            <input
+                                type="text"
+                                placeholder="Buscar materia por nombre o código..."
+                                value={materiaSearch}
+                                onChange={handleMateriaSearchChange}
+                                onFocus={() => setShowMateriaDropdown(true)}
+                                onBlur={() => setTimeout(() => setShowMateriaDropdown(false), 200)}
                                 className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-md focus:ring-2 focus:ring-navy/5 focus:border-navy transition-all outline-none"
-                            >
-                                <option value="">No especificar materia</option>
-                                {subjects.map(m => (
-                                    <option key={m.codigo} value={m.codigo}>{m.nombre}</option>
-                                ))}
-                            </select>
+                            />
+                            {showMateriaDropdown && (
+                                <div className="absolute z-20 w-full mt-1 bg-white border border-slate-100 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                                    <div 
+                                        className="px-4 py-3 hover:bg-slate-50 cursor-pointer text-sm text-slate-500 font-bold"
+                                        onClick={() => { setFormData(prev => ({ ...prev, materia: '' })); setMateriaSearch(''); }}
+                                    >
+                                        No especificar materia
+                                    </div>
+                                    {filteredMaterias.length > 0 ? filteredMaterias.map(m => (
+                                        <div 
+                                            key={m.codigo} 
+                                            className="px-4 py-3 hover:bg-slate-50 cursor-pointer font-bold text-navy text-sm border-t border-slate-50"
+                                            onClick={() => handleSelectMateria(m)}
+                                        >
+                                            <span className="text-navy/40 text-[10px] mr-2 uppercase tracking-wider">{m.codigo}</span>
+                                            {m.nombre}
+                                        </div>
+                                    )) : (
+                                        <div className="px-4 py-3 text-sm text-slate-400 font-medium">No se encontraron materias</div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </div>
 

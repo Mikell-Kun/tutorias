@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Tarjeta from '../../components/Tarjeta.jsx';
 import { useUser } from '../../context/ContextoUsuario.jsx';
-import { Estudiantes } from '../../data/database.js';
 import {
     generateGroupSemesterReport,
     generateDetailedGroupReport,
@@ -48,11 +47,6 @@ const TutorReportes = () => {
         if (entry.reportType === 'incidence_detailed') route = '/reporte-detallado-incidencia';
         navigate(route, { state: { editData: entry.data } });
     };
-
-    // Filter students assigned to this tutor that are at risk
-    const atRiskStudents = (Estudiantes || []).filter(s =>
-        s && s.tutor_id === user?.id_tutor && s.estatus === 'Riesgo'
-    );
 
     const reportTypes = [
         {

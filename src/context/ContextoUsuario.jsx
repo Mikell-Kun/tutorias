@@ -13,26 +13,32 @@ export const ProveedorUsuario = ({ children }) => {
         if (savedUser) {
             const parsedUser = JSON.parse(savedUser);
 
-            // Refresh data from source to avoid stale sessions (DX improvement)
-            const freshData = getUserByControl(parsedUser.n_control || parsedUser.id_tutor);
-            if (freshData) {
-                const updatedUser = {
-                    ...parsedUser,
-                    ...freshData
-                };
-                setUser(updatedUser);
-                // Optional: persist the fresh data back to sessionStorage
-                sessionStorage.setItem('tutorias_user', JSON.stringify(updatedUser));
-            } else {
-                setUser(parsedUser);
-            }
+            // Fetch asincrono
+            const fetchFreshData = async () => {
+                const freshData = await getUserByControl(parsedUser.n_control || parsedUser.id_tutor);
+                if (freshData) {
+                    const updatedUser = { ...parsedUser, ...freshData };
+                    setUser(updatedUser);
+                    sessionStorage.setItem('tutorias_user', JSON.stringify(updatedUser));
+                } else {
+                    setUser(parsedUser);
+                }
+                setLoading(false);
+            };
+            fetchFreshData();
+        } else {
+            setLoading(false);
         }
-        setLoading(false);
     }, []);
 
     const login = (userData) => {
         setUser(userData);
         sessionStorage.setItem('tutorias_user', JSON.stringify(userData));
+    };
+
+    const updateSession = (newUserData) => {
+        setUser(newUserData);
+        sessionStorage.setItem('tutorias_user', JSON.stringify(newUserData));
     };
 
     const logout = () => {
@@ -41,7 +47,7 @@ export const ProveedorUsuario = ({ children }) => {
     };
 
     return (
-        <ContextoUsuario.Provider value={{ user, login, logout, loading }}>
+        <ContextoUsuario.Provider value={{ user, login, logout, loading, updateSession }}>
             {children}
         </ContextoUsuario.Provider>
     );

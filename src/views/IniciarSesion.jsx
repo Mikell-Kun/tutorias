@@ -29,7 +29,7 @@ const IniciarSesion = () => {
         // Simulation delay
         await new Promise(resolve => setTimeout(resolve, 800));
 
-        const validatedUser = validateCredentials(nControl, password);
+        const validatedUser = await validateCredentials(nControl, password);
 
         if (validatedUser && validatedUser.rol === selectedRole) {
             login({

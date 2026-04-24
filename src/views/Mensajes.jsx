@@ -27,45 +27,41 @@ const Mensajes = () => {
     const { user } = useUser();
     const location = useLocation();
     const [messages, setMessages] = useState([]);
+    const [contacts, setContacts] = useState([]);
     const [activeContact, setActiveContact] = useState(null);
 
     // Auto-select contact from navigation state
     useEffect(() => {
-        if (location.state?.contactId) {
-            const contact = getUserByControl(location.state.contactId);
-            if (contact) {
-                setActiveContact({ id: location.state.contactId, ...contact });
+        const checkNavState = async () => {
+            if (location.state?.contactId) {
+                const contact = await getUserByControl(location.state.contactId);
+                if (contact) setActiveContact({ id: location.state.contactId, ...contact });
             }
-        }
+        };
+        checkNavState();
     }, [location.state]);
+
     const [newMessage, setNewMessage] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [isNewChatModalOpen, setIsNewChatModalOpen] = useState(false);
     const messagesEndRef = useRef(null);
 
     // Refresh messages and contacts
-    const refreshData = () => {
+    const refreshData = async () => {
         if (user) {
             const userId = user.n_control || user.id_tutor;
-            setMessages(getMensajes(userId));
+            const fetchedMessages = await getMensajes(userId);
+            const fetchedContacts = await getContactosDisponibles(user);
+            setMessages(fetchedMessages || []);
+            setContacts(fetchedContacts || []);
         }
     };
 
     useEffect(() => {
         refreshData();
         window.addEventListener('databaseUpdated', refreshData);
-
-        // Sync across tabs
-        const handleStorageChange = (e) => {
-            if (e.key === 'tutorias_mensajes_db') {
-                refreshData();
-            }
-        };
-        window.addEventListener('storage', handleStorageChange);
-
         return () => {
             window.removeEventListener('databaseUpdated', refreshData);
-            window.removeEventListener('storage', handleStorageChange);
         };
     }, [user]);
 
@@ -83,13 +79,18 @@ const Mensajes = () => {
 
     // Derived: Group and filter messages into conversations
     const conversations = React.useMemo(() => {
+        if (!contacts.length || !messages.length) return [];
         const currentUserId = user?.n_control || user?.id_tutor;
         const map = new Map();
 
         messages.forEach(m => {
-            const otherId = parseInt(m.remitente_id, 10) === currentUserId ? m.destinatario_id : m.remitente_id;
+            const otherId = parseInt(m.remitente_id, 10) === currentUserId ? parseInt(m.destinatario_id, 10) : parseInt(m.remitente_id, 10);
             if (!map.has(otherId)) {
-                const otherUser = getUserByControl(otherId);
+                // Encontrar el usuario usando el array local de contactos!
+                const otherUser = contacts.find(c => parseInt(c.id, 10) === otherId);
+                // Evitar crashes si el contacto no se puede ver por reglas de permisos o borrado
+                if(!otherUser) return; 
+
                 map.set(otherId, {
                     id: otherId,
                     user: otherUser,
@@ -97,30 +98,25 @@ const Mensajes = () => {
                     messages: []
                 });
             }
-            map.get(otherId).messages.push(m);
+            if(map.has(otherId)) map.get(otherId).messages.push(m);
         });
 
-        // Filter by search query
         const filtered = Array.from(map.values()).filter(conv =>
             conv.user.nombre_completo.toLowerCase().includes(searchQuery.toLowerCase())
         );
 
-        // Sort by last message date
-        return filtered.sort((a, b) => {
-            return new Date(b.lastMessage.fecha_hora) - new Date(a.lastMessage.fecha_hora);
-        });
-    }, [messages, user, searchQuery]);
+        return filtered.sort((a, b) => new Date(b.lastMessage.fecha_hora) - new Date(a.lastMessage.fecha_hora));
+    }, [messages, user, searchQuery, contacts]);
 
-    const handleSendMessage = (e) => {
+    const handleSendMessage = async (e) => {
         e.preventDefault();
         if (!newMessage.trim() || !activeContact) return;
 
         const senderId = user.n_control || user.id_tutor;
-        addMensaje(senderId, activeContact.id, newMessage.trim());
+        await addMensaje(senderId, activeContact.id, newMessage.trim());
         setNewMessage('');
     };
 
-    const contacts = getContactosDisponibles(user);
     const filteredContacts = contacts.filter(c =>
         c.nombre_completo.toLowerCase().includes(searchQuery.toLowerCase())
     );

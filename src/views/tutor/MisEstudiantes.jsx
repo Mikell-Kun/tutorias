@@ -2,42 +2,57 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Users, User, BookOpen, Clock, AlertCircle, CheckCircle, MessageSquare } from 'lucide-react';
 import { useUser } from '../../context/ContextoUsuario.jsx';
-import { Estudiantes, getIncidencias, getMensajes, Tutores } from '../../data/database.js';
+import { fetchEstudiantes, getIncidencias, getMensajes, fetchTutores } from '../../data/database.js';
 
 const MisEstudiantes = () => {
     const { user } = useUser();
     const [refresh, setRefresh] = useState(0);
     const [filter, setFilter] = useState('all');
 
+    const [Estudiantes, setEstudiantes] = useState([]);
+    const [Tutores, setTutores] = useState([]);
+    const [allIncidencias, setAllIncidencias] = useState([]);
+    const [tutorMessages, setTutorMessages] = useState([]);
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
+        const loadAllData = async () => {
+            setLoading(true);
+            const est = await fetchEstudiantes();
+            const tut = await fetchTutores();
+            const inc = await getIncidencias();
+            
+            const userId = user?.n_control || user?.id_tutor;
+            let msgs = [];
+            if(userId) msgs = await getMensajes(userId);
+
+            setEstudiantes(est || []);
+            setTutores(tut || []);
+            setAllIncidencias(inc || []);
+            setTutorMessages(msgs || []);
+            setLoading(false);
+        };
+        loadAllData();
+
         const handleUpdate = () => setRefresh(prev => prev + 1);
         window.addEventListener('databaseUpdated', handleUpdate);
         return () => window.removeEventListener('databaseUpdated', handleUpdate);
-    }, []);
-
-    // Get all initial data
-    const allIncidencias = getIncidencias() || [];
+    }, [refresh, user]);
 
     // Status Logic
     const getStudentStatus = (student) => {
-        // Search for unread incidents for this student
         const studentIncidencias = allIncidencias.filter(i =>
-            parseInt(i.estudiante_n_control, 10) === parseInt(student.n_control, 10) && !i.leida
+            parseInt(i.estudiante_n_control || i.estudiante_relacionado, 10) === parseInt(student.n_control, 10) && !i.leida
         );
 
-        // Get all messages for this student to check for tutor contact
-        const studentMessages = getMensajes(student.n_control) || [];
-
-        // Find the FIRST message SENT BY A TUTOR to this student
-        // Tutores.some check ensures the sender is a tutor
-        const tutorContact = [...studentMessages]
+        // Find the FIRST message SENT BY A TUTOR to this student in our locally cached messages
+        const tutorContact = [...tutorMessages]
             .filter(m =>
-                parseInt(m.destinatario_id, 10) === parseInt(student.n_control, 10) &&
+                (parseInt(m.destinatario_id, 10) === parseInt(student.n_control, 10) || parseInt(m.remitente_id, 10) === parseInt(student.n_control, 10)) &&
                 Tutores.some(t => t.id_tutor === parseInt(m.remitente_id, 10))
             )
             .sort((a, b) => new Date(a.fecha_hora) - new Date(b.fecha_hora))[0];
 
-        // 1. Recibido / Atendiendo: Unread incident + Contacted by Tutor
         if (studentIncidencias.length > 0 && tutorContact) {
             return {
                 label: 'Atendiendo',
@@ -48,17 +63,17 @@ const MisEstudiantes = () => {
             };
         }
 
-        // 2. Regular: No unread incidents or not contacted yet
         return {
             label: 'Regular',
             type: 'regular',
             color: 'text-green-600 bg-green-50',
             icon: CheckCircle,
-            incidentType: 'Ninguna', // Default for regular
-            // Even if regular, they might have been contacted in the past
+            incidentType: 'Ninguna',
             firstContact: tutorContact
         };
     };
+
+    if (loading) return <div className="p-8 text-center">Cargando estudiantes...</div>;
 
 
 

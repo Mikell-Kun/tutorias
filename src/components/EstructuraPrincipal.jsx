@@ -12,8 +12,27 @@ const EstructuraPrincipal = () => {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState(false);
     const menuRef = React.useRef(null);
 
+    const [incidencias, setIncidencias] = React.useState([]);
+    const [mensajes, setMensajes] = React.useState([]);
+
+    const userId = user?.n_control || user?.id_tutor;
+
     React.useEffect(() => {
-        const handleUpdate = () => setRefresh(prev => prev + 1);
+        const fetchData = async () => {
+            if (user?.role === 'tutor') {
+                const data = await getIncidencias();
+                setIncidencias(data || []);
+            } else if (user?.role === 'student' && userId) {
+                const data = await getMensajes(userId);
+                setMensajes(data || []);
+            }
+        };
+        fetchData();
+
+        const handleUpdate = () => {
+            setRefresh(prev => prev + 1);
+            fetchData();
+        };
         window.addEventListener('databaseUpdated', handleUpdate);
 
         const handleClickOutside = (event) => {
@@ -27,11 +46,7 @@ const EstructuraPrincipal = () => {
             window.removeEventListener('databaseUpdated', handleUpdate);
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, []);
-
-    const userId = user?.n_control || user?.id_tutor;
-    const incidencias = getIncidencias() || [];
-    const mensajes = getMensajes(userId) || [];
+    }, [user, refresh]);
 
     // Tutors see unread incidents, Students see unread messages from tutors
     let unreadCount = 0;

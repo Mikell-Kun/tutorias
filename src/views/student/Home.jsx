@@ -23,15 +23,17 @@ const StudentHome = () => {
             {/* Stats Row - Top horizontal */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Tarjeta title="Promedio General" subtitle="Basado en el último semestre" icon={Award}>
-                    <div className="flex items-baseline gap-2 mt-2">
-                        <span className="text-4xl font-black text-navy">88.8</span>
-                        <span className="text-xs font-bold text-green-500 bg-green-50 px-2 py-1 rounded-md">+1.2%</span>
+                    <div className="flex items-center justify-center p-6 border-2 border-dashed border-slate-200 rounded-lg bg-slate-50 opacity-70 mt-2">
+                        <span className="text-xs font-black text-navy/40 uppercase tracking-[0.2em] flex items-center gap-2">
+                            <Clock size={14} /> Módulo en desarrollo
+                        </span>
                     </div>
                 </Tarjeta>
                 <Tarjeta title="Créditos Acumulados" subtitle="Progreso total" icon={FileText}>
-                    <div className="flex items-baseline gap-2 mt-2">
-                        <span className="text-4xl font-black text-navy">63</span>
-                        <span className="text-[10px] font-black text-navy/40 uppercase tracking-[0.2em]">28.6% del total</span>
+                    <div className="flex items-center justify-center p-6 border-2 border-dashed border-slate-200 rounded-lg bg-slate-50 opacity-70 mt-2">
+                        <span className="text-xs font-black text-navy/40 uppercase tracking-[0.2em] flex items-center gap-2">
+                            <Clock size={14} /> Módulo en desarrollo
+                        </span>
                     </div>
                 </Tarjeta>
                 <Tarjeta title="Mensajes de Tutor" subtitle="Bandeja de entrada" icon={Bell}>
@@ -52,31 +54,10 @@ const StudentHome = () => {
                         icon={Calendar}
                         className="h-full"
                     >
-                        <div className="flex items-center justify-between mb-6">
-                            <span className="text-[10px] font-black text-navy/40 uppercase tracking-[0.2em]">Lunes, 16 de Febrero 2026</span>
-                            <button className="text-[10px] font-black text-navy uppercase tracking-[0.2em] hover:text-gold transition-colors">Ver Calendario</button>
-                        </div>
-                        <div className="space-y-4">
-                            {[
-                                { label: 'Académico', title: 'Inscripción de materias (AGO-DIC)', date: 'Próximo Lunes', type: 'academic' },
-                                { label: 'Evento', title: 'Conferencia: Tendencias en Web 2026', date: 'Mañana, 10:00 AM', type: 'event' }
-                            ].map((event, i) => (
-                                <div key={i} className="flex items-center justify-between p-5 bg-slate-50/50 rounded-lg border border-slate-100 hover:border-navy/10 hover:bg-white hover:shadow-lg transition-all cursor-pointer group">
-                                    <div className="space-y-1">
-                                        <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${event.type === 'academic' ? 'text-navy/60' : 'text-gold'}`}>
-                                            {event.label}
-                                        </span>
-                                        <p className="font-bold text-navy text-lg">{event.title}</p>
-                                        <p className="text-xs text-text-muted font-medium flex items-center gap-2">
-                                            <div className="w-1 h-1 rounded-full bg-navy/20" />
-                                            {event.date}
-                                        </p>
-                                    </div>
-                                    <div className="w-10 h-10 bg-white rounded-md shadow-sm border border-slate-100 flex items-center justify-center group-hover:bg-navy group-hover:text-white transition-all">
-                                        <ChevronRight size={18} />
-                                    </div>
-                                </div>
-                            ))}
+                        <div className="flex items-center justify-center h-48 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 opacity-70 mt-4">
+                            <span className="text-xs font-black text-navy/40 uppercase tracking-[0.2em] flex items-center gap-3">
+                                <Clock size={18} /> Módulo en desarrollo
+                            </span>
                         </div>
                     </Tarjeta>
                 </div>

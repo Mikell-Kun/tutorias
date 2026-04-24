@@ -3,11 +3,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Save, Plus, Trash2, ShieldAlert, FileText, Calendar, Users, BarChart } from 'lucide-react';
 import Tarjeta from '../../components/Tarjeta';
 import { useUser } from '../../context/ContextoUsuario';
-import { Estudiantes } from '../../data/database';
+import { fetchEstudiantes } from '../../data/database.js';
 import { generateDetailedIncidenceReport } from '../../utils/reportGenerator';
 import { saveReportEntry } from '../../utils/reportHistory';
 
 const FormularioReporteIncidenciasDetallado = () => {
+    const [Estudiantes, setEstudiantes] = useState([]);
+    useEffect(() => { fetchEstudiantes().then(setEstudiantes); }, []);
     const { user } = useUser();
     const navigate = useNavigate();
     const location = useLocation();
