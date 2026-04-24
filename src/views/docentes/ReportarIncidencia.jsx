@@ -115,22 +115,28 @@ const ReportarIncidencia = () => {
         setStatus({ type: '', message: '' });
     };
 
+    // Filtrado condicional: Solo obtener las materias que pertenecen al departamento del docente activo.
     const myMaterias = Materias.filter(m => m.departamento === user?.departamento);
 
+    // Filtrado interactivo: Este arreglo se actualiza en tiempo real basado en lo que el usuario escribe.
+    // Filtra el nombre o el código de la materia.
     const filteredMaterias = myMaterias.filter(m => 
         m.nombre.toLowerCase().includes(materiaSearch.toLowerCase()) || 
         m.codigo.toLowerCase().includes(materiaSearch.toLowerCase())
     );
 
+    // Función que se dispara al hacer clic en alguna materia de la lista de sugerencias.
     const handleSelectMateria = (materia) => {
          setFormData(prev => ({ ...prev, materia: materia.codigo }));
          setMateriaSearch(materia.nombre);
          setShowMateriaDropdown(false);
     };
 
+    // Función que captura el texto tipeado por el usuario y abre el panel visual de sugerencias.
     const handleMateriaSearchChange = (e) => {
          setMateriaSearch(e.target.value);
          if (!e.target.value) {
+             // Si el campo está vacío, limpiamos la selección previa.
              setFormData(prev => ({ ...prev, materia: '' }));
          }
          if (!showMateriaDropdown) setShowMateriaDropdown(true);

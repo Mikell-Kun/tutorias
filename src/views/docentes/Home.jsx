@@ -30,7 +30,7 @@ const TeacherHome = () => {
                 </div>
             </div>
 
-            {/* Top Cards */}
+            {/* Fila de Tarjetas Superiores: Información Rápida (Departamento, Mensajes y Reportes) */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Tarjeta className="border-none shadow-xl shadow-navy/5 overflow-hidden group" icon={Building2}>
                     <div>

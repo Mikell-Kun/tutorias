@@ -5,13 +5,24 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/ContextoUsuario.jsx';
 import { validateCredentials } from '../data/database.js';
 
+// Componente principal para el inicio de sesión del sistema.
+// Gestiona el formulario, validación de campos, animaciones y redirección al panel correspondiente.
 const IniciarSesion = () => {
+    // Estado para saber qué rol seleccionó el usuario en las pestañas.
     const [selectedRole, setSelectedRole] = useState('estudiante');
+    
+    // Estados para almacenar la información digitada (usuario/n_control y contraseña).
     const [nControl, setNControl] = useState('');
     const [password, setPassword] = useState('');
+    
+    // Estado para controlar la visibilidad visual de la contraseña en el input.
     const [showPassword, setShowPassword] = useState(false);
+    
+    // Estado para guardar el texto de algún error al autenticar.
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    
+    // Hook de contexto global para persistir los datos del usuario en toda la app.
     const { login } = useUser();
     const navigate = useNavigate();
 
@@ -21,24 +32,31 @@ const IniciarSesion = () => {
         { id: 'tutor', label: 'Tutores' },
     ];
 
+    // Función que se ejecuta al presionar el botón "Iniciar sesión".
+    // Contacta con la función asíncrona de la base de datos para autenticar las credenciales.
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setIsSubmitting(true);
 
-        // Simulation delay
+        // Simulation delay (pequeña pausa visual simulando carga)
         await new Promise(resolve => setTimeout(resolve, 800));
 
+        // Petición de validación hacia nuestro archivo database.js (el cual habla con el Backend API)
         const validatedUser = await validateCredentials(nControl, password);
 
+        // Si la base de datos confirma que el usuario existe Y su rol coincide con la pestaña elegida
         if (validatedUser && validatedUser.rol === selectedRole) {
+            // Guardamos la sesión exitosamente e incrustamos nombres ingleses para algunas lógicas internas.
             login({
                 ...validatedUser,
                 name: validatedUser.nombre_completo,
                 role: validatedUser.rol === 'estudiante' ? 'student' : validatedUser.rol === 'docente' ? 'teacher' : 'tutor'
             });
+            // Redirigimos al usuario a su panel inicial correspondiente
             navigate('/');
         } else {
+            // Si hay un error, notificamos qué fue lo que falló.
             setError(validatedUser ? `Este usuario no tiene el rol de ${selectedRole}` : 'Número de control o contraseña incorrectos');
             setIsSubmitting(false);
         }
