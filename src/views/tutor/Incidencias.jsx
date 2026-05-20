@@ -79,13 +79,13 @@ const TutorIncidencias = () => {
                             <div className="flex justify-between items-start mb-6">
                                 <div>
                                     <div className="flex items-center gap-2">
-                                        <h2 className="text-2xl font-black tracking-tight text-navy uppercase">{incidencia.estudiante_nombre}</h2>
+                                        <h2 className="text-2xl font-black tracking-tight text-navy uppercase">{incidencia.datos?.estudiante_nombre || incidencia.estudiante_nombre || 'Estudiante'}</h2>
                                         {!incidencia.leida && (
                                             <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
                                         )}
                                     </div>
                                     <p className="text-sm text-text-muted mt-1 font-medium">
-                                        Matrícula: {incidencia.estudiante_n_control} • {incidencia.estudiante_carrera}
+                                        Matrícula: {incidencia.datos?.estudiante_n_control || incidencia.estudiante_n_control || incidencia.estudiante_relacionado || 'Manual'} • {incidencia.datos?.estudiante_carrera || incidencia.estudiante_carrera || 'No especificada'}
                                     </p>
                                 </div>
                                 <span className="px-4 py-1.5 bg-gold text-navy text-[10px] font-black rounded-full uppercase tracking-widest shadow-lg shadow-gold/20">

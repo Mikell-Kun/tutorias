@@ -24,6 +24,9 @@ const ReportarIncidencia = () => {
     const [materiaSearch, setMateriaSearch] = useState('');
     const [showMateriaDropdown, setShowMateriaDropdown] = useState(false);
 
+    const [studentSearch, setStudentSearch] = useState('');
+    const [showStudentDropdown, setShowStudentDropdown] = useState(false);
+
     useEffect(() => {
         const loadInitialData = async () => {
             const est = await fetchEstudiantes();
@@ -59,13 +62,6 @@ const ReportarIncidencia = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleStudentChange = (e) => {
-        setFormData(prev => ({
-            ...prev,
-            estudiante_n_control: e.target.value
-        }));
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -80,7 +76,7 @@ const ReportarIncidencia = () => {
         // Nuevo formato para el backend
         const newIncident = {
             remitente_id: user.n_control || user.id_tutor,
-            estudiante_relacionado: student.n_control,
+            estudiante_relacionado: student?.n_control || null,
             tipo: formData.tipo,
             titulo: 'Reporte de Incidencia',
             descripcion: formData.descripcion,
@@ -88,8 +84,8 @@ const ReportarIncidencia = () => {
                 materia_codigo: materiaObj?.codigo || 'N/A',
                 materia_nombre: materiaObj?.nombre || formData.materia || 'No especificada',
                 docente_nombre: user.nombre_completo,
-                estudiante_nombre: student.nombre_completo,
-                estudiante_carrera: student.carrera
+                estudiante_nombre: student?.nombre_completo || formData.estudiante_n_control || 'No especificado',
+                estudiante_carrera: student?.carrera || 'No especificada'
             }
         };
 
@@ -112,6 +108,7 @@ const ReportarIncidencia = () => {
             descripcion: ''
         });
         setMateriaSearch('');
+        setStudentSearch('');
         setStatus({ type: '', message: '' });
     };
 
@@ -123,6 +120,12 @@ const ReportarIncidencia = () => {
     const filteredMaterias = myMaterias.filter(m => 
         m.nombre.toLowerCase().includes(materiaSearch.toLowerCase()) || 
         m.codigo.toLowerCase().includes(materiaSearch.toLowerCase())
+    );
+
+    // Filtrar estudiantes por nombre o número de control
+    const filteredEstudiantes = Estudiantes.filter(s => 
+        s.nombre_completo.toLowerCase().includes(studentSearch.toLowerCase()) ||
+        s.n_control.toString().includes(studentSearch)
     );
 
     // Función que se dispara al hacer clic en alguna materia de la lista de sugerencias.
@@ -140,6 +143,19 @@ const ReportarIncidencia = () => {
              setFormData(prev => ({ ...prev, materia: '' }));
          }
          if (!showMateriaDropdown) setShowMateriaDropdown(true);
+    };
+
+    const handleSelectStudent = (student) => {
+        setFormData(prev => ({ ...prev, estudiante_n_control: student.n_control.toString() }));
+        setStudentSearch(student.nombre_completo);
+        setShowStudentDropdown(false);
+    };
+
+    const handleStudentSearchChange = (e) => {
+        const val = e.target.value;
+        setStudentSearch(val);
+        setFormData(prev => ({ ...prev, estudiante_n_control: val }));
+        if (!showStudentDropdown) setShowStudentDropdown(true);
     };
 
     if (loading) return <div className="p-8 text-center text-navy font-bold text-lg animate-pulse">Cargando base de datos...</div>;
@@ -160,20 +176,36 @@ const ReportarIncidencia = () => {
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Estudiante */}
-                        <div className="space-y-2">
+                        <div className="space-y-2 relative">
                             <label className="text-sm font-bold text-navy uppercase tracking-wider">Estudiante *</label>
-                            <select
-                                name="estudiante_n_control"
-                                value={formData.estudiante_n_control}
-                                onChange={handleStudentChange}
+                            <input
+                                type="text"
+                                placeholder="Buscar por nombre o número de control..."
+                                value={studentSearch}
+                                onChange={handleStudentSearchChange}
+                                onFocus={() => setShowStudentDropdown(true)}
+                                onBlur={() => setTimeout(() => setShowStudentDropdown(false), 200)}
                                 className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-md focus:ring-2 focus:ring-navy/5 focus:border-navy transition-all outline-none"
                                 required
-                            >
-                                <option value="">Selecciona un estudiante...</option>
-                                {Estudiantes.map(s => (
-                                    <option key={s.n_control} value={s.n_control}>{s.nombre_completo} ({s.n_control})</option>
-                                ))}
-                            </select>
+                            />
+                            {showStudentDropdown && (
+                                <div className="absolute z-20 w-full mt-1 bg-white border border-slate-100 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                                    {filteredEstudiantes.length > 0 ? filteredEstudiantes.map(s => (
+                                        <div 
+                                            key={s.n_control} 
+                                            className="px-4 py-3 hover:bg-slate-50 cursor-pointer font-bold text-navy text-sm border-t border-slate-50"
+                                            onClick={() => handleSelectStudent(s)}
+                                        >
+                                            <span className="text-navy/40 text-[10px] mr-2 uppercase tracking-wider">{s.n_control}</span>
+                                            {s.nombre_completo}
+                                        </div>
+                                    )) : (
+                                        <div className="px-4 py-3 text-sm text-slate-400 font-medium">
+                                            No se encontraron estudiantes. Presiona Enviar para registrar como nombre manual.
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
 
                         {/* Tipo de Incidencia */}
