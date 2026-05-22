@@ -10,12 +10,12 @@ const mapRolToRole = (user) => {
     return user;
 };
 
-export const validateCredentials = async (nControl, password) => {
+export const validateCredentials = async (nControl, password, rol, roleKey) => {
     try {
         const response = await fetch(`${API_URL}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nControl, password })
+            body: JSON.stringify({ nControl, password, rol, roleKey })
         });
         if (!response.ok) return null;
         let data = await response.json();
@@ -23,6 +23,24 @@ export const validateCredentials = async (nControl, password) => {
     } catch (error) {
         console.error("Error validando credenciales:", error);
         return null;
+    }
+};
+
+export const registerUser = async (userData) => {
+    try {
+        const response = await fetch(`${API_URL}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(userData)
+        });
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.message || 'Error en el registro');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error("Error registrando usuario:", error);
+        throw error;
     }
 };
 
@@ -71,6 +89,7 @@ export const getContactosDisponibles = async (user) => {
 export const fetchEstudiantes = async () => {
     try {
         const res = await fetch(`${API_URL}/estudiantes`);
+        if (!res.ok) return [];
         return await res.json();
     } catch (error) { return []; }
 };
@@ -78,6 +97,7 @@ export const fetchEstudiantes = async () => {
 export const fetchDocentes = async () => {
     try {
         const res = await fetch(`${API_URL}/docentes`);
+        if (!res.ok) return [];
         return await res.json();
     } catch (error) { return []; }
 };
@@ -85,6 +105,7 @@ export const fetchDocentes = async () => {
 export const fetchTutores = async () => {
     try {
         const res = await fetch(`${API_URL}/tutores`);
+        if (!res.ok) return [];
         return await res.json();
     } catch (error) { return []; }
 };
@@ -92,6 +113,7 @@ export const fetchTutores = async () => {
 export const fetchMaterias = async () => {
     try {
         const res = await fetch(`${API_URL}/materias`);
+        if (!res.ok) return [];
         return await res.json();
     } catch (error) { return []; }
 };
