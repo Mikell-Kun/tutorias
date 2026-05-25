@@ -2,6 +2,15 @@ const API_URL = window.location.hostname === 'localhost' || window.location.host
     ? 'http://localhost:3001/api'
     : 'https://semisweet-emote-cornbread.ngrok-free.dev/api';
 
+// Helper to bypass ngrok browser warnings when accessing backend from Netlify or remote clients
+const customFetch = (url, options = {}) => {
+    options.headers = {
+        ...options.headers,
+        'ngrok-skip-browser-warning': 'true'
+    };
+    return fetch(url, options);
+};
+
 // ===== AUTENTICACIÓN Y USUARIOS =====
 
 const mapRolToRole = (user) => {
@@ -14,7 +23,7 @@ const mapRolToRole = (user) => {
 
 export const validateCredentials = async (nControl, password, rol, roleKey) => {
     try {
-        const response = await fetch(`${API_URL}/auth/login`, {
+        const response = await customFetch(`${API_URL}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ nControl, password, rol, roleKey })
@@ -30,7 +39,7 @@ export const validateCredentials = async (nControl, password, rol, roleKey) => {
 
 export const registerUser = async (userData) => {
     try {
-        const response = await fetch(`${API_URL}/auth/register`, {
+        const response = await customFetch(`${API_URL}/auth/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(userData)
@@ -49,7 +58,7 @@ export const registerUser = async (userData) => {
 export const getUserByControl = async (control) => {
     if (!control) return null;
     try {
-        const response = await fetch(`${API_URL}/usuarios/${control}`);
+        const response = await customFetch(`${API_URL}/usuarios/${control}`);
         if (!response.ok) return null;
         let data = await response.json();
         return mapRolToRole(data);
@@ -61,7 +70,7 @@ export const getUserByControl = async (control) => {
 
 export const updateUser = async (id, updatedData) => {
     try {
-        const response = await fetch(`${API_URL}/usuarios/${id}`, {
+        const response = await customFetch(`${API_URL}/usuarios/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedData)
@@ -77,7 +86,7 @@ export const updateUser = async (id, updatedData) => {
 export const getContactosDisponibles = async (user) => {
     if (!user) return [];
     try {
-        const response = await fetch(`${API_URL}/usuarios/contactos?rol=${user.rol}`);
+        const response = await customFetch(`${API_URL}/usuarios/contactos?rol=${user.rol}`);
         if (!response.ok) return [];
         return await response.json();
     } catch (error) {
@@ -90,34 +99,46 @@ export const getContactosDisponibles = async (user) => {
 
 export const fetchEstudiantes = async () => {
     try {
-        const res = await fetch(`${API_URL}/estudiantes`);
+        const res = await customFetch(`${API_URL}/estudiantes`);
         if (!res.ok) return [];
         return await res.json();
-    } catch (error) { return []; }
+    } catch (error) {
+        console.error("Error al obtener estudiantes:", error);
+        return [];
+    }
 };
 
 export const fetchDocentes = async () => {
     try {
-        const res = await fetch(`${API_URL}/docentes`);
+        const res = await customFetch(`${API_URL}/docentes`);
         if (!res.ok) return [];
         return await res.json();
-    } catch (error) { return []; }
+    } catch (error) {
+        console.error("Error al obtener docentes:", error);
+        return [];
+    }
 };
 
 export const fetchTutores = async () => {
     try {
-        const res = await fetch(`${API_URL}/tutores`);
+        const res = await customFetch(`${API_URL}/tutores`);
         if (!res.ok) return [];
         return await res.json();
-    } catch (error) { return []; }
+    } catch (error) {
+        console.error("Error al obtener tutores:", error);
+        return [];
+    }
 };
 
 export const fetchMaterias = async () => {
     try {
-        const res = await fetch(`${API_URL}/materias`);
+        const res = await customFetch(`${API_URL}/materias`);
         if (!res.ok) return [];
         return await res.json();
-    } catch (error) { return []; }
+    } catch (error) {
+        console.error("Error al obtener materias:", error);
+        return [];
+    }
 };
 
 // ===== MENSAJERÍA =====
@@ -125,21 +146,23 @@ export const fetchMaterias = async () => {
 export const getMensajes = async (userId) => {
     if (!userId) return [];
     try {
-        const response = await fetch(`${API_URL}/mensajes/${userId}`);
+        const response = await customFetch(`${API_URL}/mensajes/${userId}`);
         if (!response.ok) return [];
         return await response.json();
-    } catch (error) { return []; }
+    } catch (error) {
+        console.error("Error al obtener mensajes:", error);
+        return [];
+    }
 };
 
 export const addMensaje = async (remitenteId, destinatarioId, contenido) => {
     try {
-        const response = await fetch(`${API_URL}/mensajes`, {
+        const response = await customFetch(`${API_URL}/mensajes`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ remitenteId, destinatarioId, contenido })
         });
         const nuevo = await response.json();
-        // Disparamos un evento para que las vistas se enteren (como antes)
         window.dispatchEvent(new CustomEvent('databaseUpdated'));
         return nuevo;
     } catch (error) {
@@ -150,7 +173,7 @@ export const addMensaje = async (remitenteId, destinatarioId, contenido) => {
 
 export const markMensajesComoLeidos = async (userId, contactId) => {
     try {
-        await fetch(`${API_URL}/mensajes/leidos`, {
+        await customFetch(`${API_URL}/mensajes/leidos`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId, contactId })
@@ -165,19 +188,18 @@ export const markMensajesComoLeidos = async (userId, contactId) => {
 
 export const getIncidencias = async () => {
     try {
-        const response = await fetch(`${API_URL}/incidencias`);
+        const response = await customFetch(`${API_URL}/incidencias`);
         if (!response.ok) return [];
         return await response.json();
     } catch (error) {
+        console.error("Error al obtener incidencias:", error);
         return [];
     }
 };
 
 export const addIncidencia = async (nuevaIncidencia) => {
-    // nuevaIncidencia debe venir estructurada como:
-    // { remitente_id, estudiante_relacionado, tipo, titulo, descripcion, datos }
     try {
-        const response = await fetch(`${API_URL}/incidencias`, {
+        const response = await customFetch(`${API_URL}/incidencias`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(nuevaIncidencia)
@@ -192,7 +214,7 @@ export const addIncidencia = async (nuevaIncidencia) => {
 
 export const markIncidenciaAsRead = async (id) => {
     try {
-        await fetch(`${API_URL}/incidencias/${id}/leida`, { method: 'PUT' });
+        await customFetch(`${API_URL}/incidencias/${id}/leida`, { method: 'PUT' });
         window.dispatchEvent(new CustomEvent('databaseUpdated'));
     } catch (error) {
         console.error("Error marcando incidencia como leida", error);
