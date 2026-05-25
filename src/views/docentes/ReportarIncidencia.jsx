@@ -124,8 +124,8 @@ const ReportarIncidencia = () => {
 
     // Filtrar estudiantes por nombre o número de control
     const filteredEstudiantes = Estudiantes.filter(s => 
-        s.nombre_completo.toLowerCase().includes(studentSearch.toLowerCase()) ||
-        s.n_control.toString().includes(studentSearch)
+        (s.nombre_completo || '').toLowerCase().includes(studentSearch.toLowerCase()) ||
+        (s.n_control || '').toString().includes(studentSearch)
     );
 
     // Función que se dispara al hacer clic en alguna materia de la lista de sugerencias.
