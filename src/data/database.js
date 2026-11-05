@@ -1,6 +1,6 @@
 const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:3001/api'
-    : 'http://201.174.73.249:3001/api';
+    : 'https://hughes-nasa-enb-ultimate.trycloudflare.com/api';
 
 // Helper to bypass ngrok browser warnings when accessing backend from Netlify or remote clients
 const customFetch = (url, options = {}) => {
